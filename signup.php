@@ -1,6 +1,6 @@
 <?php
     session_start();
-	if(isset($_SESSION['userMerlaTrav'])){
+	if(isset($_SESSION['userImmoERPV2'])){
 		header('Location:dashboard.php');
 	}
 	else{

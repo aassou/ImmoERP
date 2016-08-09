@@ -12,7 +12,7 @@
     include('config.php');  
     //classes loading end
     session_start();
-    if(isset($_SESSION['userMerlaTrav'])){
+    if(isset($_SESSION['userImmoERPV2'])){
         //classes managers
         $usersManager = new UserManager($pdo);
         $mailManager = new MailManager($pdo);
@@ -54,7 +54,7 @@
         <!-- BEGIN TOP NAVIGATION BAR -->
         <?php 
         include("include/top-menu.php"); 
-        $todos = $todoManager->getTodosByUser($_SESSION['userMerlaTrav']->login());
+        $todos = $todoManager->getTodosByUser($_SESSION['userImmoERPV2']->login());
         ?>   
         <!-- END TOP NAVIGATION BAR -->
     </div>

@@ -13,7 +13,7 @@
 	include('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
+    if( isset($_SESSION['userImmoERPV2']) ){
     	//les sources
 		$projetManager = new ProjetManager($pdo);
 		$caisseSortiesManager = new CaisseSortiesManager($pdo);
@@ -389,7 +389,7 @@
 				                                      </div>
 													<div class="control-group">
 														<input type="hidden" name="idSortie" value="<?= $sortie->id() ?>" />
-														<input type="hidden" name="user" value="<?= $_SESSION['userMerlaTrav']->login() ?>" />
+														<input type="hidden" name="user" value="<?= $_SESSION['userImmoERPV2']->login() ?>" />
 														<div class="controls">	
 															<button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
 															<button type="submit" class="btn red" aria-hidden="true">Oui</button>
@@ -523,7 +523,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
 	header('Location:dashboard.php');
 }*/
 else{

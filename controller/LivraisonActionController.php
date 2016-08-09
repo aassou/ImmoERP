@@ -16,9 +16,7 @@
     
     //post input processing
     $action = htmlentities($_POST['action']);
-    //In this session variable we put all the POST, to get it in the contrats-add file
-    //in case of error, and this help the user to do not put again what he filled out.
-    $_SESSION['livraison-data-form'] = $_POST;
+    $companyID = htmlentities($_POST['companyID']);
     //This var contains result message of CRUD action
     $actionMessage = "";
     $typeMessage = "";
@@ -37,7 +35,7 @@
             $designation = htmlentities($_POST['designation']);
             $dateLivraison = htmlentities($_POST['dateLivraison']);
             $codeLivraison = uniqid().date('YmdHis');
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //these next data are used to know the month and the year of a supply demand
             $mois = date('m', strtotime($dateLivraison));
@@ -46,7 +44,7 @@
             $livraison = 
             new Livraison(array('dateLivraison' => $dateLivraison, 'libelle' => $libelle,
             'designation' => $designation, 'idProjet' => $idProjet, 'idFournisseur' => $idFournisseur, 
-            'code' => $codeLivraison, 'createdBy' => $createdBy, 'created' => $created));
+            'code' => $codeLivraison, 'companyID' => $companyID, 'createdBy' => $createdBy, 'created' => $created));
             //add it to db
             $livraisonManager->add($livraison);
             //add history data to db
@@ -63,22 +61,22 @@
             $historyManager->add($history);
             $actionMessage = "<strong>Opération Valide</strong> : Livraison Ajoutée avec succès.";  
             $typeMessage = "success";
-            $redirectLink = "Location:../livraisons-details.php?codeLivraison=".$codeLivraison."&mois=".$mois."&annee=".$annee;
+            $redirectLink = "Location:../livraisons-details.php?codeLivraison=".$codeLivraison."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
         }
         else{
             $actionMessage = "<strong>Erreur Ajout Livraison</strong> : Vous devez remplir le champ <strong>N° BL</strong>.";
             $typeMessage = "error";
             //test the source of this request for the reason of exact redirection
             if ( isset($_POST['source']) and $_POST['source'] == "livraisons-group" ) {
-                $redirectLink = "Location:../livraisons-group.php";    
+                $redirectLink = "Location:../livraisons-group.php?companyID=".$companyID;    
             }
             else if ( isset($_POST['source']) and $_POST['source'] == "livraisons-fournisseur-mois" ) {
-                $redirectLink = "Location:../livraisons-fournisseur-mois.php?idFournisseur=".$idFournisseur;    
+                $redirectLink = "Location:../livraisons-fournisseur-mois.php?idFournisseur=".$idFournisseur."&companyID=".$companyID;    
             }
             else if ( isset($_POST['source']) and $_POST['source'] == "livraisons-fournisseur-mois-list" ) {
                 $mois = htmlentities($_POST['mois']);
                 $annee = htmlentities($_POST['annee']);
-                $redirectLink = "Location:../livraisons-fournisseur-mois-list.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee;    
+                $redirectLink = "Location:../livraisons-fournisseur-mois-list.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;    
             }
         }
     }
@@ -91,7 +89,7 @@
             $libelle = htmlentities($_POST['libelle']);
             $designation = htmlentities($_POST['designation']);
             $dateLivraison = htmlentities($_POST['dateLivraison']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             //these next data are used to know the month and the year of a supply demand
             $mois = date('m', strtotime($dateLivraison));
@@ -99,12 +97,12 @@
             $livraison = 
             new Livraison(array('id' => $id, 'dateLivraison' => $dateLivraison, 'libelle' => $libelle,
             'designation' => $designation, 'idProjet' => $idProjet, 'idFournisseur' => $idFournisseur, 
-            'updatedBy' => $updatedBy, 'updated' => $updated));
+            'companyID' => $companyID, 'updatedBy' => $updatedBy, 'updated' => $updated));
             $livraisonManager->update($livraison);
             //add history data to db
             $nomFournisseur = $fournisseurManager->getFournisseurById($idFournisseur)->nom();
             $nomProjet = $projetManager->getProjetById($idProjet)->nom();
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",
@@ -123,12 +121,12 @@
             $typeMessage = "error";
         }
         //$redirectLink = "Location:../livraisons-fournisseur.php?idFournisseur=".$idFournisseur;
-        $redirectLink = "Location:../livraisons-fournisseur-mois-list.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee;
+        $redirectLink = "Location:../livraisons-fournisseur-mois-list.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
         //this case treat the updated request comming from livraisons-details.php page,
         //not livraisons-fournisseur.php page
         if( isset($_POST['source']) and $_POST['source']=="details-livraison" ){
             $codeLivraison = $_POST['codeLivraison'];
-            $redirectLink = "Location:../livraisons-details.php?codeLivraison=".$codeLivraison."&mois=".$mois."&annee=".$annee;
+            $redirectLink = "Location:../livraisons-details.php?codeLivraison=".$codeLivraison."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
         }
     }
     else if($action == "updateStatus"){
@@ -141,7 +139,7 @@
             }
         }
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Modification",
@@ -154,7 +152,7 @@
         $historyManager->add($history);
         $actionMessage = "<strong>Opération Valide</strong> : Livraison Status Modifiée avec succès.";
         $typeMessage = "success";
-        $redirectLink = "Location:../livraisons-fournisseur-mois-list.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee;
+        $redirectLink = "Location:../livraisons-fournisseur-mois-list.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
         
     }
     else if($action=="delete"){
@@ -164,7 +162,7 @@
         $annee = htmlentities($_POST['annee']);
         $livraisonManager->delete($idLivraison);
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",
@@ -180,7 +178,7 @@
         $livraisonDetailManager->deleteLivraison($idLivraison);
         $actionMessage = "<strong>Opération Valide</strong> : Livraison Supprimée avec succès.";
         $typeMessage = "success";
-        $redirectLink = "Location:../livraisons-fournisseur-mois-list.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee;
+        $redirectLink = "Location:../livraisons-fournisseur-mois-list.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
         
     }
     

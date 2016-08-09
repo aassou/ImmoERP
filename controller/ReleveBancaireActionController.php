@@ -115,7 +115,7 @@
 			$debit = htmlentities($_POST['debit']);
 			$credit = htmlentities($_POST['credit']);
 			$projet = htmlentities($_POST['projet']);
-			$updatedBy = $_SESSION['userMerlaTrav']->login();
+			$updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $releveBancaire = new ReleveBancaire(array(
 				'id' => $idReleveBancaire,
@@ -154,7 +154,7 @@
             $chargeCommunManager = new ChargeCommunManager($pdo);
             $societe = htmlentities($_POST['societe']);
             $type = htmlentities($_POST['typeChargesCommuns']);
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $charge = new ChargeCommun(array(
@@ -175,7 +175,7 @@
             $societe = htmlentities($_POST['societe2']);
             $type = htmlentities($_POST['typeChargesProjet']);
             $projet = htmlentities($_POST['projet']);
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $charge = new Charge(array(
@@ -226,7 +226,7 @@
             //$observation ="Ce réglement client fait référence à la ligne : ".$idReleveBancaire." du relevé bancaire du compte bancaire : ".$compteBancaire;
             $observation = htmlentities($_POST['observation']);
             $idContrat = htmlentities($_POST['contrat-client']);
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $operation = 
             new Operation(array('date' => $dateOperation, 'dateReglement' => $dateReglement, 'status' => $status,

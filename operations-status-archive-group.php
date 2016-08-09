@@ -13,7 +13,7 @@
     include('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
+    if( isset($_SESSION['userImmoERPV2']) ){
         //les sources
         $operationManager = new OperationManager($pdo);
         $operations =$operationManager->getOperationsGroupByMonth();
@@ -195,7 +195,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
     header('Location:dashboard.php');
 }*/
 else{

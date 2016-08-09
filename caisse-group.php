@@ -13,16 +13,20 @@
     include('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
+    if( isset($_SESSION['userImmoERPV2']) ){
+        $companyID = htmlentities($_GET['companyID']);
         //les sources
+        $companyManager = new CompanyManager($pdo);
         $projetManager = new ProjetManager($pdo);
         $caisseManager = new CaisseManager($pdo);
+        //objs and vars
+        $company = $companyManager->getCompanyById($companyID);
         $projets = $projetManager->getProjets();    
-        $caisses =$caisseManager->getCaissesGroupByMonth();
+        $caisses =$caisseManager->getCaissesGroupByMonth($companyID);
         $totalCaisse = 
-        $caisseManager->getTotalCaisseByType('Entree') - $caisseManager->getTotalCaisseByType('Sortie');
-        $totalEntrees = $caisseManager->getTotalCaisseByType('Entree');
-        $totalSorties = $caisseManager->getTotalCaisseByType('Sortie');
+        $caisseManager->getTotalCaisseByType('Entree', $companyID) - $caisseManager->getTotalCaisseByType('Sortie', $companyID);
+        $totalEntrees = $caisseManager->getTotalCaisseByType('Entree', $companyID);
+        $totalSorties = $caisseManager->getTotalCaisseByType('Sortie', $companyID);
 ?>
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
@@ -79,12 +83,17 @@
                         <ul class="breadcrumb">
                             <li>
                                 <i class="icon-home"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <a href="company-choice.php">Accueil</a> 
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $company->id() ?>">Société <?= $company->nom() ?></a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
                                 <i class="icon-money"></i>
-                                <a>Gestion de la caisse - <strong>Société Annahda</strong></a>
+                                <a>Gestion de la caisse</a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->
@@ -158,7 +167,8 @@
                                     <div class="control-group">
                                         <div class="controls">  
                                             <input type="hidden" name="action" value="add" />
-                                            <input type="hidden" name="source" value="caisse-group" />        
+                                            <input type="hidden" name="source" value="caisse-group" />
+                                            <input type="hidden" name="companyID" value="<?= $company->id() ?>" />        
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
@@ -174,7 +184,7 @@
                                 <h3>Imprimer Bilan de la Caisse </h3>
                             </div>
                             <div class="modal-body">
-                                <form class="form-horizontal" action="controller/CaissePrintController.php" method="post" enctype="multipart/form-data">
+                                <form target="_blank" class="form-horizontal" action="controller/CaissePrintController.php" method="post" enctype="multipart/form-data">
                                     <p><strong>Séléctionner les opérations de caisse à imprimer</strong></p>
                                     <div class="control-group">
                                       <label class="control-label">Imprimer</label>
@@ -217,7 +227,7 @@
                                    </div>
                                     <div class="control-group">
                                         <div class="controls">
-                                            <input type="hidden" name="societe" value="1" />
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
@@ -249,8 +259,8 @@
                                 <div class="clearfix">
                                     <?php
                                     if ( 
-                                        $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                                        $_SESSION['userMerlaTrav']->profil() == "manager" 
+                                        $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                                        $_SESSION['userImmoERPV2']->profil() == "manager" 
                                         ) {
                                     ?>
                                     <div class="btn-group pull-left">
@@ -296,13 +306,13 @@
                                             <?php
                                             $mois = date('m', strtotime($caisse->dateOperation()));
                                             $annee = date('Y', strtotime($caisse->dateOperation()));
-                                            $credit = $caisseManager->getTotalCaissesByMonthYearByType($mois, $annee, 'Entree');
-                                            $debit = $caisseManager->getTotalCaissesByMonthYearByType($mois, $annee, 'Sortie');
+                                            $credit = $caisseManager->getTotalCaissesByMonthYearByType($mois, $annee, 'Entree', $caisse->companyID());
+                                            $debit = $caisseManager->getTotalCaissesByMonthYearByType($mois, $annee, 'Sortie', $caisse->companyID());
                                             $solde = $credit - $debit;
                                             ?>
                                             <!--td><?= $caisse->type() ?></td-->
                                             <td>
-                                                <a class="btn mini" href="caisse-mois-annee.php?mois=<?= $mois ?>&annee=<?= $annee ?>">
+                                                <a class="btn mini" href="caisse-mois-annee.php?mois=<?= $mois ?>&annee=<?= $annee ?>&companyID=<?= $caisse->companyID() ?>">
                                                     <strong><?= date('m/Y', strtotime($caisse->dateOperation())) ?></strong>
                                                 </a>
                                             </td>
@@ -381,7 +391,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
     header('Location:dashboard.php');
 }*/
 else{

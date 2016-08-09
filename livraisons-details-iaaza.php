@@ -13,7 +13,7 @@
     include('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
+    if( isset($_SESSION['userImmoERPV2']) ){
         //classManagers
         $projetManager = new ProjetManager($pdo);
         $fournisseurManager = new FournisseurManager($pdo);
@@ -152,8 +152,8 @@
                         <?php
                         $updateLink = "";
                         if ( 
-                            $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                            $_SESSION['userMerlaTrav']->profil() == "user" 
+                            $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                            $_SESSION['userImmoERPV2']->profil() == "user" 
                             ) {
                             $updateLink = "#updateLivraison";    
                         }
@@ -275,8 +275,8 @@
                             </a>
                             <?php  
                             if ( 
-                                $_SESSION['userMerlaTrav']->profil() == "admin" || 
-                                $_SESSION['userMerlaTrav']->profil() == "user" 
+                                $_SESSION['userImmoERPV2']->profil() == "admin" || 
+                                $_SESSION['userImmoERPV2']->profil() == "user" 
                                 ) {
                             ?>
                             <a class="btn green" href="#addArticle" data-toggle="modal" data-id="">
@@ -342,8 +342,8 @@
                             <tr>
                                 <?php  
                                 if ( 
-                                    $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                                    $_SESSION['userMerlaTrav']->profil() == "user" 
+                                    $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                                    $_SESSION['userImmoERPV2']->profil() == "user" 
                                     ) {
                                 ?>
                                 <th style="width: 10%">Actions</th>
@@ -361,8 +361,8 @@
                             <tr>
                                 <?php  
                                 if ( 
-                                    $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                                    $_SESSION['userMerlaTrav']->profil() == "user" 
+                                    $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                                    $_SESSION['userImmoERPV2']->profil() == "user" 
                                     ) {
                                 ?>
                                 <td class="hidden-phone">
@@ -562,7 +562,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
     header('Location:dashboard.php');
 }*/
 else{

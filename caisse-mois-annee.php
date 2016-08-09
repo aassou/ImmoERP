@@ -13,16 +13,21 @@
     include('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
-        //les sources
+    if( isset($_SESSION['userImmoERPV2']) ){
+        //post processing
+        $companyID = htmlentities($_GET['companyID']);
         $mois = $_GET['mois'];
         $annee = $_GET['annee'];
+        //class managers
         $projetManager = new ProjetManager($pdo);
         $caisseManager = new CaisseManager($pdo);
+        $companyManager = new CompanyManager($pdo);
+        //objs and vars
+        $company = $companyManager->getCompanyById($companyID);
         $projets = $projetManager->getProjets();    
-        $caisses =$caisseManager->getCaissesByMonthYear($mois, $annee);
-        $totalEntrees = $caisseManager->getTotalCaisseByTypeByMonthYear('Entree', $mois, $annee);
-        $totalSorties = $caisseManager->getTotalCaisseByTypeByMonthYear('Sortie', $mois, $annee);
+        $caisses =$caisseManager->getCaissesByMonthYear($mois, $annee, $companyID);
+        $totalEntrees = $caisseManager->getTotalCaisseByTypeByMonthYear('Entree', $mois, $annee, $companyID);
+        $totalSorties = $caisseManager->getTotalCaisseByTypeByMonthYear('Sortie', $mois, $annee, $companyID);
         $totalCaisse = $totalEntrees - $totalSorties;
 ?>
 <!DOCTYPE html>
@@ -84,8 +89,13 @@
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $company->id() ?>">Société <?= $company->nom() ?></a> 
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
                                 <i class="icon-money"></i>
-                                <a href="caisse-group.php">Gestion de la caisse - <strong>Société Annahda</strong></a>
+                                <a href="caisse-group.php?companyID=<?= $companyID ?>">Gestion de la caisse</a>
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
@@ -164,6 +174,7 @@
                                         <div class="controls">  
                                             <input type="hidden" name="action" value="add" />
                                             <input type="hidden" name="source" value="caisse-mois-annee" />
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                             <input type="hidden" name="mois" value="<?= $mois ?>" />
                                             <input type="hidden" name="annee" value="<?= $annee ?>" />    
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
@@ -181,7 +192,7 @@
                                 <h3>Imprimer Bilan de la Caisse </h3>
                             </div>
                             <div class="modal-body">
-                                <form class="form-horizontal" action="controller/CaissePrintController.php" method="post" enctype="multipart/form-data">
+                                <form target="_blank" class="form-horizontal" action="controller/CaissePrintController.php" method="post" enctype="multipart/form-data">
                                     <p><strong>Séléctionner les opérations de caisse à imprimer</strong></p>
                                     <div class="control-group">
                                       <label class="control-label">Imprimer</label>
@@ -224,7 +235,7 @@
                                    </div>
                                     <div class="control-group">
                                         <div class="controls">
-                                            <input type="hidden" name="societe" value="1" />
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
@@ -256,8 +267,8 @@
                                 <div class="clearfix">
                                     <?php
                                     if ( 
-                                        $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                                        $_SESSION['userMerlaTrav']->profil() == "manager" 
+                                        $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                                        $_SESSION['userImmoERPV2']->profil() == "manager" 
                                         ) {
                                     ?>
                                     <div class="btn-group pull-left">
@@ -291,8 +302,8 @@
                                         <tr>
                                             <?php
                                             if ( 
-                                                $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                                                $_SESSION['userMerlaTrav']->profil() == "manager" 
+                                                $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                                                $_SESSION['userImmoERPV2']->profil() == "manager" 
                                                 ) {
                                             ?>
                                             <th style="width:10%">Actions</th>
@@ -314,8 +325,8 @@
                                         <tr class="odd gradeX">
                                             <?php
                                             if ( 
-                                                $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                                                $_SESSION['userMerlaTrav']->profil() == "manager" 
+                                                $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                                                $_SESSION['userImmoERPV2']->profil() == "manager" 
                                                 ) {
                                             ?>
                                             <td>
@@ -398,9 +409,10 @@
                                                         <div class="controls">  
                                                             <input type="hidden" name="action" value="update" />
                                                             <input type="hidden" name="source" value="caisse-mois-annee" />
+                                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
+                                                            <input type="hidden" name="idCaisse" value="<?= $caisse->id() ?>" />
                                                             <input type="hidden" name="mois" value="<?= $mois ?>" />
-                                                            <input type="hidden" name="annee" value="<?= $annee ?>" /> 
-                                                            <input type="hidden" name="idCaisse" value="<?= $caisse->id() ?>" />    
+                                                            <input type="hidden" name="annee" value="<?= $annee ?>" />    
                                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                                         </div>
@@ -413,18 +425,19 @@
                                         <div id="deleteCaisse<?= $caisse->id() ?>" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                                <h3>Supprimer la ligne</h3>
+                                                <h3>Supprimer Opération de Caisse</h3>
                                             </div>
                                             <div class="modal-body">
                                                 <form class="form-horizontal loginFrm" action="controller/CaisseActionController.php" method="post">
-                                                    <p>Êtes-vous sûr de vouloir supprimer cette ligne ?</p>
+                                                    <p>Êtes-vous sûr de vouloir supprimer cette opération de caisse ?</p>
                                                     <div class="control-group">
                                                         <label class="right-label"></label>
                                                         <input type="hidden" name="action" value="delete" />
                                                         <input type="hidden" name="source" value="caisse-mois-annee" />
-                                                        <input type="hidden" name="mois" value="<?= $mois ?>" />
-                                                        <input type="hidden" name="annee" value="<?= $annee ?>" /> 
+                                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                                         <input type="hidden" name="idCaisse" value="<?= $caisse->id() ?>" />
+                                                        <input type="hidden" name="mois" value="<?= $mois ?>" />
+                                                        <input type="hidden" name="annee" value="<?= $annee ?>" />
                                                         <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                                         <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                                     </div>
@@ -497,7 +510,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
     header('Location:dashboard.php');
 }*/
 else{

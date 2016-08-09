@@ -1,7 +1,7 @@
 <?php
     session_start();
-	if(isset($_SESSION['userMerlaTrav'])){
-		header('Location:dashboard.php');
+	if(isset($_SESSION['userImmoERPV2'])){
+		header('Location:company-choice.php');
 	}
 	else{
 ?>
@@ -36,30 +36,29 @@
   <!-- BEGIN LOGIN -->
   <div class="content">
     <!-- BEGIN LOGIN FORM -->
-    <form class="form-vertical login-form" action="controller/UserSignInController.php" method="POST">
+    <form class="form-vertical login-form" action="controller/UserActionController.php" method="POST">
       <h3 class="form-title">Accéder à votre compte</h3>
-      <div class="alert alert-error hide">
-        <button class="close" data-dismiss="alert"></button>
-        <span><strong>Login</strong> et <strong>Mot de passe</strong> non saisies.</span>
-      </div>
-      <?php
-      	if(isset($_SESSION['signin-error'])){
-      ?>			
-		  <div class="alert alert-error">
-	        <button class="close" data-dismiss="alert"></button>
-	        <span><?php echo $_SESSION['signin-error']; ?></span>
-	      </div>
-      <?php
-		}
-		unset($_SESSION['signin-error']);
-	  ?>	
+	  <?php 
+      if ( isset($_SESSION['user-action-message']) 
+      and isset($_SESSION['user-type-message'])) {
+          $message = $_SESSION['user-action-message'];
+          $typeMessage = $_SESSION['user-type-message'];
+      ?>
+          <div class="alert alert-<?= $typeMessage ?>">
+              <button class="close" data-dismiss="alert"></button>
+              <?= $message ?>      
+          </div>
+      <?php } 
+          unset($_SESSION['user-action-message']);
+          unset($_SESSION['user-type-message']);
+      ?>
       <div class="control-group">
         <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
         <label class="control-label visible-ie8 visible-ie9">Login</label>
         <div class="controls">
           <div class="input-icon left">
             <i class="icon-user"></i>
-            <input class="m-wrap placeholder-no-fix" type="text" placeholder="Login" name="login"/>
+            <input class="m-wrap placeholder-no-fix" type="text" required="required" placeholder="Login" name="login"/>
           </div>
         </div>
       </div>
@@ -68,15 +67,13 @@
         <div class="controls">
           <div class="input-icon left">
             <i class="icon-lock"></i>
-            <input class="m-wrap placeholder-no-fix" type="password" placeholder="Mot de passe" name="password"/>
+            <input class="m-wrap placeholder-no-fix" type="password" required="required" placeholder="Mot de passe" name="password"/>
           </div>
         </div>
       </div>
       <div class="form-actions">
+        <input type="hidden" name="action" value="signin">
         <input type="submit" class="btn green pull-right" value="Se connecter">            
-      </div>
-      <div class="forget-password">
-        <h4><a href="signup.php" class="" id="forget-password">Créer un nouveau compte</a></h4>
       </div>
     </form>
     <!-- END LOGIN FORM -->
@@ -84,7 +81,8 @@
   <!-- END LOGIN -->
   <!-- BEGIN COPYRIGHT -->
   <div class="copyright">
-    2015 &copy; AnnahdaERP. Management Application.
+    <p>ImmoERP Management Application.</p>        
+    <p>2015 - <?= date('Y') ?> &copy;</p>
   </div>
   <!-- END COPYRIGHT -->
   <!-- BEGIN JAVASCRIPTS -->

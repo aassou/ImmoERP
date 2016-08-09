@@ -19,10 +19,10 @@
         $alertManager = new AlertManager($pdo);
         $todoManager = new TodoManager($pdo);
         //obj and vars
-        $taskNumber = $taskManager->getTaskNumberByUser($_SESSION['userMerlaTrav']->login());
+        $taskNumber = $taskManager->getTaskNumberByUser($_SESSION['userImmoERPV2']->login());
         $bugNumber = $bugManager->getBugsNumber();
         $alertNumber = $alertManager->getAlertsNumber();
-        $todoNumber = $todoManager->getTodosNumberByUser($_SESSION['userMerlaTrav']->login());
+        $todoNumber = $todoManager->getTodosNumberByUser($_SESSION['userImmoERPV2']->login());
 		?>			
 		<ul class="nav pull-right">
 		    <li class="dropdown" id="header_inbox_bar">
@@ -77,7 +77,7 @@
 			<li class="dropdown user">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 				<img alt="" src="assets/img/avatar_small.png" />
-				<span class="username"><?= $_SESSION['userMerlaTrav']->login(); ?></span>
+				<span class="username"><?= $_SESSION['userImmoERPV2']->login(); ?></span>
 				<i class="icon-angle-down"></i>
 				</a>
 				<ul class="dropdown-menu">

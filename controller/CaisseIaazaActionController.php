@@ -33,7 +33,7 @@
             $montant = htmlentities($_POST['montant']);
             $designation = htmlentities($_POST['designation']);
             $destination = htmlentities($_POST['destination']);
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $caisse = new Caisse(array(
@@ -75,7 +75,7 @@
             $montant = htmlentities($_POST['montant']);
             $designation = htmlentities($_POST['designation']);
             $destination = htmlentities($_POST['destination']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $caisse = new Caisse(array(
                 'id' => $idCaisse,
@@ -89,7 +89,7 @@
             ));
             $caisseManager->update($caisse);
             //add history data to db
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",
@@ -115,7 +115,7 @@
         $caisse = $caisseManager->getCaisseById($idCaisse);
         $caisseManager->delete($idCaisse);
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",

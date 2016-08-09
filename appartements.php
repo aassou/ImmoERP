@@ -13,7 +13,7 @@
 	include('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
+    if( isset($_SESSION['userImmoERPV2']) ){
     	//les sources
     	$idProjet = 0;
     	$projetManager = new ProjetManager($pdo);
@@ -122,8 +122,8 @@
 						    <input class="m-wrap" name="criteria" id="criteria" type="text" placeholder="Chercher Par Code, Status..." />
 						    <?php
                             if ( 
-                                $_SESSION['userMerlaTrav']->profil()=="admin" ||
-                                $_SESSION['userMerlaTrav']->profil()=="manager" 
+                                $_SESSION['userImmoERPV2']->profil()=="admin" ||
+                                $_SESSION['userImmoERPV2']->profil()=="manager" 
                             ) {
                             ?>
 							<a href="#addAppartement" class="pull-right btn icn-only green" data-toggle="modal">Ajouter Nouvel Appartement <i class="icon-plus-sign m-icon-white"></i></a>
@@ -269,8 +269,8 @@
 												    </a>
 												    <?php
                                                     if ( 
-                                                        $_SESSION['userMerlaTrav']->profil()=="admin" ||
-                                                        $_SESSION['userMerlaTrav']->profil()=="manager"    
+                                                        $_SESSION['userImmoERPV2']->profil()=="admin" ||
+                                                        $_SESSION['userImmoERPV2']->profil()=="manager"    
                                                     ) {
                                                     ?>
 												    <ul class="dropdown-menu">
@@ -313,8 +313,8 @@
 												<?php
 												if ( $appartement->status()=="Disponible" ) {
                                                     if ( 
-                                                        $_SESSION['userMerlaTrav']->profil()=="admin" ||
-                                                        $_SESSION['userMerlaTrav']->profil()=="manager"    
+                                                        $_SESSION['userImmoERPV2']->profil()=="admin" ||
+                                                        $_SESSION['userImmoERPV2']->profil()=="manager"    
                                                     ) {    
 												?>
 													<a class="btn mini green" href="#changeToReserve<?= $appartement->id() ?>" data-toggle="modal" data-id="<?= $appartement->id() ?>">
@@ -334,8 +334,8 @@
 												<?php 
 												if ( $appartement->status()=="R&eacute;serv&eacute;" ) {
 												     if ( 
-												        $_SESSION['userMerlaTrav']->profil()=="admin" ||
-                                                        $_SESSION['userMerlaTrav']->profil()=="manager"
+												        $_SESSION['userImmoERPV2']->profil()=="admin" ||
+                                                        $_SESSION['userImmoERPV2']->profil()=="manager"
                                                      ) {   
 												?>
 													<a class="btn mini red" href="#changeToDisponible<?= $appartement->id() ?>" data-toggle="modal" data-id="<?= $appartement->id() ?>">
@@ -364,8 +364,8 @@
 												<?php
 												if( $appartement->status()=="R&eacute;serv&eacute;" ){
 												    if ( 
-												        $_SESSION['userMerlaTrav']->profil()=="admin" || 
-                                                        $_SESSION['userMerlaTrav']->profil()=="manager"    
+												        $_SESSION['userImmoERPV2']->profil()=="admin" || 
+                                                        $_SESSION['userImmoERPV2']->profil()=="manager"    
                                                     ) {
 												?>
 												<a class="btn mini" title="<?= $appartement->par() ?>" href="#updateClient<?= $appartement->id() ?>" data-toggle="modal" data-id="<?= $appartement->id() ?>">
@@ -819,7 +819,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
 	header('Location:dashboard.php');
 }*/
 else{

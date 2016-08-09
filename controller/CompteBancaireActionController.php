@@ -31,7 +31,7 @@
 			$numero = htmlentities($_POST['numero']);
             $denomination = htmlentities($_POST['denomination']);
 			$dateCreation = htmlentities($_POST['dateCreation']);
-			$createdBy = $_SESSION['userMerlaTrav']->login();
+			$createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $CompteBancaire = new CompteBancaire(array(
@@ -69,7 +69,7 @@
 			$numero = htmlentities($_POST['numero']);
             $denomination = htmlentities($_POST['denomination']);
 			$dateCreation = htmlentities($_POST['dateCreation']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
 			$CompteBancaire = new CompteBancaire(array(
 				'id' => $idCompteBancaire,
@@ -81,7 +81,7 @@
 			));
             $CompteBancaireManager->update($CompteBancaire);
             //add history data to db
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",
@@ -108,7 +108,7 @@
         $compteBancaire = $CompteBancaireManager->getCaisseById($idCompteBancaire); 
         $CompteBancaireManager->delete($idCompteBancaire);
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",

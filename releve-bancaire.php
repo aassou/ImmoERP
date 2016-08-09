@@ -12,7 +12,7 @@
     include('config.php');  
     //classes loading end
     session_start();
-    if(isset($_SESSION['userMerlaTrav'])){
+    if(isset($_SESSION['userImmoERPV2'])){
         //classes managers
         $releveBancaireManager = new ReleveBancaireManager($pdo);
         $chargesCommunsManager = new ChargeCommunManager($pdo);
@@ -213,7 +213,7 @@
                                         <tr class="odd gradeX">
                                             <td>
                                                 <?php
-                                                if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                                if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                 ?>
                                                     <a href="#update<?= $releve->id() ?>" data-toggle="modal" data-id="<?= $releve->id() ?>" class="btn mini green"><i class="icon-refresh"></i></a>
                                                     <a href="#delete<?= $releve->id() ?>" data-toggle="modal" data-id="<?= $releve->id() ?>" class="btn mini red"><i class="icon-remove"></i></a>

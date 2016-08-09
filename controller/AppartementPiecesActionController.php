@@ -27,7 +27,7 @@
         if( file_exists($_FILES['url']['tmp_name']) || is_uploaded_file($_FILES['url']['tmp_name']) ){
             $url = imageProcessing($_FILES['url'], '/pieces/pieces_appartement/');
             $nom = htmlentities($_POST['nom']);
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $appartementPiece = 
@@ -48,7 +48,7 @@
         if( file_exists($_FILES['url']['tmp_name']) || is_uploaded_file($_FILES['url']['tmp_name']) ){
             $url = imageProcessing($_FILES['url'], '/pieces/pieces_appartement/');
             $nom = htmlentities($_POST['nom']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             //create object
             $appartementPiece = 

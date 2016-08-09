@@ -13,14 +13,19 @@
     include('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
-        //les sources
+    if( isset($_SESSION['userImmoERPV2']) ){
+        //post processing
+        $companyID = htmlentities($_GET['companyID']);
+        //Class Managers
+        $companyManager = new CompanyManager($pdo);
         $projetManager = new ProjetManager($pdo);
         $fournisseurManager = new FournisseurManager($pdo);
         $commandeManager = new CommandeManager($pdo);
+        //objs and vars
+        $company = $companyManager->getCompanyById($companyID);
         $projets = $projetManager->getProjets();
         $fournisseurs = $fournisseurManager->getFournisseurs();    
-        $commandes =$commandeManager->getCommandesGroupByMonth();
+        $commandes = $commandeManager->getCommandesGroupByMonth($companyID);
 ?>
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
@@ -72,17 +77,22 @@
                     <div class="span12">
                         <!-- BEGIN PAGE TITLE & BREADCRUMB-->           
                         <h3 class="page-title">
-                            Gestion des commandes : Société Iaaza
+                            Gestion des commandes
                         </h3>
                         <ul class="breadcrumb">
                             <li>
                                 <i class="icon-home"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <a href="company-choice.php">Accueil</a> 
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $company->id() ?>">Société <?= $company->nom() ?></a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
                                 <i class="icon-shopping-cart"></i>
-                                <a>Gestion des commandes - <strong>Société Iaaza</strong></a>
+                                <a>Gestion des commandes</a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->
@@ -157,7 +167,8 @@
                                     <div class="control-group">
                                         <div class="controls">  
                                             <input type="hidden" name="action" value="add" />
-                                            <input type="hidden" name="source" value="commande-group-iaaza" />        
+                                            <input type="hidden" name="source" value="commande-group" />
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />        
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
@@ -167,7 +178,7 @@
                         </div>
                         <!-- addCaisse box end -->  
                         <!-- printBilanCaisse box begin -->
-                        <div id="printCaisseBilan" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
+                        <div target="_blank" id="printCaisseBilan" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
                                 <h3>Imprimer Bilan de la Caisse </h3>
@@ -216,7 +227,7 @@
                                    </div>
                                     <div class="control-group">
                                         <div class="controls">
-                                            <input type="hidden" name="societe" value="1" />
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
@@ -236,9 +247,9 @@
                                 <div class="clearfix">
                                     <?php
                                     if ( 
-                                        $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                                        $_SESSION['userMerlaTrav']->profil() == "manager" ||
-                                        $_SESSION['userMerlaTrav']->profil() == "user" 
+                                        $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                                        $_SESSION['userImmoERPV2']->profil() == "manager" ||
+                                        $_SESSION['userImmoERPV2']->profil() == "user" 
                                         ) {
                                     ?>
                                     <div class="btn-group pull-left">
@@ -286,7 +297,7 @@
                                             $annee = date('Y', strtotime($commande->dateCommande()));
                                             ?>
                                             <td>
-                                                <a class="btn mini" href="commande-mois-annee-iaaza.php?mois=<?= $mois ?>&annee=<?= $annee ?>">
+                                                <a class="btn mini" href="commande-mois-annee.php?mois=<?= $mois ?>&annee=<?= $annee ?>&companyID=<?= $companyID ?>">
                                                     <strong><?= date('m/Y', strtotime($commande->dateCommande())) ?></strong>
                                                 </a>
                                             </td>
@@ -356,7 +367,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
     header('Location:dashboard.php');
 }*/
 else{

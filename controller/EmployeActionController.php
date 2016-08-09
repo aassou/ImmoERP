@@ -34,7 +34,7 @@
 			$adresseArabe = htmlentities($_POST['adresseArabe']);
 			$cin = htmlentities($_POST['cin']);
 			$telephone = htmlentities($_POST['telephone']);
-			$createdBy = $_SESSION['userMerlaTrav']->login();
+			$createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $employe = new Employe(array(
@@ -78,7 +78,7 @@
 			$adresseArabe = htmlentities($_POST['adresseArabe']);
 			$cin = htmlentities($_POST['cin']);
 			$telephone = htmlentities($_POST['telephone']);
-			$updatedBy = $_SESSION['userMerlaTrav']->login();
+			$updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $employe = new Employe(array(
 				'id' => $idEmploye,
@@ -117,7 +117,7 @@
         $nomEmploye = $employeManager->getEmployeById($idEmploye)->nom();
         $employeManager->delete($idEmploye);
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",

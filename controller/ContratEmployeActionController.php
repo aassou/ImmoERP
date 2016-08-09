@@ -47,7 +47,7 @@
 			$employe = htmlentities($_POST['employe']);
             $idSociete = htmlentities($_POST['idSociete']);
 			$idProjet = htmlentities($_POST['idProjet']);
-			$createdBy = $_SESSION['userMerlaTrav']->login();
+			$createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $contratEmploye = new ContratEmploye(array(

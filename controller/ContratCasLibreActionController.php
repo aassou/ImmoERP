@@ -34,7 +34,7 @@
 			$montant = htmlentities($_POST['montant']);
 			$observation = htmlentities($_POST['observation']);
 			$codeContrat = htmlentities($_POST['codeContrat']);
-			$createdBy = $_SESSION['userMerlaTrav']->login();
+			$createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $contratCasLibre = new ContratCasLibre(array(
@@ -71,7 +71,7 @@
                 if ( isset($_POST['cas-libre-observation'.$i]) ) {
                     $observations[$i] = htmlentities($_POST['cas-libre-observation'.$i]);   
                 }   
-                $createdBy = $_SESSION['userMerlaTrav']->login();
+                $createdBy = $_SESSION['userImmoERPV2']->login();
                 $created = date('Y-m-d h:i:s');
                 $contratCasLibreManager->add(
                     new ContratCasLibre(
@@ -100,7 +100,7 @@
 			$date = htmlentities($_POST['date']);
 			$montant = htmlentities($_POST['montant']);
 			$observation = htmlentities($_POST['observation']);
-			$updatedBy = $_SESSION['userMerlaTrav']->login();
+			$updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
 			$contratCasLibre = new ContratCasLibre(array(
 	            'id' => $idContratCasLibre,

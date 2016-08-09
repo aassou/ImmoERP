@@ -16,7 +16,7 @@
     //post input processing
     if(!empty($_POST['mail'])){
         $content = htmlentities($_POST['mail']);
-        $sender = $_SESSION['userMerlaTrav']->login();
+        $sender = $_SESSION['userImmoERPV2']->login();
         $created = date("Y-m-d H:i:s");
         $mail = new Mail(array('content' => $content, 'sender' => $sender,'created' => $created));
         $mailManager = new MailManager($pdo);

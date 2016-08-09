@@ -39,7 +39,7 @@
             //$type = htmlentities($_POST['type']);
             $dateLivraison = htmlentities($_POST['dateLivraison']);
             $codeLivraison = uniqid().date('YmdHis');
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //these next data are used to know the month and the year of a supply demand
             $mois = date('m', strtotime($dateLivraison));
@@ -95,7 +95,7 @@
             $libelle = htmlentities($_POST['libelle']);
             $designation = htmlentities($_POST['designation']);            
             //$type = htmlentities($_POST['type']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             //these next data are used to know the month and the year of a supply demand
             $mois = date('m', strtotime($dateLivraison));
@@ -108,7 +108,7 @@
             //add history data to db
             $nomFournisseur = $fournisseurManager->getFournisseurById($idFournisseur)->nom();
             $nomProjet = $projetManager->getProjetById($idProjet)->nom();
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",
@@ -146,7 +146,7 @@
             }
         }
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Modification",
@@ -169,7 +169,7 @@
         $annee = htmlentities($_POST['annee']);
         $livraisonManager->delete($idLivraison);
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",

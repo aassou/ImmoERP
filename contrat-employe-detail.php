@@ -13,8 +13,8 @@
     include('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) 
-    and ( $_SESSION['userMerlaTrav']->profil()=="admin" OR $_SESSION['userMerlaTrav']->profil()=="consultant" ) ){
+    if( isset($_SESSION['userImmoERPV2']) 
+    and ( $_SESSION['userImmoERPV2']->profil()=="admin" OR $_SESSION['userImmoERPV2']->profil()=="consultant" ) ){
         //les sources
         $idProjet = 0;
         $projetManager = new ProjetManager($pdo);
@@ -173,7 +173,7 @@
                             <div class="portlet-body">
                                 <div class="clearfix">
                                     <?php
-                                    if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                    if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                     ?>
                                     <div class="btn-group pull-left">
                                         <a href="#addPaiement" data-toggle="modal" class="btn icn-only green">
@@ -234,7 +234,7 @@
                                                                 Imprimer Quittance
                                                             </a>
                                                             <?php
-                                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                             ?>
                                                             <a href="#updateContrat<?= $contrat->id() ?>" data-toggle="modal" data-id="<?= $contrat->id() ?>">
                                                                 Modifier

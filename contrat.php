@@ -13,7 +13,7 @@
 	include('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ) {
+    if( isset($_SESSION['userImmoERPV2']) ) {
     	if( isset($_GET['idProjet']) ){
     	   $idProjet = $_GET['idProjet'];   
     	}
@@ -227,7 +227,7 @@
 							<div class="portlet-title">
 								<h4>Informations du client</h4>
 								<?php
-                                if( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                if( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                 ?>
 								<a href="#updateClient<?= $client->id() ?>" class="pull-right btn red hidden-phone" data-toggle="modal" data-id="<?= $client->id(); ?>">
 									Modifier <i class="icon-refresh icon-white"></i>
@@ -270,7 +270,7 @@
 							<div class="portlet-title">
 								<h4>Informations du contrat</h4>
 								<?php
-                                if( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                if( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                 ?>
 								<a href="#updateContrat<?= $contrat->id() ?>" class="pull-right btn red hidden-phone" data-toggle="modal" data-id="<?= $contrat->id(); ?>">
 									Modifier <i class="icon-refresh icon-white"></i>
@@ -525,7 +525,7 @@
                                     <thead>
                                         <tr>
                                             <?php
-                                            //if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            //if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                             ?>
                                             <th style="width: 10%">Actions</th>
                                             <?php
@@ -552,7 +552,7 @@
                                                 $dateCasLibre = new DateTime($dateCasLibre);
                                                 $dateCasLibre = $dateCasLibre->format('Ymd');
                                                 if ( $dateCasLibre > $now ) {
-                                                    if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                                    if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                         $status = '<a href="#updateStatusContratCasLibre'.$element->id().'" data-toggle="modal" data-id="'.$element->id().'" class="btn mini green">Normal</a>';    
                                                     }   
                                                     else{
@@ -560,7 +560,7 @@
                                                     }
                                                 }
                                                 else if ( $dateCasLibre < $now ) {
-                                                    if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                                    if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                         $status = '<a href="#updateStatusContratCasLibre'.$element->id().'" data-toggle="modal" data-id="'.$element->id().'" class="btn mini red blink_me">En retard</a>';
                                                     }
                                                     else {
@@ -568,7 +568,7 @@
                                                     }    
                                                 }
                                                 else {
-                                                    if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                                    if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                         $status = '<a href="#updateStatusContratCasLibre'.$element->id().'" data-toggle="modal" data-id="'.$element->id().'" class="btn mini purple">En cours</a>';
                                                     }
                                                     else {
@@ -577,7 +577,7 @@
                                                 } 
                                             }
                                             else if( $element->status() == 1 ) {
-                                                if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                                if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                     $status = '<a href="#updateStatusContratCasLibre'.$element->id().'" data-toggle="modal" data-id="'.$element->id().'" class="btn mini blue">Réglé</a>';
                                                 }
                                                 else {
@@ -685,7 +685,7 @@
                                         <!-- deleteContratCasLibre box end -->
                                         <tr>
                                             <?php
-                                            //if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            //if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                             ?>
                                             <td>
                                                 <a href="#deleteContratCasLibre<?= $element->id() ?>" data-toggle="modal" data-id="<?= $element->id() ?>" class="btn mini red">
@@ -713,7 +713,7 @@
                                             <td></td>
                                             <?php
                                             //this is used to the style of table
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                             ?>
                                             <td></td>
                                             <?php
@@ -726,7 +726,7 @@
                                             <th><?= number_format($totalMontantsCasLibre, 2, ',', ' ') ?>&nbsp;DH</th>
                                             <td></td>
                                             <?php
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                             ?>
                                             <td></td>
                                             <?php
@@ -808,7 +808,7 @@
                                                 $datePrevu = new DateTime($datePrevu);
                                                 $datePrevu = $datePrevu->format('Ymd');
                                                 if ( $datePrevu > $now ) {
-                                                    if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                                    if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                         $status = '<a href="#updateStatusReglementPrevu'.$element->id().'" data-toggle="modal" data-id="'.$element->id().'" class="btn mini">Normal</a>';    
                                                     }
                                                     else{
@@ -816,7 +816,7 @@
                                                     }   
                                                 }
                                                 else if ( $datePrevu < $now ) {
-                                                    if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                                    if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                         $status = '<a href="#updateStatusReglementPrevu'.$element->id().'" data-toggle="modal" data-id="'.$element->id().'" class="btn mini red blink_me">En retards</a>';
                                                     }
                                                     else {
@@ -825,7 +825,7 @@
                                                 }
                                             }
                                             else if( $element->status() == 1 ) {
-                                                if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                                if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                     $status = '<a href="#updateStatusReglementPrevu'.$element->id().'" data-toggle="modal" data-id="'.$element->id().'" class="btn mini blue">Réglé</a>';
                                                 }
                                                 else {
@@ -921,8 +921,8 @@
                                 ?>
                                 <?php
                                 if( 
-                                    $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                                    $_SESSION['userMerlaTrav']->profil() == "manager" 
+                                    $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                                    $_SESSION['userImmoERPV2']->profil() == "manager" 
                                 ) {
                                 ?>
                                 <div class="btn-group">
@@ -966,7 +966,7 @@
                                         $action = "";
                                         if ( $operation->status() == 0 ) {
                                             $action = '<a class="btn grey mini"><i class="icon-off"></i></a>'; 
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                 $status = '<a class="btn red mini" href="#validateOperation'.$operation->id().'" data-toggle="modal" data-id="'.$operation->id().'">Non validé</a>';  
                                             } 
                                             else{
@@ -974,7 +974,7 @@
                                             } 
                                         } 
                                         else if ( $operation->status() == 1 ) {
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                 $status = '<a class="btn blue mini" href="#cancelOperation'.$operation->id().'" data-toggle="modal" data-id="'.$operation->id().'">Validé</a>';
                                                 $action = '<a class="btn green mini" href="#hideOperation'.$operation->id().'" data-toggle="modal" data-id="'.$operation->id().'"><i class="icon-off"></i></a>';   
                                             }
@@ -988,7 +988,7 @@
 									    <td>
 									        <a title="Imprimer Quittance" class="btn mini blue" href="controller/QuittanceArabePrintController.php?idOperation=<?= $operation->id() ?>"><i class="m-icon-white icon-print"></i></a>
     									    <?php
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                             ?>
     									       <a title="Modifier Réglement" class="btn green mini" href="#updateOperation<?= $operation->id();?>" data-toggle="modal" data-id="<?= $operation->id(); ?>"><i class="icon-refresh"></i></a>
     									       <a title="Supprimer Réglement" class="btn red mini" href="#deleteOperation<?= $operation->id();?>" data-toggle="modal" data-id="<?= $operation->id(); ?>"><i class="icon-remove"></i></a>
@@ -1581,7 +1581,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
 	header('Location:dashboard.php');
 }*/
 else{

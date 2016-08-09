@@ -43,7 +43,7 @@
                 $fax = htmlentities($_POST['fax']);
                 $email = htmlentities($_POST['email']);
                 $codeFournisseur = uniqid().date('YmdHis');
-                $createdBy = $_SESSION['userMerlaTrav']->login();
+                $createdBy = $_SESSION['userImmoERPV2']->login();
                 $created = date('Y-m-d h:i:s');
                 $fournisseur = 
                 new Fournisseur(array('code' => $codeFournisseur, 'nom' => $nom, 'adresse' => $adresse, 
@@ -88,7 +88,7 @@
             $telephone2 = htmlentities($_POST['telephone2']);
             $fax = htmlentities($_POST['fax']);
             $email = htmlentities($_POST['email']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $fournisseur = 
             new Fournisseur(array('id' => $idFournisseur, 'nom' => $nom, 'adresse' => $adresse, 
@@ -96,7 +96,7 @@
             'updatedBy' => $updatedBy, 'updated' => $updated));
             $fournisseurManager->update($fournisseur);
             //add history data to db
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",
@@ -123,7 +123,7 @@
         $nomFournisseur = $fournisseurManager->getFournisseurById($idFournisseur)->nom();
         $fournisseurManager->delete($idFournisseur);
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",

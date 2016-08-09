@@ -14,10 +14,10 @@
     session_start();
 	
 	if(!empty($_POST['oldPassword']) 
-	and $_POST['oldPassword']==$_SESSION['userMerlaTrav']->password()){
+	and $_POST['oldPassword']==$_SESSION['userImmoERPV2']->password()){
 		if($_POST['newPassword1']==$_POST['newPassword2']){
 			$newPassword = htmlentities($_POST['newPassword1']);
-			$idUser = $_SESSION['userMerlaTrav']->id();
+			$idUser = $_SESSION['userImmoERPV2']->id();
 			$userManager = new UserManager($pdo);
 			$userManager->changePassword($newPassword, $idUser);
 			$_SESSION['password-update-success']="<strong>Opération valide</strong> : Le mot de passe a été changé avec succès.";

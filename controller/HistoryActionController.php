@@ -30,7 +30,7 @@
 			$action = htmlentities($_POST['action']);
 			$target = htmlentities($_POST['target']);
 			$description = htmlentities($_POST['description']);
-			$createdBy = $_SESSION['userMerlaTrav']->login();
+			$createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $history = new History(array(
@@ -58,7 +58,7 @@
 			$action = htmlentities($_POST['action']);
 			$target = htmlentities($_POST['target']);
 			$description = htmlentities($_POST['description']);
-			$updatedBy = $_SESSION['userMerlaTrav']->login();
+			$updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             			$history = new History(array(
 				'id' => $idHistory,

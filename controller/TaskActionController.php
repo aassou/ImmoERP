@@ -31,7 +31,7 @@
 			$user = htmlentities($_POST['user']);
 			$content = htmlentities($_POST['content']);
 			$status = htmlentities($_POST['status']);
-			$createdBy = $_SESSION['userMerlaTrav']->login();
+			$createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $task = new Task(array(
@@ -69,7 +69,7 @@
 			$user = htmlentities($_POST['user']);
 			$content = htmlentities($_POST['content']);
 			$status = htmlentities($_POST['status']);
-			$updatedBy = $_SESSION['userMerlaTrav']->login();
+			$updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $task = new Task(array(
 				'id' => $idTask,
@@ -81,7 +81,7 @@
 			));
             $taskManager->update($task);
             //add History data
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",
@@ -105,7 +105,7 @@
     else if($action == "updateStatus"){
         $idTask = htmlentities($_POST['idTask']);
         $status = htmlentities($_POST['status']);
-        $updatedBy = $_SESSION['userMerlaTrav']->login();
+        $updatedBy = $_SESSION['userImmoERPV2']->login();
         $updated = date('Y-m-d h:i:s');
         $task = new Task(array(
             'id' => $idTask,
@@ -115,7 +115,7 @@
         ));
         $taskManager->updateStatus($task);
         //add History data
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Modification",
@@ -135,7 +135,7 @@
         $idTask = htmlentities($_POST['idTask']);
         $taskManager->delete($idTask);
         //add History data
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",
@@ -155,7 +155,7 @@
         $user = htmlentities($_POST['user']);
         $taskManager->deleteValideTasksByUser($user);
         //add History data
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",

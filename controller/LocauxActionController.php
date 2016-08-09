@@ -35,7 +35,7 @@
             $mezzanine = htmlentities($_POST['mezzanine']);
             $status = htmlentities($_POST['status']);
             $par = htmlentities($_POST['par']);
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $locaux = 
@@ -74,7 +74,7 @@
             $mezzanine = htmlentities($_POST['mezzanine']);
             $status = htmlentities($_POST['status']);
             $par = htmlentities($_POST['par']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $locaux = 
             new Locaux(array('id' => $id, 'nom' => $code, 'prix' => $prix, 'superficie' => $superficie,
@@ -82,7 +82,7 @@
             'updatedBy' => $updatedBy, 'updated' => $updated));
             $locauxManager->update($locaux);
             //add History data
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",
@@ -109,7 +109,7 @@
         $nomLocal = $locauxManager->getLocauxById($idLocaux)->nom();
         $locauxManager->changeStatus($idLocaux, $status);
         //add History data
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Modification Status",
@@ -131,7 +131,7 @@
         $nomLocal = $locauxManager->getLocauxById($idLocaux)->nom();
         $locauxManager->updatePar($par, $idLocaux);
         //add History data
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Modification Client",
@@ -152,7 +152,7 @@
         $nomLocal = $locauxManager->getLocauxById($idLocaux)->nom();
         $locauxManager->delete($idLocaux);
         //add History data
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",

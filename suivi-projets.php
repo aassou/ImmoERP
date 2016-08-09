@@ -12,7 +12,7 @@
     include('config.php');  
     //classes loading end
     session_start();
-    if(isset($_SESSION['userMerlaTrav']) and (isset($_GET['idProjet']))){
+    if(isset($_SESSION['userImmoERPV2']) and (isset($_GET['idProjet']))){
     	//classes managers
     	$appartementManager = new AppartementManager($pdo);
         $locauxManager = new LocauxManager($pdo);

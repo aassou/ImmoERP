@@ -13,7 +13,7 @@
     include ('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ) {
+    if( isset($_SESSION['userImmoERPV2']) ) {
         //les sources
         $idProjet = $_GET['idProjet'];
         $projetsManager = new ProjetManager($pdo);
@@ -115,8 +115,8 @@
                                     <div class="portfolio-info">
                                         <?php
                                         if ( 
-                                            $_SESSION['userMerlaTrav']->profil()=="admin" 
-                                            || $_SESSION['userMerlaTrav']->profil()=="consultant" 
+                                            $_SESSION['userImmoERPV2']->profil()=="admin" 
+                                            || $_SESSION['userImmoERPV2']->profil()=="consultant" 
                                         ) {
                                         ?>
                                         <a href="projet-charges-grouped.php?idProjet=<?= $projet->id() ?>" class="btn btn-fixed-width dark-red">Charges du Projet</a>
@@ -125,8 +125,8 @@
                                         ?>
                                         <?php
                                         if ( 
-                                            $_SESSION['userMerlaTrav']->profil()=="admin" ||
-                                            $_SESSION['userMerlaTrav']->profil()=="manager"
+                                            $_SESSION['userImmoERPV2']->profil()=="admin" ||
+                                            $_SESSION['userImmoERPV2']->profil()=="manager"
                                             ) {
                                         ?>
                                         <a href="clients-add.php?idProjet=<?= $projet->id() ?>" class="btn btn-fixed-width red">Créer Clients et Contrats</a>
@@ -193,7 +193,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
     header('Location:dashboard.php');
 }*/
 else{

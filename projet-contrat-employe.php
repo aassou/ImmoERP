@@ -13,7 +13,7 @@
     include('lib/pagination.php');
     //classes loading end
     session_start();
-    if ( isset($_SESSION['userMerlaTrav']) ) {
+    if ( isset($_SESSION['userImmoERPV2']) ) {
         //les sources
         $idProjet = 0;
         $projetManager = new ProjetManager($pdo);
@@ -346,8 +346,8 @@
                             <div class="portlet-body">
                                     <div class="clearfix">
                                         <?php
-                                        if ( $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                                             $_SESSION['userMerlaTrav']->profil() == "manager") {
+                                        if ( $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                                             $_SESSION['userImmoERPV2']->profil() == "manager") {
                                         ?>
                                         <div class="btn-group pull-left">
                                             <a class="btn blue" href="#addEmploye" data-toggle="modal">
@@ -394,7 +394,7 @@
                                             <tr>
                                                 <td>
                                                     <?php
-                                                    if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                                    if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                     ?>
                                                     <a class="btn mini red" href="#deleteContrat<?= $contrat->id() ?>" data-toggle="modal" data-id="<?= $contrat->id() ?>">
                                                         <i class="icon-remove"></i>
@@ -759,7 +759,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
     header('Location:dashboard.php');
 }*/
 else{

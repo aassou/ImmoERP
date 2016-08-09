@@ -13,8 +13,8 @@
     include('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) 
-    and ( $_SESSION['userMerlaTrav']->profil() == "admin" OR $_SESSION['userMerlaTrav']->profil()=="consultant") ){
+    if( isset($_SESSION['userImmoERPV2']) 
+    and ( $_SESSION['userImmoERPV2']->profil() == "admin" OR $_SESSION['userImmoERPV2']->profil()=="consultant") ){
         //classManagers
         $chargeManager = new ChargeCommunManager($pdo);
         $typeChargeManager = new TypeChargeCommunManager($pdo);
@@ -189,7 +189,7 @@
                                     <i class="icon-print"></i>&nbsp;Imprimer liste des charges
                                 </a>
                                 <?php 
-                                if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                 ?>
                                 <a href="#addTypeCharge" data-toggle="modal" class="btn blue pull-right">
                                     Type Charge <i class="icon-plus-sign "></i>
@@ -301,7 +301,7 @@
                                     <thead>
                                         <tr>
                                             <?php
-                                            if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) { 
+                                            if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) { 
                                             ?>
                                             <th style="width: 10%"></th>
                                             <?php
@@ -320,7 +320,7 @@
                                         ?>      
                                         <tr class="charges">
                                             <?php
-                                            if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) { 
+                                            if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) { 
                                             ?>
                                             <td>
                                                 <a class="btn mini green" title="Modifier" href="#updateCharge<?= $charge->id();?>" data-toggle="modal" data-id="<?= $charge->id(); ?>"><i class="icon-refresh"></i></a>
@@ -539,7 +539,7 @@
 </html>
 <?php
 }
-else if(isset($_SESSION['userMerlaTrav']) and $_SESSION['userMerlaTrav']->profil()!="admin"){
+else if(isset($_SESSION['userImmoERPV2']) and $_SESSION['userImmoERPV2']->profil()!="admin"){
     header('Location:dashboard.php');
 }
 else{

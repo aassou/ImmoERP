@@ -14,10 +14,10 @@
     //classes loading end
     session_start();
     if( 
-        isset($_SESSION['userMerlaTrav']) and 
+        isset($_SESSION['userImmoERPV2']) and 
         (
-            $_SESSION['userMerlaTrav']->profil()=="admin" or
-            $_SESSION['userMerlaTrav']->profil()=="manager"    
+            $_SESSION['userImmoERPV2']->profil()=="admin" or
+            $_SESSION['userImmoERPV2']->profil()=="manager"    
         ) 
     ){
     	$idProjet = 0;
@@ -514,7 +514,7 @@
 </html>
 <?php
 }
-else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
 	header('Location:dashboard.php');
 }
 else{

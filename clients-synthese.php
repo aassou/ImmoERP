@@ -13,7 +13,7 @@
     include('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
+    if( isset($_SESSION['userImmoERPV2']) ){
         //les sources
         $clientsManager = new ClientManager($pdo);
         $clientNumber = $clientsManager->getClientsNumber();
@@ -137,7 +137,7 @@
                                             <!--td><input type="checkbox" class="checkboxes" value="1" /></td-->
                                             <td>
                                                 <?php
-                                                if ( $_SESSION['userMerlaTrav']->profil() != "consultant" ) {
+                                                if ( $_SESSION['userImmoERPV2']->profil() != "consultant" ) {
                                                 ?>
                                                 <a title="Liste des contrats" href="contrats-synthese.php?idClient=<?= $client->id() ?>" class="btn mini blue"><i class="icon-copy"></i></a>
                                                 <?php  

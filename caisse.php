@@ -13,7 +13,7 @@
 	include('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
+    if( isset($_SESSION['userImmoERPV2']) ){
     	//les sources
 		$projetManager = new ProjetManager($pdo);
         $caisseManager = new CaisseManager($pdo);
@@ -250,8 +250,8 @@
                                 <div class="clearfix">
                                     <?php
                                     if ( 
-                                        $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                                        $_SESSION['userMerlaTrav']->profil() == "manager" 
+                                        $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                                        $_SESSION['userImmoERPV2']->profil() == "manager" 
                                         ) {
                                     ?>
                                     <div class="btn-group pull-left">
@@ -285,8 +285,8 @@
                                         <tr>
                                             <?php
                                             if ( 
-                                                $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                                                $_SESSION['userMerlaTrav']->profil() == "manager" 
+                                                $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                                                $_SESSION['userImmoERPV2']->profil() == "manager" 
                                                 ) {
                                             ?>
                                             <th style="width:10%">Actions</th>
@@ -308,8 +308,8 @@
                                         <tr class="odd gradeX">
                                             <?php
                                             if ( 
-                                                $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                                                $_SESSION['userMerlaTrav']->profil() == "manager" 
+                                                $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                                                $_SESSION['userImmoERPV2']->profil() == "manager" 
                                                 ) {
                                             ?>
                                             <td>
@@ -485,7 +485,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
 	header('Location:dashboard.php');
 }*/
 else{

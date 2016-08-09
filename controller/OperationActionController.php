@@ -52,7 +52,7 @@
             $compteBancaire = htmlentities($_POST['compteBancaire']);
             $status = 0;
             $idContrat = htmlentities($_POST['idContrat']);
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $url = "";
             if(file_exists($_FILES['urlCheque']['tmp_name']) || is_uploaded_file($_FILES['urlCheque']['tmp_name'])) {
@@ -94,7 +94,7 @@
             $typeMessage = "success";
             //add history data to db
             $historyManager = new HistoryManager($pdo);
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification Pièce réglement",
@@ -121,7 +121,7 @@
             $montant = htmlentities($_POST['montant']);
             $modePaiement = htmlentities($_POST['modePaiement']);
             $numeroOperation = htmlentities($_POST['numeroOperation']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $operation = 
             new Operation(array('id' => $idOperation, 'date' => $dateOperation,
@@ -130,7 +130,7 @@
             'modePaiement' => $modePaiement, 'updatedBy' => $updatedBy, 'updated' => $updated));
             $operationManager->update($operation);
             //add History data
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",
@@ -153,7 +153,7 @@
         $idOperation = $_POST['idOperation'];
         $operationManager->validate($idOperation, 1);
         //add History data
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Validation",
@@ -171,7 +171,7 @@
         $idOperation = $_POST['idOperation'];
         $operationManager->cancel($idOperation, 0);
         //add History data
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Annulation",
@@ -189,7 +189,7 @@
         $idOperation = $_POST['idOperation'];
         $operationManager->hide($idOperation, 2);
         //add History data
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Retirage",
@@ -207,7 +207,7 @@
         $idOperation = $_POST['idOperation'];
         $operationManager->delete($idOperation);
         //add History data
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",

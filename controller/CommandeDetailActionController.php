@@ -21,12 +21,12 @@
     $actionMessage = "";
     $typeMessage = "";
     $redirectLink = "";
-    $mois = $_POST['mois'];
-    $annee = $_POST['annee'];
-    $codeCommande = $_POST['codeCommande'];
-    $redirectLink = "Location:../commande-details-iaaza.php?codeCommande=".$codeCommande."&mois=".$mois."&annee=".$annee;
+    $companyID = htmlentities($_POST['companyID']);
+    $mois = htmlentities($_POST['mois']);
+    $annee = htmlentities($_POST['annee']);
+    $codeCommande = htmlentities($_POST['codeCommande']);
+    $redirectLink = "Location:../commande-details.php?codeCommande=".$codeCommande."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
     //Component Class Manager
-
     $commandeDetailManager = new CommandeDetailManager($pdo);
 	//Action Add Processing Begin
     if($action == "add"){
@@ -35,7 +35,7 @@
 			$libelle = htmlentities($_POST['libelle']);
 			$quantite = htmlentities($_POST['quantite']);
 			$idCommande = htmlentities($_POST['idCommande']);
-			$createdBy = $_SESSION['userMerlaTrav']->login();
+			$createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $commandeDetail = new CommandeDetail(array(
@@ -64,7 +64,7 @@
 			$reference = htmlentities($_POST['reference']);
 			$libelle = htmlentities($_POST['libelle']);
 			$quantite = htmlentities($_POST['quantite']);
-			$updatedBy = $_SESSION['userMerlaTrav']->login();
+			$updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $commandeDetail = new CommandeDetail(array(
 				'id' => $idCommandeDetail,

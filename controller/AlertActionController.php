@@ -29,7 +29,7 @@
         if( !empty($_POST['alert']) ){
 			$alert = htmlentities($_POST['alert']);
 			$status = 0;
-			$createdBy = $_SESSION['userMerlaTrav']->login();
+			$createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $alert = new Alert(array(
@@ -55,7 +55,7 @@
         if(!empty($_POST['alert'])){
 			$alert = htmlentities($_POST['alert']);
 			$status = htmlentities($_POST['status']);
-			$updatedBy = $_SESSION['userMerlaTrav']->login();
+			$updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $alert = new Alert(array(
 				'id' => $idAlert,

@@ -13,7 +13,7 @@
     include ('lib/pagination.php');
     //classes loading end
     session_start();
-    if ( isset($_SESSION['userMerlaTrav']) ) {
+    if ( isset($_SESSION['userImmoERPV2']) ) {
         //les sources
         $projetsManager = new ProjetManager($pdo);
         $projetNumber = $projetsManager->getProjetsNumber();
@@ -109,7 +109,7 @@
                                     <span><?= $projetNumber ?> Projets en Total</span>
                                 </div>
                                 <?php
-                                if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                 ?>
                                 <div class="pull-right">
                                     <a href="#addProjet" class="btn icn-only green" data-toggle="modal">Ajouter Nouveau Projet <i class="icon-plus-sign m-icon-white"></i></a>                                  
@@ -197,7 +197,7 @@
                                     <ul class="dropdown-menu">
                                         <li><a href="projet-details.php?idProjet=<?= $projet->id() ?>">Gestion du projet</a></li>
                                         <?php
-                                        if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                        if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                         ?>
                                         <li><a href="#updateProjet<?= $projet->id() ?>" data-toggle="modal" data-id="<?= $projet->id(); ?>">Modifier</a></li>
                                         <?php
@@ -323,7 +323,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION['userMerlaTrav']->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION['userImmoERPV2']->profil()!="admin"){
     header('Location:dashboard.php');
 }*/
 else{

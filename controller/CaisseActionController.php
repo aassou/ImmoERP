@@ -17,6 +17,7 @@
     
     //post input processing
     $action = htmlentities($_POST['action']);
+    $companyID = htmlentities($_POST['companyID']);
     //This var contains result message of CRUD action
     $actionMessage = "";
     $typeMessage = "";
@@ -26,14 +27,14 @@
     $historyManager = new HistoryManager($pdo);
     $caisseManager = new CaisseManager($pdo);
 	//Action Add Processing Begin
-    	if($action == "add"){
+    if($action == "add"){
         if( !empty($_POST['type']) ){
 			$type = htmlentities($_POST['type']);
 			$dateOperation = htmlentities($_POST['dateOperation']);
 			$montant = htmlentities($_POST['montant']);
 			$designation = htmlentities($_POST['designation']);
 			$destination = htmlentities($_POST['destination']);
-			$createdBy = $_SESSION['userMerlaTrav']->login();
+			$createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $caisse = new Caisse(array(
@@ -42,6 +43,7 @@
 				'montant' => $montant,
 				'designation' => $designation,
 				'destination' => $destination,
+				'companyID' => $companyID,
 				'created' => $created,
             	'createdBy' => $createdBy
 			));
@@ -75,7 +77,7 @@
 			$montant = htmlentities($_POST['montant']);
 			$designation = htmlentities($_POST['designation']);
 			$destination = htmlentities($_POST['destination']);
-			$updatedBy = $_SESSION['userMerlaTrav']->login();
+			$updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $caisse = new Caisse(array(
 				'id' => $idCaisse,
@@ -84,12 +86,13 @@
 				'montant' => $montant,
 				'designation' => $designation,
 				'destination' => $destination,
+				'companyID' => $companyID,
 				'updated' => $updated,
             	'updatedBy' => $updatedBy
 			));
             $caisseManager->update($caisse);
             //add history data to db
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",
@@ -115,7 +118,7 @@
         $caisse = $caisseManager->getCaisseById($idCaisse);
         $caisseManager->delete($idCaisse);
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",
@@ -134,12 +137,12 @@
     $_SESSION['caisse-type-message'] = $typeMessage;
     $redirecktLink = 'Location:../caisse.php';
     if ( isset ($_POST['source']) and $_POST['source'] == "caisse-group" ) {
-        $redirecktLink = "Location:../caisse-group.php";
+        $redirecktLink = "Location:../caisse-group.php?companyID=".$companyID;
     }
     else if ( isset($_POST['source']) and $_POST['source'] == "caisse-mois-annee" ) {
         $mois = $_POST['mois'];
         $annee = $_POST['annee'];
-        $redirecktLink = "Location:../caisse-mois-annee.php?mois=".$mois."&annee=".$annee;
+        $redirecktLink = "Location:../caisse-mois-annee.php?mois=".$mois."&annee=".$annee."&companyID=".$companyID;
     } 
     header($redirecktLink);
 

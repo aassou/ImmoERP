@@ -13,7 +13,7 @@
     include('lib/pagination.php');
     //classes loading end
     session_start();
-    if(isset($_SESSION['userMerlaTrav'])){
+    if(isset($_SESSION['userImmoERPV2'])){
         //class managers
         $projetManager = new ProjetManager($pdo);
         $clientManager = new ClientManager($pdo);

@@ -12,22 +12,15 @@
     include('../config.php');  
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
+    if( isset($_SESSION['userImmoERPV2']) ){
+        //post processing
+        $companyID = htmlentities($_GET['companyID']);
+        //Class Managers
         $projetManager = new ProjetManager($pdo);
         $fournisseurManager = new FournisseurManager($pdo);
-        $commandeManager = "";
-        $commandeDetailManager = "";
-        //get societe value
-        $societe = $_GET['societe'];
-        if ( $societe == 2 ) {
-            $commandeManager = new CommandeManager($pdo);
-            $commandeDetailManager = new CommandeDetailManager($pdo);    
-        }
-        else if ( $societe == 1 ) {
-            $commandeManager = new CommandeAnnahdaManager($pdo);
-            $commandeDetailManager = new CommandeDetailAnnahdaManager($pdo);
-        }
-        //classes and vars
+        $commandeManager = new CommandeManager($pdo);
+        $commandeDetailManager = new CommandeDetailManager($pdo);
+        //objs and vars
         $livraisonDetailNumber = 0;
         $totalReglement = 0;
         $totalLivraison = 0;

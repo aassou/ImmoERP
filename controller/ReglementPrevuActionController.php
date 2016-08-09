@@ -32,7 +32,7 @@
 			$datePrevu = htmlentities($_POST['datePrevu']);
 			$codeContrat = htmlentities($_POST['codeContrat']);
 			$status = htmlentities($_POST['status']);
-			$createdBy = $_SESSION['userMerlaTrav']->login();
+			$createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $reglementPrevu = new ReglementPrevu(array(
@@ -70,7 +70,7 @@
 			$datePrevu = htmlentities($_POST['datePrevu']);
 			$codeContrat = htmlentities($_POST['codeContrat']);
 			$status = htmlentities($_POST['status']);
-			$updatedBy = $_SESSION['userMerlaTrav']->login();
+			$updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $reglementPrevu = new ReglementPrevu(array(
 				'id' => $idReglementPrevu,
@@ -82,7 +82,7 @@
 			));
             $reglementPrevuManager->update($reglementPrevu);
             //add History data
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",
@@ -108,7 +108,7 @@
         $status = htmlentities($_POST['status']);
         $reglementPrevuManager->updateStatus($idReglementPrevu, $status);
         //add History data
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Modification de status",
@@ -129,7 +129,7 @@
         $idReglementPrevu = htmlentities($_POST['idReglementPrevu']);
         $reglementPrevuManager->delete($idReglementPrevu);
         //add History data
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",

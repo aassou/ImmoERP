@@ -9,6 +9,7 @@ class Commande{
 	private $_numeroCommande;
 	private $_designation;
 	private $_status;
+    private $_companyID;
 	private $_codeLivraison;
 	private $_created;
 	private $_createdBy;
@@ -58,6 +59,10 @@ class Commande{
 	public function setStatus($status){
 		$this->_status = $status;
    	}
+    
+    public function setCompanyID($companyID){
+        $this->_companyID = $companyID;
+    }
 
 	public function setCodeLivraison($codeLivraison){
 		$this->_codeLivraison = $codeLivraison;
@@ -106,6 +111,10 @@ class Commande{
 	public function status(){
 		return $this->_status;
    	}
+    
+    public function companyID(){
+        return $this->_companyID;
+    }
 
 	public function codeLivraison(){
 		return $this->_codeLivraison;

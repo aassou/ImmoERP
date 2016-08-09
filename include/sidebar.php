@@ -29,6 +29,8 @@
 				or $currentPage=="recherches.php"
 				or $currentPage=="compte-bancaire.php"
 				or $currentPage=="conges.php"
+				or $currentPage=="company-choice.php"
+				or $currentPage=="company-dashboard.php"
 				or $currentPage=="statistiques.php"
 				or $currentPage=="messages.php"
 				or $currentPage=="user-profil.php"
@@ -54,8 +56,8 @@
 				or $currentPage=="charges-communs-grouped.php"
 				or $currentPage=="releve-bancaire.php"
 				){echo "active ";} ?>">
-					<a href="dashboard.php">
-					<i class="icon-dashboard"></i> 
+					<a href="company-choice.php">
+					<i class="icon-home"></i> 
 					<span class="title">Accueil</span>
 					</a>
 				</li>
@@ -63,9 +65,9 @@
 				<!---------------------------- Gestion des projets Begin ----------------------------------->
 				<?php 
 				if ( 
-				    $_SESSION["userMerlaTrav"]->profil() == "admin" ||
-				    $_SESSION['userMerlaTrav']->profil() == "manager" ||
-				    $_SESSION['userMerlaTrav']->profil() == "consultant" 
+				    $_SESSION["userImmoERPV2"]->profil() == "admin" ||
+				    $_SESSION['userImmoERPV2']->profil() == "manager" ||
+				    $_SESSION['userImmoERPV2']->profil() == "consultant" 
                     ) { 
 					$gestionProjetClass="";
 					if($currentPage=="projet-list.php"
@@ -143,9 +145,9 @@
                     <ul class="sub">
                         <?php
                         if ( 
-                            $_SESSION["userMerlaTrav"]->profil() == "admin" ||
-                            $_SESSION['userMerlaTrav']->profil() == "manager" ||
-                            $_SESSION['userMerlaTrav']->profil() == "consultant" 
+                            $_SESSION["userImmoERPV2"]->profil() == "admin" ||
+                            $_SESSION['userImmoERPV2']->profil() == "manager" ||
+                            $_SESSION['userImmoERPV2']->profil() == "consultant" 
                             ) {
                         ?>
                         <li <?php if($currentPage=="livraisons-group.php"
@@ -163,9 +165,9 @@
                         ?>
                         <?php
                         if ( 
-                            $_SESSION["userMerlaTrav"]->profil() == "admin" ||
-                            $_SESSION["userMerlaTrav"]->profil() == "user" ||
-                            $_SESSION['userMerlaTrav']->profil() == "consultant" 
+                            $_SESSION["userImmoERPV2"]->profil() == "admin" ||
+                            $_SESSION["userImmoERPV2"]->profil() == "user" ||
+                            $_SESSION['userImmoERPV2']->profil() == "consultant" 
                             ) {
                         ?>
                         <li <?php if($currentPage=="livraisons-group-iaaza.php"
@@ -186,52 +188,18 @@
                     $gestionCommandeClass="";
                     if(
                     $currentPage=="commande-group.php"
-                    or $currentPage=="commande-group-iaaza.php"
-                    or $currentPage=="commande-details-iaaza.php"
-                    or $currentPage=="commande-mois-annee-iaaza.php"
+                    or $currentPage=="commande-details.php"
+                    or $currentPage=="commande-mois-annee.php"
                     ){
                         $gestionCommandeClass = "active ";
                     } 
                 ?> 
                 <li class="<?= $gestionCommandeClass; ?> has-sub ">
-                    <a href="javascript:;">
+                    <a>
                     <i class="icon-shopping-cart"></i> 
                     <span class="title">Gestion des commandes</span>
                     <span class="arrow "></span>
                     </a>
-                    <ul class="sub">
-                        <?php
-                        if ( 
-                            $_SESSION["userMerlaTrav"]->profil() == "admin" ||
-                            $_SESSION['userMerlaTrav']->profil() == "manager" ||
-                            $_SESSION['userMerlaTrav']->profil() == "consultant" 
-                            ) {
-                        ?>
-                        <li <?php if($currentPage=="commande-group.php"
-                                    ){
-                            ?> class="active" <?php } ?> >
-                            <a href="commande-group.php">Société Annahda</a>
-                        </li>
-                        <?php
-                        }
-                        ?>
-                        <?php
-                        if ( 
-                            $_SESSION["userMerlaTrav"]->profil() == "admin" ||
-                            $_SESSION["userMerlaTrav"]->profil() == "user" ||
-                            $_SESSION['userMerlaTrav']->profil() == "consultant" 
-                            ) {
-                        ?>
-                        <li <?php if($currentPage=="commande-group-iaaza.php"
-                                    or $currentPage=="commande-details-iaaza.php"
-                                    or $currentPage=="commande-mois-annee-iaaza.php"
-                                    ){?> class="active" <?php } ?> >
-                            <a href="commande-group-iaaza.php">Société Iaaza</a>
-                        </li>
-                        <?php
-                        }
-                        ?>
-                    </ul>
                 </li>
                 <!---------------------------- Commandes End    -------------------------------------------->
                 <!---------------------------- Caisse Begin  -------------------------------------------->
@@ -257,9 +225,9 @@
                     <ul class="sub">
                         <?php
                         if ( 
-                            $_SESSION["userMerlaTrav"]->profil() == "admin" ||
-                            $_SESSION['userMerlaTrav']->profil() == "manager" ||
-                            $_SESSION['userMerlaTrav']->profil() == "consultant" 
+                            $_SESSION["userImmoERPV2"]->profil() == "admin" ||
+                            $_SESSION['userImmoERPV2']->profil() == "manager" ||
+                            $_SESSION['userImmoERPV2']->profil() == "consultant" 
                             ) {
                         ?>
                         <li <?php if($currentPage=="caisse-group.php"){
@@ -271,9 +239,9 @@
                         ?>
                         <?php
                         if ( 
-                            $_SESSION["userMerlaTrav"]->profil() == "admin" ||
-                            $_SESSION["userMerlaTrav"]->profil() == "user" ||
-                            $_SESSION['userMerlaTrav']->profil() == "consultant" 
+                            $_SESSION["userImmoERPV2"]->profil() == "admin" ||
+                            $_SESSION["userImmoERPV2"]->profil() == "user" ||
+                            $_SESSION['userImmoERPV2']->profil() == "consultant" 
                             ) {
                         ?>
                         <li <?php if($currentPage=="caisse-group-iaaza.php"){?> class="active" <?php } ?> >
@@ -287,7 +255,7 @@
                 <!---------------------------- Caisse End    -------------------------------------------->
 				<!---------------------------- Parametrage Begin  -------------------------------------------->
 				<?php
-                if ( $_SESSION["userMerlaTrav"]->profil() == "admin" ) {
+                if ( $_SESSION["userImmoERPV2"]->profil() == "admin" ) {
                 ?>
                 <li class="start <?php if($currentPage=="configuration.php" 
                 or $currentPage=="history-group.php"

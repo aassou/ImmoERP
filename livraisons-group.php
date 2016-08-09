@@ -13,14 +13,18 @@
     include('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
-        //classManagers
+    if( isset($_SESSION['userImmoERPV2']) ){
+        //post processing
+        $companyID = htmlentities($_GET['companyID']);
+        //Class Managers
+        $companyManager = new CompanyManager($pdo);
         $projetManager = new ProjetManager($pdo);
         $fournisseurManager = new FournisseurManager($pdo);
         $livraisonManager = new LivraisonManager($pdo);
         $livraisonDetailManager = new LivraisonDetailManager($pdo);
         $reglementsFournisseurManager = new ReglementFournisseurManager($pdo);
-        //classes and vars
+        //objs and vars
+        $company = $companyManager->getCompanyById($companyID);
         $projets = $projetManager->getProjets();
         $fournisseurs = $fournisseurManager->getFournisseurs();
         $projet = $projetManager->getProjets();
@@ -31,9 +35,9 @@
         $hrefLivraisonBilanPrintController = "controller/Livraison2BilanPrintController.php";
         $livraisonListDeleteLink = "";
         $titreLivraison ="Société Annahda";
-        $livraisonNumber = $livraisonManager->getLivraisonNumber();
+        $livraisonNumber = $livraisonManager->getLivraisonNumber($companyID);
         if($livraisonNumber != 0){
-            $livraisons = $livraisonManager->getLivraisonsByGroup();
+            $livraisons = $livraisonManager->getLivraisonsByGroup($companyID);
             $totalReglement = $reglementsFournisseurManager->getTotalReglement();
             $totalLivraison = $livraisonDetailManager->getTotalLivraison(); 
             $hrefLivraisonBilanPrintController = "controller/Livraison2BilanPrintController.php?societe=1";
@@ -89,17 +93,22 @@
                     <div class="span12">
                         <!-- BEGIN PAGE TITLE & BREADCRUMB-->           
                         <h3 class="page-title">
-                            Gestion des livraisons - <strong><?= $titreLivraison ?></strong>
+                            Gestion des livraisons
                         </h3>
                         <ul class="breadcrumb">
                             <li>
                                 <i class="icon-home"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <a href="company-choice.php">Accueil</a> 
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $companyID ?>">Société <?= $company->nom() ?></a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
                                 <i class="icon-truck"></i>
-                                <a>Gestion des livraisons <strong>Société Annahda</strong></a>
+                                <a>Gestion des livraisons</a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->
@@ -110,17 +119,17 @@
                     <div class="span12">
                         <?php
                         if ( 
-                            $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                            $_SESSION['userMerlaTrav']->profil() == "manager" ||  
-                            $_SESSION['userMerlaTrav']->profil() == "user"
+                            $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                            $_SESSION['userImmoERPV2']->profil() == "manager" ||  
+                            $_SESSION['userImmoERPV2']->profil() == "user"
                             ) {
                         ?>
                         <div class="row-fluid add-portfolio">
                             <div class="pull-left">
                                 <?php
                                 if ( 
-                                    $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                                    $_SESSION['userMerlaTrav']->profil() == "manager" 
+                                    $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                                    $_SESSION['userImmoERPV2']->profil() == "manager" 
                                     ) {
                                 ?>
                                 <a href="#addReglement" data-toggle="modal" class="btn black">
@@ -190,6 +199,7 @@
                                         <div class="controls">  
                                             <input type="hidden" name="action" value="add" />
                                             <input type="hidden" name="source" value="livraisons-group" />
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
@@ -249,7 +259,8 @@
                                     <div class="control-group">
                                         <div class="controls">  
                                             <input type="hidden" name="action" value="add" />
-                                            <input type="hidden" name="source" value="livraisons-group" />    
+                                            <input type="hidden" name="source" value="livraisons-group" />  
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />  
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
@@ -327,6 +338,7 @@
                                         <div class="controls">
                                             <input type="hidden" name="action" value="add" />
                                             <input type="hidden" name="source" value="livraisons-group" />  
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
@@ -414,10 +426,10 @@
                                                     <a><strong><?= $fournisseurManager->getFournisseurById($livraison->idFournisseur())->nom() ?></strong></a>
                                                 </div>  
                                                 <!--a href="livraisons-fournisseur.php?idFournisseur=<?php //$livraison->idFournisseur() ?>" style="width: 100px" class="btn blue mini"-->
-                                                <a href="livraisons-fournisseur-mois.php?idFournisseur=<?= $livraison->idFournisseur() ?>" style="width: 100px" class="btn blue mini">
+                                                <a href="livraisons-fournisseur-mois.php?idFournisseur=<?= $livraison->idFournisseur() ?>&companyID=<?= $companyID ?>" style="width: 100px" class="btn blue mini">
                                                     Livraisons
                                                 </a>
-                                                <a href="reglements-fournisseur.php?idFournisseur=<?= $livraison->idFournisseur() ?>" style="width: 100px" class="btn green mini">
+                                                <a href="reglements-fournisseur.php?idFournisseur=<?= $livraison->idFournisseur() ?>&companyID=<?= $companyID ?>" style="width: 100px" class="btn green mini">
                                                     Réglements
                                                 </a>
                                             </td>
@@ -428,7 +440,7 @@
                                                 <?= number_format($reglementsFournisseurManager->sommeReglementFournisseursByIdFournisseur($livraison->idFournisseur()), 2, ',', ' '); ?>
                                             </td>
                                             <td>
-                                                <?= number_format( $totalDetailsLivraisons-$reglementsFournisseurManager->sommeReglementFournisseursByIdFournisseur($livraison->idFournisseur()), 2, ',', ' '); ?>
+                                                <?= number_format($totalDetailsLivraisons-$reglementsFournisseurManager->sommeReglementFournisseursByIdFournisseur($livraison->idFournisseur()), 2, ',', ' '); ?>
                                             </td>
                                         </tr>
                                         <?php
@@ -436,11 +448,6 @@
                                         }//end of if
                                         ?>
                                     </tbody>
-                                    <?php
-                                    /*if($livraisonNumber != 0){
-                                        echo $pagination;   
-                                    }*/
-                                    ?>
                                     <tr>
                                         <th></th>
                                         <th><strong>Σ Total Livraisons</strong></th>
@@ -542,7 +549,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
     header('Location:dashboard.php');
 }*/
 else{

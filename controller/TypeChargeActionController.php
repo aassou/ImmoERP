@@ -30,7 +30,7 @@
         if( !empty($_POST['nom']) ){
             $nom = htmlentities($_POST['nom']);
             if ( !$typeChargeManager->exists($nom) ){
-                $createdBy = $_SESSION['userMerlaTrav']->login();
+                $createdBy = $_SESSION['userImmoERPV2']->login();
                 $created = date('Y-m-d h:i:s');
                 //create object
                 $typeCharge = new TypeCharge(array(
@@ -59,7 +59,7 @@
         $idTypeCharge = htmlentities($_POST['idTypeCharge']);
         if(!empty($_POST['nom'])){
 			$nom = htmlentities($_POST['nom']);
-			$updatedBy = $_SESSION['userMerlaTrav']->login();
+			$updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $typeCharge = new TypeCharge(array(
 				'id' => $idTypeCharge,

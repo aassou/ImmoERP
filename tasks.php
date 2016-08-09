@@ -12,7 +12,7 @@
     include('config.php');  
     //classes loading end
     session_start();
-    if(isset($_SESSION['userMerlaTrav'])){
+    if(isset($_SESSION['userImmoERPV2'])){
         //classes managers
         $usersManager = new UserManager($pdo);
         $mailManager = new MailManager($pdo);
@@ -54,9 +54,9 @@
         <!-- BEGIN TOP NAVIGATION BAR -->
         <?php 
         include("include/top-menu.php"); 
-        $myTasks = $taskManager->getTasksByUser($_SESSION['userMerlaTrav']->login());
+        $myTasks = $taskManager->getTasksByUser($_SESSION['userImmoERPV2']->login());
         $tasksAffectedByMeToOther = 
-        $taskManager->getTasksAffectedByMeToOther($_SESSION['userMerlaTrav']->login());
+        $taskManager->getTasksAffectedByMeToOther($_SESSION['userImmoERPV2']->login());
         ?>   
         <!-- END TOP NAVIGATION BAR -->
     </div>
@@ -151,7 +151,7 @@
                                                                     <option disabled="disabled">--------------</option>
                                                                     <?php 
                                                                     foreach ( $users as $user ) {
-                                                                        if ( $user->login() != $_SESSION['userMerlaTrav']->login() ) { 
+                                                                        if ( $user->login() != $_SESSION['userImmoERPV2']->login() ) { 
                                                                     ?>
                                                                             <option value="<?= $user->login() ?>"><?= $user->login() ?></option>
                                                                     <?php 
@@ -236,7 +236,7 @@
                                                     <select name="user" id="user">
                                                         <?php 
                                                         foreach ( $users as $user ) {
-                                                            if ( $user->login() != $_SESSION['userMerlaTrav']->login() ) { 
+                                                            if ( $user->login() != $_SESSION['userImmoERPV2']->login() ) { 
                                                         ?>
                                                                 <option value="<?= $user->login() ?>"><?= $user->login() ?></option>
                                                         <?php 
@@ -286,7 +286,7 @@
                                                 <div class="control-group">
                                                     <div class="controls">  
                                                         <input type="hidden" name="action" value="deleteValideTasks" />
-                                                        <input type="hidden" name="user" value="<?= $_SESSION['userMerlaTrav']->login() ?>" />
+                                                        <input type="hidden" name="user" value="<?= $_SESSION['userImmoERPV2']->login() ?>" />
                                                         <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                                         <button type="submit" class="btn green" aria-hidden="true">Oui</button>
                                                     </div>
@@ -301,7 +301,7 @@
                                         $status = "";    
                                         $classInOrOut = "out";    
                                         $avatar = "assets/img/red-user-icon.png";
-                                        if($task->createdBy() == $_SESSION['userMerlaTrav']->login()){
+                                        if($task->createdBy() == $_SESSION['userImmoERPV2']->login()){
                                             $classInOrOut = "in";
                                             $avatar = "assets/img/green-user-icon.png";
                                         }   

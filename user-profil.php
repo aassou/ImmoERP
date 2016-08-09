@@ -12,7 +12,7 @@
     include('config.php');  
     //classes loading end
     session_start();
-    if(isset($_SESSION['userMerlaTrav']) ){
+    if(isset($_SESSION['userImmoERPV2']) ){
     	//les sources
     	$usersManager = new UserManager($pdo);
 		$users = $usersManager->getUsers(); 
@@ -98,21 +98,18 @@
                               </div>
                               <div class="portlet-body form">
                                  <!-- BEGIN FORM-->
-                                 <?php if(isset($_SESSION['password-update-success'])){ ?>
-                                 	<div class="alert alert-success">
-    									<button class="close" data-dismiss="alert"></button>
-    									<?= $_SESSION['password-update-success'] ?>		
-    								</div>
-                                 <?php } 
-                                 	unset($_SESSION['password-update-success']);
+                                 <?php 
+                                 if ( isset($_SESSION['user-action-message']) 
+                                 and isset($_SESSION['user-type-message'])) {
+                                     $message = $_SESSION['user-action-message'];
+                                     $typeMessage = $_SESSION['user-type-message'];
                                  ?>
-                                 <?php if(isset($_SESSION['password-update-error'])){ ?>
-                                 	<div class="alert alert-error">
-    									<button class="close" data-dismiss="alert"></button>
-    									<?= $_SESSION['password-update-error'] ?>		
-    								</div>
+                                     <div style="text-align: center" class="alert alert-<?= $typeMessage ?>">
+                                         <?= $message ?>      
+                                     </div>
                                  <?php } 
-                                 	unset($_SESSION['password-update-error']);
+                                     unset($_SESSION['user-action-message']);
+                                     unset($_SESSION['user-type-message']);
                                  ?>
                                  <form class="horizontal-form">
                                     <div class="row-fluid">
@@ -120,7 +117,7 @@
                                           <div class="control-group">
                                              <label class="control-label" for="login">Login</label>
                                              <div class="controls">
-                                                <input disabled="disabled" type="text" id="login" name="login" class="m-wrap span12" value="<?= $_SESSION['userMerlaTrav']->login() ?>">
+                                                <input disabled="disabled" type="text" id="login" name="login" class="m-wrap span12" value="<?= $_SESSION['userImmoERPV2']->login() ?>">
                                              </div>
                                           </div>
                                        </div>
@@ -128,7 +125,7 @@
                                           <div class="control-group">
                                              <label class="control-label" for="profil">Profil</label>
                                              <div class="controls">
-                                                <input disabled="disabled" type="text" id="profil" name="profil" class="m-wrap span12" value="<?= $_SESSION['userMerlaTrav']->profil() ?>">
+                                                <input disabled="disabled" type="text" id="profil" name="profil" class="m-wrap span12" value="<?= $_SESSION['userImmoERPV2']->profil() ?>">
                                              </div>
                                           </div>
                                        </div>
@@ -145,7 +142,7 @@
                                           <div class="control-group">
                                              <label class="control-label" for="dateCreation">Date de création</label>
                                              <div class="controls">
-                                                <input disabled="disabled" type="text" id="dateCreation" name="dateCreation" class="m-wrap span12" value="<?= date('Y-m-d', strtotime($_SESSION['userMerlaTrav']->created())) ?>">
+                                                <input disabled="disabled" type="text" id="dateCreation" name="dateCreation" class="m-wrap span12" value="<?= date('Y-m-d', strtotime($_SESSION['userImmoERPV2']->created())) ?>">
                                              </div>
                                           </div>
                                        </div>
@@ -162,7 +159,7 @@
 											<h3>Modification du mot de passe</h3>
 										</div>
 										<div class="modal-body">
-											<form class="form-horizontal loginFrm" action="controller/UserUpdatePasswordController.php" method="post">
+											<form class="form-horizontal loginFrm" action="controller/UserActionController.php" method="post">
 												<p>Êtes-vous sûr de vouloir modifier votre mot de passe ?</p>
 												<div class="control-group">
 													<label class="right-label">Ancien mot de passe</label>
@@ -173,6 +170,7 @@
 													<input type="password" name="newPassword2" />
 												</div>
 												<div class="control-group">
+												    <input type="hidden" name="action" value="update-password" />
 													<button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
 													<button type="submit" class="btn red" aria-hidden="true">Oui</button>
 												</div>

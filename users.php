@@ -12,7 +12,7 @@
     include('config.php');  
     //classes loading end
     session_start();
-    if(isset($_SESSION['userMerlaTrav']) and $_SESSION['userMerlaTrav']->profil()=="admin"){
+    if(isset($_SESSION['userImmoERPV2']) and $_SESSION['userImmoERPV2']->profil()=="admin"){
     	//les sources
     	$usersManager = new UserManager($pdo);
 		$users = $usersManager->getUsers(); 
@@ -335,7 +335,7 @@
 </html>
 <?php
 }
-else if(isset($_SESSION['userMerlaTrav']) and $_SESSION['userMerlaTrav']->profil()!="admin"){
+else if(isset($_SESSION['userImmoERPV2']) and $_SESSION['userImmoERPV2']->profil()!="admin"){
 	header('Location:dashboard.php');
 }
 else{

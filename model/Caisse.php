@@ -8,6 +8,7 @@ class Caisse{
 	private $_montant;
 	private $_designation;
 	private $_destination;
+    private $_companyID;
 	private $_created;
 	private $_createdBy;
 	private $_updated;
@@ -52,6 +53,10 @@ class Caisse{
 	public function setDestination($destination){
 		$this->_destination = $destination;
    	}
+    
+    public function setCompanyID($companyID){
+        $this->_companyID = $companyID;
+    }
 
 	public function setCreated($created){
         $this->_created = $created;
@@ -92,6 +97,10 @@ class Caisse{
 	public function destination(){
 		return $this->_destination;
    	}
+    
+    public function companyID(){
+        return $this->_companyID;
+    }
 
 	public function created(){
         return $this->_created;

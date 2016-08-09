@@ -1,5 +1,4 @@
 <?php
-
     //classes loading begin
     function classLoad ($myClass) {
         if(file_exists('../model/'.$myClass.'.php')){
@@ -21,6 +20,7 @@
     $actionMessage = "";
     $typeMessage = "";
     $redirectLink = "";
+    $companyID = htmlentities($_POST['companyID']);
     //Component Class Manager
     $commandeManager = new CommandeManager($pdo);
 	//Action Add Processing Begin
@@ -33,7 +33,7 @@
 			$designation = htmlentities($_POST['designation']);
 			$status = 0;
 			$codeLivraison = uniqid().date('YmdHis');;
-			$createdBy = $_SESSION['userMerlaTrav']->login();
+			$createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
              //these next data are used to know the month and the year of a supply demand
             $mois = date('m', strtotime($dateCommande));
@@ -46,6 +46,7 @@
 				'numeroCommande' => $numeroCommande,
 				'designation' => $designation,
 				'status' => $status,
+				'companyID' => $companyID,
 				'codeLivraison' => $codeLivraison,
 				'created' => $created,
             	'createdBy' => $createdBy
@@ -54,11 +55,11 @@
             $commandeManager->add($commande);
             $actionMessage = "Opération Valide : Commande Ajouté(e) avec succès.";  
             $typeMessage = "success";
-            $redirectLink = "Location:../commande-details-iaaza.php?codeCommande=".$codeLivraison."&mois=".$mois."&annee=".$annee;
+            $redirectLink = "Location:../commande-details.php?codeCommande=".$codeLivraison."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;;
         }
         else{
-            if ( isset($_POST['source']) and $_POST['source'] == "commande-group-iaaza" ) {
-                $redirectLink = "Location:../commande-group-iaaza.php";
+            if ( isset($_POST['source']) and $_POST['source'] == "commande-group" ) {
+                $redirectLink = "Location:../commande-group.php?companyID=".$companyID;
             } 
             $actionMessage = "Erreur Ajout commande : Vous devez remplir le champ 'Numéro Commande'.";
             $typeMessage = "error";
@@ -77,7 +78,7 @@
 			$dateCommande = htmlentities($_POST['dateCommande']);
 			$numeroCommande = htmlentities($_POST['numeroCommande']);
 			$designation = htmlentities($_POST['designation']);
-			$updatedBy = $_SESSION['userMerlaTrav']->login();
+			$updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $commande = new Commande(array(
 				'id' => $idCommande,
@@ -86,6 +87,7 @@
 				'dateCommande' => $dateCommande,
 				'numeroCommande' => $numeroCommande,
 				'designation' => $designation,
+				'companyID' => $companyID,
 				'updated' => $updated,
             	'updatedBy' => $updatedBy
 			));
@@ -97,11 +99,11 @@
             $actionMessage = "Erreur Modification Commande : Vous devez remplir le champ 'idFournisseur'.";
             $typeMessage = "error";
         }
-        if ( isset($_POST['source']) and $_POST['source'] == "commande-mois-annee-iaaza" ) {
-            $redirectLink = "Location:../commande-mois-annee-iaaza.php?mois=".$mois."&annee=".$annee;    
+        if ( isset($_POST['source']) and $_POST['source'] == "commande-mois-annee" ) {
+            $redirectLink = "Location:../commande-mois-annee.php?mois=".$mois."&annee=".$annee."&companyID=".$companyID;    
         }
-        else if ( isset($_POST['source']) and $_POST['source'] == "commande-details-iaaza" ) {
-            $redirectLink = "Location:../commande-details-iaaza.php?codeCommande=".$codeCommande."&mois=".$mois."&annee=".$annee;
+        else if ( isset($_POST['source']) and $_POST['source'] == "commande-details" ) {
+            $redirectLink = "Location:../commande-details.php?codeCommande=".$codeCommande."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;;
         }
     }
     //Action Update Processing End
@@ -117,12 +119,11 @@
         $commandeManager->delete($idCommande);
         $actionMessage = "Opération Valide : Commande supprimé(e) avec succès.";
         $typeMessage = "success";
-        if ( isset($_POST['source']) and $_POST['source'] == "commande-mois-annee-iaaza" ) {
-            $redirectLink = "Location:../commande-mois-annee-iaaza.php?mois=".$mois."&annee=".$annee;    
+        if ( isset($_POST['source']) and $_POST['source'] == "commande-mois-annee" ) {
+            $redirectLink = "Location:../commande-mois-annee.php?mois=".$mois."&annee=".$annee."&companyID=".$companyID;;    
         }
     }
     //Action Delete Processing End
     $_SESSION['commande-action-message'] = $actionMessage;
     $_SESSION['commande-type-message'] = $typeMessage;
     header($redirectLink);
-

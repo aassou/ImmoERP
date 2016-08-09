@@ -37,7 +37,7 @@
 			$montant = htmlentities($_POST['montant']);
 			$societe = htmlentities($_POST['societe']);
 			$designation = htmlentities($_POST['designation']);
-			$createdBy = $_SESSION['userMerlaTrav']->login();
+			$createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $charge = new ChargeCommun(array(
@@ -80,7 +80,7 @@
 			$montant = htmlentities($_POST['montant']);
 			$societe = htmlentities($_POST['societe']);
 			$designation = htmlentities($_POST['designation']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
 			$charge = new ChargeCommun(array(
 				'id' => $idCharge,
@@ -94,7 +94,7 @@
 			));
             $chargeManager->update($charge);
             //add history data to db
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",
@@ -122,7 +122,7 @@
         $charge = $chargeManager->getChargeById($idCharge);
         $chargeManager->delete($idCharge);
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",

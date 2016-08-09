@@ -12,7 +12,7 @@
     include('../config.php');  
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
+    if( isset($_SESSION['userImmoERPV2']) ){
         $relevesbancaires = $_SESSION['releve-bancaire-archive-print'];
         //classes managers  
 

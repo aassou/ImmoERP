@@ -13,7 +13,7 @@
 	include('lib/pagination.php');
     //classes loading end
     session_start();
-    if(isset($_SESSION['userMerlaTrav']) ){
+    if(isset($_SESSION['userImmoERPV2']) ){
     	//les sources
     	$idProjet = 0;
     	$projetManager = new ProjetManager($pdo);
@@ -119,7 +119,7 @@
 				<div class="row-fluid"> 
 					<div class="span12">
 					    <?php
-                        if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {
+                        if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {
                         ?>
 						<div class="get-down">
 						    <input class="pull-left m-wrap" name="criteria" id="criteria" type="text" placeholder="Chercher Par Code, Status..." />
@@ -240,7 +240,7 @@
 												        <i class="icon-angle-down"></i>
 												    </a>
 												    <?php
-												    if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {    
+												    if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {    
 												    ?>
 												    <ul class="dropdown-menu">
 												        <li>
@@ -273,7 +273,7 @@
 											<td>
 												<?php
 												if($locau->status()=="R&eacute;serv&eacute;"){ 
-												    if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {    
+												    if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {    
 												?>
 													<a class="btn mini red" href="#changeToDisponible<?= $locau->id() ?>" data-toggle="modal" data-id="<?= $locau->id() ?>">
 														Réservé
@@ -289,7 +289,7 @@
                                                 ?>
 												<?php 
 												if($locau->status()=="Disponible"){ 
-												    if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {  
+												    if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {  
 												?>
 													<a class="btn mini green" href="#changeToReserve<?= $locau->id() ?>" data-toggle="modal" data-id="<?= $locau->id() ?>">
 														Disponible
@@ -310,7 +310,7 @@
 											<td>
 												<?php
 												if( $locau->status() == "R&eacute;serv&eacute;" ){
-												    if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {  
+												    if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {  
 												?>
 												<a class="btn mini" title="<?= $locau->par() ?>" href="#updateClient<?= $locau->id() ?>" data-toggle="modal" data-id="<?= $locau->id() ?>">
 													Pour
@@ -616,7 +616,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
 	header('Location:dashboard.php');
 }*/
 else{

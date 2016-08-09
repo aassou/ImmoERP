@@ -13,7 +13,7 @@
     include('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
+    if( isset($_SESSION['userImmoERPV2']) ){
         //les sources
         $projetManager = new ProjetManager($pdo);
         $appartementManager = new AppartementManager($pdo);
@@ -152,7 +152,7 @@
                                                     <ul class="dropdown-menu info-dropdown">
                                                         <?php
                                                         if( $appartement->status()=="R&eacute;serv&eacute;" ){
-                                                            if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {
+                                                            if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {
                                                         ?>
                                                         <li>
                                                             <a href="#updateClient<?= $appartement->id() ?>" data-toggle="modal" data-id="<?= $appartement->id() ?>">
@@ -182,7 +182,7 @@
                                                         <i class="icon-angle-down"></i>
                                                     </a>
                                                     <?php
-                                                    if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {
+                                                    if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {
                                                     ?>
                                                     <ul class="dropdown-menu">
                                                         <li>
@@ -209,7 +209,7 @@
                                             <td>
                                                 <?php
                                                 if ( $appartement->status()=="Disponible" ) {
-                                                    if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {    
+                                                    if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {    
                                                 ?>
                                                     <a class="btn mini green" href="#changeToReserve<?= $appartement->id() ?>" data-toggle="modal" data-id="<?= $appartement->id() ?>">
                                                         Disponible
@@ -227,7 +227,7 @@
                                                 ?>
                                                 <?php 
                                                 if ( $appartement->status()=="R&eacute;serv&eacute;" ) {
-                                                     if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {   
+                                                     if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {   
                                                 ?>
                                                     <a class="btn mini red" href="#changeToDisponible<?= $appartement->id() ?>" data-toggle="modal" data-id="<?= $appartement->id() ?>">
                                                         Réservé
@@ -277,7 +277,7 @@
                                                         <i class="icon-angle-down"></i>
                                                     </a>
                                                     <?php
-                                                    if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {
+                                                    if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {
                                                     ?>
                                                     <ul class="dropdown-menu">
                                                         <li>
@@ -341,7 +341,7 @@
                                                     <ul class="dropdown-menu info-dropdown">
                                                         <?php
                                                         if( $locau->status() == "R&eacute;serv&eacute;" ){
-                                                            if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {  
+                                                            if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {  
                                                         ?>
                                                         <li>
                                                             <a href="#updateClient<?= $locau->id() ?>" data-toggle="modal" data-id="<?= $locau->id() ?>">
@@ -371,7 +371,7 @@
                                                         <i class="icon-angle-down"></i>
                                                     </a>
                                                     <?php
-                                                    if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {    
+                                                    if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {    
                                                     ?>
                                                     <ul class="dropdown-menu">
                                                         <li>
@@ -396,7 +396,7 @@
                                             <td>
                                                 <?php
                                                 if($locau->status()=="R&eacute;serv&eacute;"){ 
-                                                    if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {    
+                                                    if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {    
                                                 ?>
                                                     <a class="btn mini red" href="#changeToDisponible<?= $locau->id() ?>" data-toggle="modal" data-id="<?= $locau->id() ?>">
                                                         Réservé
@@ -412,7 +412,7 @@
                                                 ?>
                                                 <?php 
                                                 if($locau->status()=="Disponible"){ 
-                                                    if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {  
+                                                    if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {  
                                                 ?>
                                                     <a class="btn mini green" href="#changeToReserve<?= $locau->id() ?>" data-toggle="modal" data-id="<?= $locau->id() ?>">
                                                         Disponible
@@ -460,7 +460,7 @@
                                                         <i class="icon-angle-down"></i>
                                                     </a>
                                                     <?php
-                                                    if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {    
+                                                    if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {    
                                                     ?>
                                                     <ul class="dropdown-menu">
                                                         <li>
@@ -558,7 +558,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
     header('Location:dashboard.php');
 }*/
 else{

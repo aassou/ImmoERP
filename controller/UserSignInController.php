@@ -25,7 +25,7 @@ else{
     $userManager = new UserManager($pdo);
     if($userManager->exists($login, $password)){
 		if($userManager->getStatus($login)!=0){
-			$_SESSION['userMerlaTrav'] = $userManager->getUserByLoginPassword($login, $password);
+			$_SESSION['userImmoERPV2'] = $userManager->getUserByLoginPassword($login, $password);
 			$redirectLink='../dashboard.php';	
 		}
 		else{

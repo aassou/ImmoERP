@@ -12,7 +12,7 @@
     include('config.php');  
     //classes loading end
     session_start();
-    if(isset($_SESSION['userMerlaTrav'])){
+    if(isset($_SESSION['userImmoERPV2'])){
     	//classes managers
 		$usersManager = new UserManager($pdo);
 		$mailManager = new MailManager($pdo);
@@ -116,7 +116,7 @@
 										foreach($mails as $mail){
 										$classInOrOut = "out";	  
 										$avatar = "assets/img/red-user-icon.png";
-										if($mail->sender()==$_SESSION['userMerlaTrav']->login()){
+										if($mail->sender()==$_SESSION['userImmoERPV2']->login()){
 											$classInOrOut = "in";
 											$avatar = "assets/img/green-user-icon.png";
 										}	

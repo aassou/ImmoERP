@@ -36,7 +36,7 @@
             $cave = htmlentities($_POST['cave']);
             $status = htmlentities($_POST['status']);
             $par = htmlentities($_POST['par']);
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $appartement = 
@@ -75,7 +75,7 @@
             $cave = htmlentities($_POST['cave']);
             $status = htmlentities($_POST['status']);
             $par = htmlentities($_POST['par']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $appartement = 
             new Appartement(array('id' => $id, 'nom' => $code, 'niveau' => $niveau, 'prix' => $prix, 
@@ -83,7 +83,7 @@
             'cave' => $cave, 'status' => $status, 'par' => $par, 'updatedBy' => $updatedBy, 'updated' => $updated));
             $appartementManager->update($appartement);
             //add history data to db
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",
@@ -108,7 +108,7 @@
         $nomAppartement = $appartementManager->getAppartementById($idAppartement)->nom();
         $appartementManager->changeStatus($idAppartement, $status);
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Modification Status",
@@ -128,7 +128,7 @@
         $nomAppartement = $appartementManager->getAppartementById($idAppartement)->nom();
         $appartementManager->updatePar($par, $idAppartement);
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Modification Client",
@@ -147,7 +147,7 @@
         $nomAppartement = $appartementManager->getAppartementById($idAppartement)->nom();
         $appartementManager->delete($idAppartement);
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",

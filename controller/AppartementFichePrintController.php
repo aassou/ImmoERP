@@ -12,7 +12,7 @@
     include('../config.php');  
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ) {
+    if( isset($_SESSION['userImmoERPV2']) ) {
         $clientManager = new ClientManager($pdo);
         $appartementManager = new AppartementManager($pdo);
 		$contratManager = new ContratManager($pdo);

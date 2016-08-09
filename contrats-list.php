@@ -13,7 +13,7 @@
 	include('lib/pagination.php');
     //classes loading end
     session_start();
-    if(isset($_SESSION['userMerlaTrav'])){
+    if(isset($_SESSION['userImmoERPV2'])){
     	//les sources
     	$idProjet = 0;
     	$projetManager = new ProjetManager($pdo);
@@ -198,7 +198,7 @@
 																Consulter Contrat
 															</a>
 															<?php
-															if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+															if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
 															?>
 												        	<a href="#addReglement<?= $contrat->id() ?>" data-toggle="modal" data-id="<?= $contrat->id() ?>">
 												        		Nouveau réglement
@@ -216,7 +216,7 @@
                                                                 Imprimer Contrat FR
                                                             </a>
 												        	<?php
-												        	if( $_SESSION['userMerlaTrav']->profil() == "admin" ){ 
+												        	if( $_SESSION['userImmoERPV2']->profil() == "admin" ){ 
     												        	if( $contrat->status()=="actif" ){
     															?>
     															<a style="color:red" href="#desisterContrat<?= $contrat->id() ?>" data-toggle="modal" data-id="<?= $contrat->id() ?>">
@@ -602,7 +602,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
 	header('Location:dashboard.php');
 }*/
 else{

@@ -12,7 +12,7 @@
     include('config.php');  
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
+    if( isset($_SESSION['userImmoERPV2']) ){
     	//les sources
     	$idProjet = 0;
     	$projetManager = new ProjetManager($pdo);
@@ -106,7 +106,7 @@
 				<div class="row-fluid">
 					<div class="span12">
 					    <?php
-					    if ( $_SESSION['userMerlaTrav']->profil()=="admin" ) {
+					    if ( $_SESSION['userImmoERPV2']->profil()=="admin" ) {
 					    ?>
 					    <div class="pull-right get-down">
                             <a href="#addTerrain" class="btn icn-only green" data-toggle="modal">Ajouter Nouveau Terrain</a>
@@ -211,7 +211,7 @@
 										<tr>
 											<td>
 											    <?php
-											    if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+											    if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                 ?>      
 											    <a title="Attacher Document" class="btn mini blue" href="#addPieces<?= $terrain->id() ?>" data-toggle="modal" data-id="<?= $terrain->id() ?>">
                                                     <i class="icon-paper-clip"></i>
@@ -347,7 +347,7 @@
 												</a>
 											</div>
 											<?php
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                             ?>      
 											<a class="btn mini red" href="#deletePiece<?= $pieces->id() ?>" data-toggle="modal" data-id="<?= $pieces->id() ?>">
 												Supprimer

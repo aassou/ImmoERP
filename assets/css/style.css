@@ -121,6 +121,16 @@ General backgrounds
   background-color: #00B38F !important;
 }
 
+.bg-orange {
+  background-image: none !important;
+  background-color: #ff9900 !important;
+}
+
+.bg-olive {
+  background-image: none !important;
+  background-color: #ace600 !important;
+}
+
 .bg-dark-cyan {
   background-image: none !important;
   background-color: #035242 !important;
@@ -3115,6 +3125,20 @@ Tiles(new in v1.1.1)
   font-weight: 400;
   font-size: 13px;
   font-smooth: always;
+  color: #ffffff;
+}
+
+.tile .tile-object > .name-company {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin-bottom: 5px;
+  margin-left: 10px;
+  margin-right: 15px;
+  font-weight: 400;
+  font-size: 16px;
+  font-smooth: always;
+  text-align: center;
   color: #ffffff;
 }
 

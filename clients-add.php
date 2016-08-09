@@ -14,10 +14,10 @@
     //classes loading end
     session_start();
     if( 
-        isset($_SESSION['userMerlaTrav']) and 
+        isset($_SESSION['userImmoERPV2']) and 
         (
-            $_SESSION['userMerlaTrav']->profil()=="admin" or
-            $_SESSION['userMerlaTrav']->profil()=="manager"    
+            $_SESSION['userImmoERPV2']->profil()=="admin" or
+            $_SESSION['userImmoERPV2']->profil()=="manager"    
         ) 
     ){
     	//les sources
@@ -300,7 +300,7 @@
 </html>
 <?php
 }
-else if(isset($_SESSION['userMerlaTrav']) and $_SESSION['userMerlaTrav']->profil() != "admin"){
+else if(isset($_SESSION['userImmoERPV2']) and $_SESSION['userImmoERPV2']->profil() != "admin"){
 	header('Location:dashboard.php');
 }
 else{

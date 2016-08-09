@@ -80,7 +80,7 @@
                     $email = htmlentities($_POST['email']);
                     $codeClient = uniqid().date('YmdHis');
                     $created = date('Y-m-d h:i:s');
-                    $createdBy =  $_SESSION['userMerlaTrav']->login();
+                    $createdBy =  $_SESSION['userImmoERPV2']->login();
                     //object creation
                     $client = 
                     new Client(array('nom' => $nom, 'nomArabe' => $nomArabe, 'cin' => $cin, 
@@ -124,7 +124,7 @@
             $telephone1 = htmlentities($_POST['telephone1']);
             $telephone2 = htmlentities($_POST['telephone2']);
             $email = htmlentities($_POST['email']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $codeContrat = htmlentities($_POST['codeContrat']);
             //This input is used to specify the redirect link. Because you can launch the update of a client
@@ -137,7 +137,7 @@
             'email' => $email, 'updatedBy' => $updatedBy, 'updated' => $updated));
             $clientManager->update($client);
             //add history data to db
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",
@@ -172,7 +172,7 @@
         //$idClient = $_POST['idClient'];
         //$clientManager->delete($idClient);
         //add history data to db
-        /*$createdBy = $_SESSION['userMerlaTrav']->login();
+        /*$createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Activation",

@@ -12,7 +12,7 @@
     include('config.php');  
     //classes loading end
     session_start();
-    if(isset($_SESSION['userMerlaTrav'])){
+    if(isset($_SESSION['userImmoERPV2'])){
         //classes managers
         $usersManager = new UserManager($pdo);
         $mailManager = new MailManager($pdo);
@@ -157,7 +157,7 @@
                         ?>
                         <div class="span3 alert alert-block alert-<?= $statusClass ?> fade in">
                             <?php
-                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                             ?>
                             <a href="#deleteAlert<?= $alert->id() ?>" class="close" data-toggle="modal" data-id="<?= $alert->id() ?>"></a>
                             <?php  
@@ -169,7 +169,7 @@
                             </p>
                             <p>
                                 <?php
-                                if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                 ?>
                                 <!--a class="btn red" href="#">Do this</a--> 
                                 <a class="btn <?= $actionClass ?>" href="#updateStatusAlert<?= $alert->id() ?>" data-toggle="modal" data-id="<?= $alert->id() ?>" ><?= $action ?></a>

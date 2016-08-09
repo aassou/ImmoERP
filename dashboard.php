@@ -12,7 +12,7 @@
     include('config.php');  
     //classes loading end
     session_start();
-    if ( isset($_SESSION['userMerlaTrav']) ) {
+    if ( isset($_SESSION['userImmoERPV2']) ) {
     	//classes managers
 		$usersManager = new UserManager($pdo);
 		$mailsManager = new MailManager($pdo);
@@ -87,6 +87,19 @@
 			<div class="container-fluid">
 				<!-- BEGIN PAGE HEADER-->
 				<div class="row-fluid">
+				    <?php 
+                    if ( isset($_SESSION['user-action-message']) 
+                    and isset($_SESSION['user-type-message'])) {
+                        $message = $_SESSION['user-action-message'];
+                        $typeMessage = $_SESSION['user-type-message'];
+                    ?>
+                        <div style="text-align: center" class="alert alert-<?= $typeMessage ?>">
+                            <?= $message ?>      
+                        </div>
+                    <?php } 
+                        unset($_SESSION['user-action-message']);
+                        unset($_SESSION['user-type-message']);
+                    ?>
 					<div class="span12">
 						<h3 class="page-title">
 							Accueil
@@ -94,7 +107,7 @@
 					</div>
 				</div>
 				<!--      BEGIN TILES      -->
-				<div class="row-fluid">
+				<!--div class="row-fluid">
 					<div class="span12">
 						<h4 class="breadcrumb"><i class="icon-hand-right"></i> Société Iaaza</h4>
 						<div class="tiles">
@@ -138,20 +151,20 @@
                                 </div>
                             </div>
                             </a>
-                        </div><!--  Tiles Iaaza End -->
+                        </div>
                     </div>
-                </div>    
-                
+                </div-->    
+                <!--  Tiles Iaaza End -->
                 <?php
                 if ( 
-                    $_SESSION['userMerlaTrav']->profil() == "admin"
-                    || $_SESSION['userMerlaTrav']->profil() == "manager" 
-                    || $_SESSION['userMerlaTrav']->profil() == "consultant" 
+                    $_SESSION['userImmoERPV2']->profil() == "admin"
+                    || $_SESSION['userImmoERPV2']->profil() == "manager" 
+                    || $_SESSION['userImmoERPV2']->profil() == "consultant" 
                 ) {
                 ?>
                 <div class="row-fluid">
                     <div class="span12">
-                        <h4 class="breadcrumb"><i class="icon-hand-right"></i> Société Annahda</h4>
+                        <h4 class="breadcrumb"><i class="icon-hand-right"></i> Société ImmoERP</h4>
                         <div class="tiles">
 						    <a href="caisse-group.php">
                             <div class="tile bg-purple">
@@ -163,6 +176,19 @@
                                         La caisse
                                     </div>
                                     <div class="number">
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                            <a href="commande-group-iaaza.php">
+                            <div class="tile bg-red">
+                                <div class="corner"></div>
+                                <div class="tile-body">
+                                    <i class="icon-shopping-cart"></i>
+                                </div>
+                                <div class="tile-object">
+                                    <div class="name">
+                                        Les commandes
                                     </div>
                                 </div>
                             </div>
@@ -210,7 +236,7 @@
                             </a>
                             <?php
                             if ( 
-                                $_SESSION['userMerlaTrav']->profil() == "admin" 
+                                $_SESSION['userImmoERPV2']->profil() == "admin" 
                             ) {
                             ?>
 							<a href="charges-communs-grouped.php">
@@ -273,7 +299,7 @@
 						</div>
 					</div>
 				</div>
-				<!--      BEGIN TILES      -->
+				<!--      END TILES      -->
 				<!-- BEGIN DASHBOARD STATS -->
 				<h4 class="breadcrumb"><i class="icon-table"></i> Bilans et Statistiques Pour Cette Semaine</h4>
 				<div class="row-fluid">
@@ -324,7 +350,7 @@
 								<div class="number">
 									<?= number_format($soldeCaisseAnnahda, '2', ',', ' ') ?>
 								</div>
-								<div class="desc">Caisse Annahda</div>
+								<div class="desc">Caisse ImmoERP</div>
 							</div>					
 						</div>
 						</a>
@@ -339,7 +365,7 @@
                                 <div class="number">
                                     <?= number_format($soldeCaisseIaaza, '2', ',', ' ') ?>
                                 </div>
-                                <div class="desc">Caisse Iaaza</div>
+                                <div class="desc">Caisse Nodom</div>
                             </div>                  
                         </div>
                         </a>
@@ -539,7 +565,7 @@
 	<!-- END CONTAINER -->
 	<!-- BEGIN FOOTER -->
 	<div class="footer">
-		2015 &copy; ImmoERP. Management Application.
+		ImmoERP Management Application | Tous droits réservés 2015 - <?= date('Y') ?> &copy;
 		<div class="span pull-right">
 			<span class="go-top"><i class="icon-angle-up"></i></span>
 		</div>

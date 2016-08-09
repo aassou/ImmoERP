@@ -15,6 +15,7 @@ class Livraison{
     private $_idFournisseur;
     private $_idProjet;
 	private $_code;
+    private $_companyID;
     private $_created;
     private $_createdBy;
     private $_updated;
@@ -93,6 +94,10 @@ class Livraison{
         $this->_code = $code;
     }
     
+    public function setCompanyID($companyID){
+        $this->_companyID = $companyID;
+    }
+    
     public function setCreated($created){
         $this->_created = $created;
     }
@@ -164,6 +169,10 @@ class Livraison{
     
 	public function code(){
         return $this->_code;
+    }
+    
+    public function companyID(){
+        return $this->_companyID;
     }
     
     public function created(){

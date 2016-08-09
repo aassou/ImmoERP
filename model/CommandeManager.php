@@ -12,8 +12,8 @@ class CommandeManager{
 	//BAISC CRUD OPERATIONS
 	public function add(Commande $commande){
     	$query = $this->_db->prepare(' INSERT INTO t_commande (
-		idFournisseur, idProjet, dateCommande, numeroCommande, designation, status, codeLivraison, created, createdBy)
-		VALUES (:idFournisseur, :idProjet, :dateCommande, :numeroCommande, :designation, :status, :codeLivraison, :created, :createdBy)')
+		idFournisseur, idProjet, dateCommande, numeroCommande, designation, status, companyID, codeLivraison, created, createdBy)
+		VALUES (:idFournisseur, :idProjet, :dateCommande, :numeroCommande, :designation, :status, :companyID, :codeLivraison, :created, :createdBy)')
 		or die (print_r($this->_db->errorInfo()));
 		$query->bindValue(':idFournisseur', $commande->idFournisseur());
 		$query->bindValue(':idProjet', $commande->idProjet());
@@ -21,6 +21,7 @@ class CommandeManager{
 		$query->bindValue(':numeroCommande', $commande->numeroCommande());
 		$query->bindValue(':designation', $commande->designation());
 		$query->bindValue(':status', $commande->status());
+        $query->bindValue(':companyID', $commande->companyID());
 		$query->bindValue(':codeLivraison', $commande->codeLivraison());
 		$query->bindValue(':created', $commande->created());
 		$query->bindValue(':createdBy', $commande->createdBy());
@@ -32,7 +33,7 @@ class CommandeManager{
     	$query = $this->_db->prepare(
     	'UPDATE t_commande SET 
 		idFournisseur=:idFournisseur, idProjet=:idProjet, dateCommande=:dateCommande, 
-		numeroCommande=:numeroCommande, designation=:designation, updated=:updated, 
+		numeroCommande=:numeroCommande, designation=:designation, companyID=:companyID, updated=:updated, 
 		updatedBy=:updatedBy
 		WHERE id=:id')
 		or die (print_r($this->_db->errorInfo()));
@@ -42,6 +43,7 @@ class CommandeManager{
 		$query->bindValue(':dateCommande', $commande->dateCommande());
 		$query->bindValue(':numeroCommande', $commande->numeroCommande());
 		$query->bindValue(':designation', $commande->designation());
+        $query->bindValue(':companyID', $commande->companyID());
 		$query->bindValue(':updated', $commande->updated());
 		$query->bindValue(':updatedBy', $commande->updatedBy());
 		$query->execute();
@@ -79,10 +81,14 @@ class CommandeManager{
         return new Commande($data);
     }
 
-	public function getCommandes(){
+	public function getCommandes($companyID){
 		$commandes = array();
-		$query = $this->_db->query('SELECT * FROM t_commande
+		$query = $this->_db->prepare(
+		'SELECT * FROM t_commande
+		WHERE companyID=:companyID
 		ORDER BY id DESC');
+        $query->bindValue(':companyID', $companyID);
+        $query->execute();
 		while($data = $query->fetch(PDO::FETCH_ASSOC)){
 			$commandes[] = new Commande($data);
 		}
@@ -113,12 +119,15 @@ class CommandeManager{
     /***********                                 New Methods                              *********/
     /**********************************************************************************************/
     
-    public function getCommandesGroupByMonth(){
+    public function getCommandesGroupByMonth($companyID){
         $commandes = array();
-        $query = $this->_db->query(
+        $query = $this->_db->prepare(
         "SELECT * FROM t_commande 
+        WHERE companyID=:companyID
         GROUP BY MONTH(dateCommande), YEAR(dateCommande)
         ORDER BY dateCommande DESC");
+        $query->bindValue(':companyID', $companyID);
+        $query->execute();
         while($data = $query->fetch(PDO::FETCH_ASSOC)){
             $commandes[] = new Commande($data);
         }
@@ -126,13 +135,15 @@ class CommandeManager{
         return $commandes;
     }
     
-    public function getCommandesByMonthYear($month, $year){
+    public function getCommandesByMonthYear($month, $year, $companyID){
         $commandes = array();
         $query = $this->_db->prepare(
         "SELECT * FROM t_commande 
-        WHERE MONTH(dateCommande) = :month
+        WHERE companyID=:companyID
+        AND MONTH(dateCommande) = :month
         AND YEAR(dateCommande) = :year
         ORDER BY dateCommande DESC");
+        $query->bindValue(':companyID', $companyID);
         $query->bindValue(':month', $month);
         $query->bindValue(':year', $year);
         $query->execute();

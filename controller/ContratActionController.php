@@ -82,7 +82,7 @@
                 $facadeArabe = htmlentities($_POST['facadeArabe']);
                 $articlesArabes = htmlentities($_POST['articlesArabes']);
                 $created = date('Y-m-d h:i:s');
-                $createdBy = $_SESSION['userMerlaTrav']->login();
+                $createdBy = $_SESSION['userImmoERPV2']->login();
                 $numeroCheque = '0';
                 if( isset($_POST['numeroCheque']) ){
                     $numeroCheque = htmlentities($_POST['numeroCheque']);
@@ -228,7 +228,7 @@
             $etatBienArabe = htmlentities($_POST['etatBienArabe']);
             $facadeArabe = htmlentities($_POST['facadeArabe']);
             $articlesArabes = htmlentities($_POST['articlesArabes']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             //create classes managers
             $locauxManager = new LocauxManager($pdo);
@@ -248,7 +248,7 @@
             $contratManager->update($newContrat);
             //Update The ReglementsPrevus Table
             //We should get the number of "ReglementPrevu" to begin our process
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $reglementPrevuNumber  = $reglementPrevuManager->getReglementNumberByCodeContrat($codeContrat);
             if ( $reglementPrevuNumber >= 1 ) {
@@ -352,7 +352,7 @@
         $idContrat = $_POST['idContrat'];
         $contratManager->hide($idContrat);
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",
@@ -384,7 +384,7 @@
         }
         $contratManager->desisterContrat($idContrat);
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Désistement",
@@ -415,7 +415,7 @@
                 $appartementManager->changeStatus($contrat->idBien(), "Vendu");
                 $contratManager->activerContrat($idContrat);
                 //add history data to db
-                $createdBy = $_SESSION['userMerlaTrav']->login();
+                $createdBy = $_SESSION['userImmoERPV2']->login();
                 $created = date('Y-m-d h:i:s');
                 $history = new History(array(
                     'action' => "Activation",
@@ -440,7 +440,7 @@
                 $locauxManager->changeStatus($contrat->idBien(), "Vendu");
                 $contratManager->activerContrat($idContrat);
                 //add history data to db
-                $createdBy = $_SESSION['userMerlaTrav']->login();
+                $createdBy = $_SESSION['userImmoERPV2']->login();
                 $created = date('Y-m-d h:i:s');
                 $history = new History(array(
                     'action' => "Activation",
@@ -489,7 +489,7 @@
             $contratManager->updateRevendre($idContrat, 0);
         }
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Modification Status Revendre",

@@ -36,7 +36,7 @@
             $montant = htmlentities($_POST['montant']);
             $modePaiement = htmlentities($_POST['modePaiement']);
             $numeroOperation = htmlentities($_POST['numeroCheque']);
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $reglement = 
             new ReglementFournisseur(array('idFournisseur' => $idFournisseur, 'idProjet' => $idProjet, 
@@ -93,7 +93,7 @@
             $montant = htmlentities($_POST['montant']);
             $modePaiement = htmlentities($_POST['modePaiement']);
             $numeroOperation = htmlentities($_POST['numeroCheque']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $reglement = 
             new ReglementFournisseur(array('id' => $idReglement, 'idFournisseur' => $idFournisseur, 
@@ -103,7 +103,7 @@
             $reglementManager->update($reglement);
             //add History data
             $nomFournisseur = $fournisseurManager->getFournisseurById($idFournisseur)->nom();
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",
@@ -130,7 +130,7 @@
         $nomFournisseur = $fournisseurManager->getFournisseurById($reglement->idFournisseur())->nom();
         $reglementManager->delete($idReglement);
         //add History data
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",

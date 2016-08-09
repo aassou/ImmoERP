@@ -32,7 +32,7 @@
             $superficie = htmlentities($_POST['superficie']);
             $prix = htmlentities($_POST['prix']);
             $fraisAchat = htmlentities($_POST['fraisAchat']);
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             
             $terrain = new Terrain(array('vendeur' => $vendeur, 'prix' => $prix,'superficie' => $superficie, 
@@ -65,7 +65,7 @@
             $superficie = htmlentities($_POST['superficie']);
             $prix = htmlentities($_POST['prix']);
             $fraisAchat = htmlentities($_POST['fraisAchat']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             
             $terrain = new Terrain(array('id' => $id, 'vendeur' => $vendeur, 'prix' => $prix,'superficie' => $superficie, 
@@ -95,7 +95,7 @@
         $emplacementTerrain = $terrainManager->getTerrainById($idTerrain)->emplacement();
         $terrainManager->delete($idTerrain);
         //add history data to db
-        $createdBy = $_SESSION['userMerlaTrav']->login();
+        $createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",

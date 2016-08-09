@@ -31,7 +31,7 @@
     			$dateOperation = htmlentities($_POST['dateOperation']);
     			$montant = htmlentities($_POST['montant']);
     			$numeroCheque = htmlentities($_POST['numeroCheque']);
-    			$createdBy = $_SESSION['userMerlaTrav']->login();
+    			$createdBy = $_SESSION['userImmoERPV2']->login();
                 $created = date('Y-m-d h:i:s');
                 //create object
                 $contratDetails = new ContratDetails(array(

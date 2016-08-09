@@ -33,7 +33,7 @@
             $adresse = htmlentities($_POST['adresse']);
             $adresseArabe = htmlentities($_POST['adresseArabe']); 
             $description = htmlentities($_POST['description']);
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $projet = 
@@ -71,7 +71,7 @@
             $adresse = htmlentities($_POST['adresse']);
             $adresseArabe = htmlentities($_POST['adresseArabe']);
             $description = htmlentities($_POST['description']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $projet = 
             new Projet(array('id' => $idProjet, 'nom' => $nom, 'nomArabe' => $nomArabe, 'titre' => $titre, 
@@ -79,7 +79,7 @@
             'description' => $description, 'updatedBy' => $updatedBy, 'updated' => $updated));
             $projetManager->update($projet);
             //add History data
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",

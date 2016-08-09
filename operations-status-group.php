@@ -13,7 +13,7 @@
     include('lib/pagination.php');
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
+    if( isset($_SESSION['userImmoERPV2']) ){
         //classes
         $projetManager = new ProjetManager($pdo);
         $clientManager = new ClientManager($pdo);
@@ -165,7 +165,7 @@
                                         $nomClient = $contratManager->getClientNameByIdContract($operation->idContrat());
                                         if ( $operation->status() == 0 ) {
                                             $action = '<a class="btn grey mini"><i class="icon-off"></i></a>'; 
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                 $status = '<a class="btn red mini" href="#validateOperation'.$operation->id().'" data-toggle="modal" data-id="'.$operation->id().'"><i class="icon-pause"></i>&nbsp;Non validé</a>';  
                                             } 
                                             else{
@@ -173,7 +173,7 @@
                                             } 
                                         } 
                                         else if ( $operation->status() == 1 ) {
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                 $status = '<a class="btn blue mini" href="#cancelOperation'.$operation->id().'" data-toggle="modal" data-id="'.$operation->id().'"><i class="icon-ok"></i>&nbsp;Validé</a>';
                                                 $action = '<a class="btn green mini" href="#hideOperation'.$operation->id().'" data-toggle="modal" data-id="'.$operation->id().'"><i class="icon-off"></i></a>';   
                                             }
@@ -384,7 +384,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
     header('Location:dashboard.php');
 }*/
 else{

@@ -30,7 +30,7 @@
 			$bug = htmlentities($_POST['bug']);
 			$lien = htmlentities($_POST['lien']);
 			$status = 0;
-			$createdBy = $_SESSION['userMerlaTrav']->login();
+			$createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $bug = new Bug(array(
@@ -57,7 +57,7 @@
         if(!empty($_POST['bug'])){
 			$bug = htmlentities($_POST['bug']);
 			$lien = htmlentities($_POST['lien']);
-			$updatedBy = $_SESSION['userMerlaTrav']->login();
+			$updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $bug = new Bug(array(
 				'id' => $idBug,

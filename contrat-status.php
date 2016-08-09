@@ -13,7 +13,7 @@
     include('lib/pagination.php');
     //classes loading end
     session_start();
-    if ( isset($_SESSION['userMerlaTrav']) ) {
+    if ( isset($_SESSION['userImmoERPV2']) ) {
         //destroy contrat-form-data session
         $projetManager = new ProjetManager($pdo);
         $clientManager = new ClientManager($pdo);
@@ -173,7 +173,7 @@
                                             }
                                             //activate the update link only for admin's profil
                                             $link = "";
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                 $link = '#updateStatusReglementPrevuEnRetards'.$element->id();
                                                 $link = '<a href="'.$link.'" data-toggle="modal" data-id="'.$element->id().'" class="btn mini red blink_me">En retard</a>';
                                             }
@@ -189,7 +189,10 @@
                                             <td><?= number_format($contrat->echeance(), 2, ',', ' ') ?>DH</td>
                                             <td><?= date('d/m/Y', strtotime($element->datePrevu())) ?></td>
                                             <td><?= $link ?></td>
-                                            <td><a href="#sendMailA<?= $element->id() ?>" data-toggle="modal" data-id="<?= $element->id() ?>" class="btn blue mini" title="Envoyer Email"><i class="icon-envelope-alt"></i></a></td>
+                                            <td>
+                                                <a href="#sendMailA<?= $element->id() ?>" data-toggle="modal" data-id="<?= $element->id() ?>" class="btn blue mini" title="Envoyer Email"><i class="icon-envelope-alt"></i></a>
+                                                <a href="#sendMailA<?= $element->id() ?>" data-toggle="modal" data-id="<?= $element->id() ?>" title="Envoyer Email"><img src="assets/img/whatsapp.png" /></a>
+                                            </td>
                                         </tr>
                                         <!-- SendMail box begin-->
                                         <div id="sendMailA<?= $element->id() ?>" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
@@ -278,7 +281,7 @@
                                             }
                                             //activate the update link only for admin's profil
                                             $link = "";
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                 $link = '#updateStatusReglementCasLibreEnRetards'.$element->id();
                                                 $link = '<a href="'.$link.'" data-toggle="modal" data-id="'.$element->id().'" class="btn mini red blink_me">En retard</a>';
                                             }
@@ -400,7 +403,7 @@
                                             }
                                             //activate the update link only for admin's profil
                                             $link = "";
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                 $link = '#updateStatusReglementPrevuToday'.$element->id();
                                                 $link = '<a href="'.$link.'" data-toggle="modal" data-id="'.$element->id().'" class="btn mini purple blink_me">En cours</a>';
                                             }
@@ -505,7 +508,7 @@
                                             }
                                             //activate the update link only for admin's profil
                                             $link = "";
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                 $link = '#updateStatusReglementCasLibreToday'.$element->id();
                                                 $link = '<a href="'.$link.'" data-toggle="modal" data-id="'.$element->id().'" class="btn mini purple blink_me">En cours</a>';
                                             }
@@ -627,7 +630,7 @@
                                             }
                                             //activate the update link only for admin's profil
                                             $link = "";
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                 $link = '#updateStatusReglementPrevuWeek'.$element->id();
                                                 $link = '<a href="'.$link.'" data-toggle="modal" data-id="'.$element->id().'" class="btn mini green">En cours</a>';
                                             }
@@ -732,7 +735,7 @@
                                             }
                                             //activate the update link only for admin's profil
                                             $link = "";
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                 $link = '#updateStatusReglementCasLibreWeek'.$element->id();
                                                 $link = '<a href="'.$link.'" data-toggle="modal" data-id="'.$element->id().'" class="btn mini green">En cours</a>';
                                             }
@@ -857,7 +860,7 @@
                                             }
                                             //activate the update link only for admin's profil
                                             $link = "";
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                 $link = '#updateStatusReglementPrevuMonth'.$element->id();
                                                 $link = '<a href="'.$link.'" data-toggle="modal" data-id="'.$element->id().'" class="btn mini blue">En cours</a>';
                                             }
@@ -962,7 +965,7 @@
                                             }
                                             //activate the update link only for admin's profil
                                             $link = "";
-                                            if ( $_SESSION['userMerlaTrav']->profil() == "admin" ) {
+                                            if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                                 $link = '#updateStatusReglementCasLibreMonth'.$element->id();
                                                 $link = '<a href="'.$link.'" data-toggle="modal" data-id="'.$element->id().'" class="btn mini blue">En cours</a>';
                                             }
@@ -1107,7 +1110,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
     header('Location:dashboard.php');
 }*/
 else{

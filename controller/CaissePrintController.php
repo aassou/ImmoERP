@@ -12,35 +12,29 @@
     include('../config.php');  
     //classes loading end
     session_start();
-    if( isset($_SESSION['userMerlaTrav']) ){
+    if( isset($_SESSION['userImmoERPV2']) ){
         //classes managers  
         $projetManager = new ProjetManager($pdo);
-        $caisseManager = "";
+        $caisseManager = new CaisseManager($pdo);
+        $companyManager = new CompanyManager($pdo);
+        //objs and vars
+        $companyID = htmlentities($_POST['companyID']);
         $projets = $projetManager->getProjets();
-        $titre = "";
+        $company = $companyManager->getCompanyById($companyID);
+        $titre = $company->nom();
         $caisses = "";
         $titreDocument = "";
         $totalCaisse = 0;
-        $societe = htmlentities($_POST['societe']);
-        if ( $societe == 1 ) {
-            $caisseManager = new CaisseManager($pdo);
-            $titre = "Société Annahda";
-        }
-        else if ( $societe == 2 ) {
-            $caisseManager = new CaisseIaazaManager($pdo);
-            $titre = "Société Iaaza";
-        }
-        
         $criteria = htmlentities($_POST['criteria']);
         if( $criteria=="parDate" ) {
             $dateFrom = htmlentities($_POST['dateFrom']);
             $dateTo = htmlentities($_POST['dateTo']); 
             $type = htmlentities($_POST['type']);
             if( $type == "Toutes" ) {
-                $caisses = $caisseManager->getCaissesByDates($dateFrom, $dateTo);
+                $caisses = $caisseManager->getCaissesByDates($dateFrom, $dateTo, $companyID);
                 $titreDocument = "Liste des opérations entre : ".date('d/m/Y', strtotime($dateFrom)).' - '.date('d/m/Y', strtotime($dateTo));
                 $totalCaisse = 
-                $caisseManager->getTotalCaisseByTypeByDate('Entree', $dateFrom, $dateTo) - $caisseManager->getTotalCaisseByTypeByDate('Sortie', $dateFrom, $dateTo);   
+                $caisseManager->getTotalCaisseByTypeByDate('Entree', $dateFrom, $dateTo, $companyID) - $caisseManager->getTotalCaisseByTypeByDate('Sortie', $dateFrom, $dateTo, $companyID);   
             }
             else {
                 $caisses = $caisseManager->getCaissesByDatesByType($dateFrom, $dateTo, $type);

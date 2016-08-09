@@ -13,13 +13,17 @@
     include('lib/pagination.php');
     //classes loading end
     session_start();
-    if ( isset($_SESSION['userMerlaTrav']) ) {
+    if ( isset($_SESSION['userImmoERPV2']) ) {
+        //post processing
+        $companyID = htmlentities($_GET['companyID']);
         //classManagers
+        $companyManager = new CompanyManager($pdo);
         $projetManager = new ProjetManager($pdo);
         $fournisseurManager = new FournisseurManager($pdo);
         $commandeManager = new CommandeManager($pdo);
         $commandeDetailManager = new CommandeDetailManager($pdo);
-        //classes and vars
+        //objs and vars
+        $company = $companyManager->getCompanyById($companyID);
         $commandes = "";
         $projets = $projetManager->getProjets();
         $fournisseurs = $fournisseurManager->getFournisseurs();
@@ -28,7 +32,7 @@
         if( isset($_GET['mois']) and isset($_GET['annee']) ){
             $mois = $_GET['mois'];
             $annee = $_GET['annee'];
-            $commandes = $commandeManager->getCommandesByMonthYear($mois, $annee);
+            $commandes = $commandeManager->getCommandesByMonthYear($mois, $annee, $companyID);
         }       
 ?>
 <!DOCTYPE html>
@@ -81,17 +85,22 @@
                     <div class="span12">
                         <!-- BEGIN PAGE TITLE & BREADCRUMB-->           
                         <h3 class="page-title">
-                            Gestion des commandes - Société Iaaza</strong>
+                            Gestion des commandes</strong>
                         </h3>
                         <ul class="breadcrumb">
                             <li>
                                 <i class="icon-home"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <a href="company-choice.php">Accueil</a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
-                                <i class="icon-truck"></i>
-                                <a href="commande-group-iaaza.php">Gestion des commandes <strong>Société Iaaza</strong></a>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $company->id() ?>">Société <?= $company->nom() ?></a> 
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <i class="icon-shopping-cart"></i>
+                                <a href="commande-group.php?companyID=<?= $companyID ?>">Gestion des commandes</a>
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
@@ -155,7 +164,8 @@
                                     <div class="control-group">
                                         <div class="controls">  
                                             <input type="hidden" name="action" value="add" />
-                                            <input type="hidden" name="source" value="commande-mois-annee-iaaza" />
+                                            <input type="hidden" name="source" value="commande-mois-annee" />
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                             <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
                                             <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />    
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
@@ -234,8 +244,8 @@
                                             <td>                             
                                                 <?php
                                                 if ( 
-                                                    $_SESSION['userMerlaTrav']->profil() == "admin" ||
-                                                    $_SESSION['userMerlaTrav']->profil() == "manager" 
+                                                    $_SESSION['userImmoERPV2']->profil() == "admin" ||
+                                                    $_SESSION['userImmoERPV2']->profil() == "manager" 
                                                     ) {
                                                 ?>                               
                                                 <a class="btn mini green" href="#updateCommande<?= $commande->id();?>" data-toggle="modal" data-id="<?= $commande->id(); ?>" title="Modifier">
@@ -247,10 +257,10 @@
                                                 <?php
                                                 }
                                                 ?>
-                                                <a class="btn mini" href="commande-details-iaaza.php?codeCommande=<?= $commande->codeLivraison() ?>&mois=<?= $_GET['mois'] ?>&annee=<?= $_GET['annee'] ?>" title="Voir Détail Commande" >
+                                                <a class="btn mini" href="commande-details.php?codeCommande=<?= $commande->codeLivraison() ?>&mois=<?= $_GET['mois'] ?>&annee=<?= $_GET['annee'] ?>&companyID=<?= $companyID ?>" title="Voir Détail Commande" >
                                                     <i class="icon-eye-open"></i>
                                                 </a>
-                                                <a class="btn mini blue" href="controller/CommandePrintController.php?idCommande=<?= $commande->id() ?>&societe=2" title="Imprimer Bon Commande" >
+                                                <a class="btn mini blue" target="_blank" href="controller/CommandePrintController.php?idCommande=<?= $commande->id() ?>&companyID=<?= $companyID ?>" title="Imprimer Bon Commande" >
                                                     <i class="icon-print"></i>
                                                 </a>
                                             </td>
@@ -318,9 +328,10 @@
                                                     <div class="control-group">
                                                         <div class="controls">  
                                                             <input type="hidden" name="action" value="update" />
+                                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                                             <input type="hidden" name="idCommande" value="<?= $commande->id() ?>" />
                                                             <input type="hidden" name="codeCommande" value="<?= $commande->codeLivraison() ?>" />
-                                                            <input type="hidden" name="source" value="commande-mois-annee-iaaza" />
+                                                            <input type="hidden" name="source" value="commande-mois-annee" />
                                                             <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
                                                             <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />  
                                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
@@ -343,9 +354,10 @@
                                                     <div class="control-group">
                                                         <label class="right-label"></label>
                                                         <input type="hidden" name="action" value="delete" />
+                                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                                         <input type="hidden" name="idCommande" value="<?= $commande->id() ?>" />
                                                         <input type="hidden" name="codeCommande" value="<?= $commande->codeLivraison() ?>" />
-                                                        <input type="hidden" name="source" value="commande-mois-annee-iaaza" />
+                                                        <input type="hidden" name="source" value="commande-mois-annee" />
                                                         <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
                                                         <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />  
                                                         <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
@@ -424,7 +436,7 @@
 </html>
 <?php
 }
-/*else if(isset($_SESSION['userMerlaTrav']) and $_SESSION->profil()!="admin"){
+/*else if(isset($_SESSION['userImmoERPV2']) and $_SESSION->profil()!="admin"){
     header('Location:dashboard.php');
 }*/
 else{

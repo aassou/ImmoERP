@@ -42,7 +42,7 @@
             $quantite = htmlentities($_POST['quantite']);
             $prixUnitaire = htmlentities($_POST['prixUnitaire']);
             $idLivraison = htmlentities($_POST['idLivraison']);
-            $createdBy = $_SESSION['userMerlaTrav']->login();
+            $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             //create object
             $livraisonDetail = 
@@ -82,14 +82,14 @@
             $designation = htmlentities($_POST['designation']);
             $quantite = htmlentities($_POST['quantite']);
             $prixUnitaire = htmlentities($_POST['prixUnitaire']);
-            $updatedBy = $_SESSION['userMerlaTrav']->login();
+            $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             $livraisonDetail = 
             new LivraisonDetail(array('id' => $idLivraisonDetail, 'designation' => $designation,
             'prixUnitaire' => $prixUnitaire, 'quantite' => $quantite, 'updatedBy' => $updatedBy,
             'updated' => $updated));
             $livraisonDetailManager->update($livraisonDetail);
-            /*$createdBy = $_SESSION['userMerlaTrav']->login();
+            /*$createdBy = $_SESSION['userImmoERPV2']->login();
             //$created = date('Y-m-d h:i:s');
             $history = new History(array(
                 'action' => "Modification",
@@ -114,7 +114,7 @@
     else if($action=="delete"){
         $idLivraisonDetail = htmlentities($_POST['idLivraisonDetail']);
         $livraisonDetailManager->delete($idLivraisonDetail);
-        /*$createdBy = $_SESSION['userMerlaTrav']->login();
+        /*$createdBy = $_SESSION['userImmoERPV2']->login();
         $created = date('Y-m-d h:i:s');
         $history = new History(array(
             'action' => "Suppression",
