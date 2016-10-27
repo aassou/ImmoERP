@@ -18,8 +18,8 @@ class ProjetManager{
     //CRUD operations
     public function add(Projet $projet){
         $query = $this->_db->prepare(
-        'INSERT INTO t_projet (nom, nomArabe, titre, adresse, adresseArabe, superficie, description, budget, createdBy, created)
-        VALUES (:nom, :nomArabe, :titre, :adresse, :adresseArabe, :superficie, :description, :budget, :createdBy, :created)') 
+        'INSERT INTO t_projet (nom, nomArabe, titre, adresse, adresseArabe, superficie, description, budget, companyID, createdBy, created)
+        VALUES (:nom, :nomArabe, :titre, :adresse, :adresseArabe, :superficie, :description, :budget, :companyID, :createdBy, :created)') 
         or die(print_r($this->_db->errorInfo()));
         $query->bindValue(':nom', $projet->nom());
         $query->bindValue(':nomArabe', $projet->nomArabe());
@@ -29,6 +29,7 @@ class ProjetManager{
         $query->bindValue(':superficie', $projet->superficie());
         $query->bindValue(':description', $projet->description());
         $query->bindValue(':budget', $projet->budget());
+        $query->bindValue(':companyID', $projet->companyID());
         $query->bindValue(':created', $projet->created());
         $query->bindValue(':createdBy', $projet->createdBy());
         $query->execute();
@@ -103,6 +104,22 @@ class ProjetManager{
     public function getProjets(){
         $projets = array();
         $query = $this->_db->query('SELECT * FROM t_projet ORDER BY cast(nom as unsigned)');
+        //get result
+        while($data = $query->fetch(PDO::FETCH_ASSOC)){
+            $projets[] = new Projet($data);
+        }
+        $query->closeCursor();
+        return $projets;
+    }
+    
+    public function getProjetsByCompanyID($companyID){
+        $projets = array();
+        $query = $this->_db->prepare(
+        'SELECT * FROM t_projet 
+        WHERE companyID=:companyID
+        ORDER BY cast(nom as unsigned)');
+        $query->bindValue(':companyID', $companyID);
+        $query->execute();
         //get result
         while($data = $query->fetch(PDO::FETCH_ASSOC)){
             $projets[] = new Projet($data);

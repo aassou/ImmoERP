@@ -18,6 +18,7 @@ class Projet{
     private $_superficie;
     private $_description;
     private $_budget;
+    private $_companyID;
     private $_created;
     private $_createdBy;
     private $_updated;
@@ -75,6 +76,10 @@ class Projet{
         $this->_budget = $budget;
     }
     
+    public function setCompanyID($companyID){
+        $this->_companyID = $companyID;
+    }
+    
     public function setCreated($created){
         $this->_created = $created;
     }
@@ -127,6 +132,10 @@ class Projet{
     
     public function budget(){
         return $this->_budget;
+    }
+    
+    public function companyID(){
+        return $this->companyID;
     }
     
     public function created(){

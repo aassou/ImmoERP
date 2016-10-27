@@ -16,6 +16,7 @@
     
     //post input processing
     $action = htmlentities($_POST['action']);
+    $companyID = htmlentities($_POST['companyID']);
     //In this session variable we put all the POST, to get it in the contrats-add file
     //in case of error, and this help the user to do not put again what he filled out.
     $_SESSION['livraison-detail-data-form'] = $_POST;
@@ -62,12 +63,12 @@
             //$historyManager->add($history);
             $actionMessage = "<strong>Opération Valide</strong> : Article Ajouté avec succès.";  
             $typeMessage = "success";
-            $redirectLink = "Location:../livraisons-details.php?codeLivraison=".$codeLivraison."&mois=".$mois."&annee=".$annee;
+            $redirectLink = "Location:../livraisons-details.php?codeLivraison=$codeLivraison&mois=$mois&annee=$annee&companyID=$companyID";
         }
         else{
             $actionMessage = "<strong>Erreur Ajout Article</strong> : Vous devez vérifier les champs <strong>Prix unitaire</strong> et <strong>Quantité</strong>.";
             $typeMessage = "error";
-            $redirectLink = "Location:../livraisons-details.php?codeLivraison=".$codeLivraison."&mois=".$mois."&annee=".$annee;
+            $redirectLink = "Location:../livraisons-details.php?codeLivraison=$codeLivraison&mois=$mois&annee=$annee&companyID=$companyID";
         }
     }
     //Action Add Processing End
@@ -107,7 +108,7 @@
             $actionMessage = "<strong>Erreur Modification Article</strong> : Vous devez vérifier les champs <strong>Prix unitaire</strong> et <strong>Quantité</strong>.";
             $typeMessage = "error";
         }
-        $redirectLink = "Location:../livraisons-details.php?codeLivraison=".$codeLivraison."&mois=".$mois."&annee=".$annee;
+        $redirectLink = "Location:../livraisons-details.php?codeLivraison=$codeLivraison&mois=$mois&annee=$annee&companyID=$companyID";
     }
     //Action Update Processing End
     //Action Delete Processing Begin
@@ -127,7 +128,7 @@
         $historyManager->add($history);*/
         $actionMessage = "<strong>Opération Valide</strong> : Article Supprimé avec succès.";
         $typeMessage = "success";
-        $redirectLink = "Location:../livraisons-details.php?codeLivraison=".$codeLivraison."&mois=".$mois."&annee=".$annee;
+        $redirectLink = "Location:../livraisons-details.php?codeLivraison=$codeLivraison&mois=$mois&annee=$annee&companyID=$companyID";
     }
     //Action Delete Processing End
     $_SESSION['livraison-detail-action-message'] = $actionMessage;

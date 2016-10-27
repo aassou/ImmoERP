@@ -9,36 +9,37 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('config.php');  
-    include('lib/pagination.php');
+    include('config/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
+        $companyID = $_GET['companyID'];
         //classManagers
-        $projetManager = new ProjetManager($pdo);
-        $fournisseurManager = new FournisseurManager($pdo);
-        $livraisonManager = new LivraisonManager($pdo);
-        $livraisonDetailManager = new LivraisonDetailManager($pdo);
-        $reglementsFournisseurManager = new ReglementFournisseurManager($pdo);
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+        $livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
+        $livraisonDetailManager = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
+        $reglementsFournisseurManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
         //classes and vars
-        $projets = $projetManager->getProjets();
+        $company = $companyManager->getCompanyById($companyID);
+        $projets = $projetManager->getProjetsByCompanyID($companyID);
         $fournisseurs = $fournisseurManager->getFournisseurs();
-        $projet = $projetManager->getProjets();
         $livraisonNumber = 0;
         $totalReglement = 0;
         $totalLivraison = 0;
         $titreLivraison ="Liste de toutes les livraisons";
-        $hrefLivraisonBilanPrintController = "controller/Livraison2BilanPrintController.php";
+        $hrefLivraisonBilanPrintController = "controller/LivraisonBilanPrintController.php";
         $livraisonListDeleteLink = "";
-        $titreLivraison ="Société Annahda";
-        $livraisonNumber = $livraisonManager->getLivraisonNumber();
+        $titreLivraison = $company->nom();
+        $livraisonNumber = $livraisonManager->getLivraisonNumber($companyID);
         //if($livraisonNumber != 0){
         $idFournisseur = $_GET['idFournisseur'];
         $livraisons = $livraisonManager->getLivraisonsByFournisseurGroupByMonth($idFournisseur);
         
         $totalReglement = $reglementsFournisseurManager->getTotalReglement();
         $totalLivraison = $livraisonDetailManager->getTotalLivraison(); 
-        $hrefLivraisonBilanPrintController = "controller/Livraison2BilanPrintController.php?societe=1";
+        $hrefLivraisonBilanPrintController = "controller/LivraisonBilanPrintController.php?companyID=$companyID";
         //}
 ?>
 <!DOCTYPE html>
@@ -91,21 +92,26 @@
                     <div class="span12">
                         <!-- BEGIN PAGE TITLE & BREADCRUMB-->           
                         <h3 class="page-title">
-                            Gestion des livraisons - <strong><?= $titreLivraison ?></strong>
+                            Gestion des livraisons
                         </h3>
                         <ul class="breadcrumb">
                             <li>
                                 <i class="icon-home"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <a href="company-choice.php">Accueil</a>  
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $companyID ?>">Société <?= $company->nom() ?></a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
                                 <i class="icon-truck"></i>
-                                <a href="livraisons-group.php">Gestion des livraisons <strong>Société Annahda</strong></a>
+                                <a href="livraisons-group.php?companyID=<?= $companyID ?>">Gestion des livraisons</a>
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
-                                <a>Livraisons de <strong><?= $fournisseurManager->getFournisseurById($idFournisseur)->nom() ?></strong></a>
+                                <a><strong><?= ucfirst($fournisseurManager->getFournisseurById($idFournisseur)->nom()) ?></strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->
@@ -364,7 +370,7 @@
                                         <tr class="livraisons">
                                             <td>
                                                 <div style="width: 200px">
-                                                    <a class="btn mini" href="livraisons-fournisseur-mois-list.php?idFournisseur=<?= $livraison->idFournisseur() ?>&mois=<?= $mois ?>&annee=<?= $annee ?>">
+                                                    <a class="btn mini" href="livraisons-fournisseur-mois-list.php?idFournisseur=<?= $livraison->idFournisseur() ?>&mois=<?= $mois ?>&annee=<?= $annee ?>&companyID=<?= $companyID ?>">
                                                         <strong><?= date('m / Y', strtotime($livraison->dateLivraison())) ?></strong>
                                                     </a>
                                                 </div>

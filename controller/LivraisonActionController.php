@@ -61,22 +61,22 @@
             $historyManager->add($history);
             $actionMessage = "<strong>Opération Valide</strong> : Livraison Ajoutée avec succès.";  
             $typeMessage = "success";
-            $redirectLink = "Location:../livraisons-details.php?codeLivraison=".$codeLivraison."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
+            $redirectLink = "Location:../livraisons-details.php?codeLivraison=$codeLivraison&mois=$mois&annee=$annee&companyID=$companyID";
         }
         else{
             $actionMessage = "<strong>Erreur Ajout Livraison</strong> : Vous devez remplir le champ <strong>N° BL</strong>.";
             $typeMessage = "error";
             //test the source of this request for the reason of exact redirection
             if ( isset($_POST['source']) and $_POST['source'] == "livraisons-group" ) {
-                $redirectLink = "Location:../livraisons-group.php?companyID=".$companyID;    
+                $redirectLink = "Location:../livraisons-group.php?companyID=$companyID";    
             }
             else if ( isset($_POST['source']) and $_POST['source'] == "livraisons-fournisseur-mois" ) {
-                $redirectLink = "Location:../livraisons-fournisseur-mois.php?idFournisseur=".$idFournisseur."&companyID=".$companyID;    
+                $redirectLink = "Location:../livraisons-fournisseur-mois.php?idFournisseur=$idFournisseur&companyID=$companyID";    
             }
             else if ( isset($_POST['source']) and $_POST['source'] == "livraisons-fournisseur-mois-list" ) {
                 $mois = htmlentities($_POST['mois']);
                 $annee = htmlentities($_POST['annee']);
-                $redirectLink = "Location:../livraisons-fournisseur-mois-list.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;    
+                $redirectLink = "Location:../livraisons-fournisseur-mois-list.php?idFournisseur=$idFournisseur&mois=$mois&annee=$annee&companyID=.$companyID";    
             }
         }
     }

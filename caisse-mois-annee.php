@@ -9,8 +9,7 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('config.php');  
-    include('lib/pagination.php');
+    include('config/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
@@ -19,9 +18,9 @@
         $mois = $_GET['mois'];
         $annee = $_GET['annee'];
         //class managers
-        $projetManager = new ProjetManager($pdo);
-        $caisseManager = new CaisseManager($pdo);
-        $companyManager = new CompanyManager($pdo);
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $caisseManager = new CaisseManager(PDOFactory::getMysqlConnection());
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
         //objs and vars
         $company = $companyManager->getCompanyById($companyID);
         $projets = $projetManager->getProjets();    
@@ -85,7 +84,7 @@
                         <ul class="breadcrumb">
                             <li>
                                 <i class="icon-home"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <a href="company-choice.php">Accueil</a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>

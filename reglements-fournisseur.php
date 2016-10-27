@@ -9,20 +9,22 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('config.php');  
-    include('lib/pagination.php');
+    include('config/PDOFactory.php');  
     //classes loading end
     session_start();
     if ( isset($_SESSION['userImmoERPV2']) ) {
+        $companyID = $_GET['companyID'];
         //classManagers
-        $projetManager = new ProjetManager($pdo);
-        $fournisseurManager = new FournisseurManager($pdo);
-        $livraisonManager = new LivraisonManager($pdo);
-        $livraisonDetailManager = new LivraisonDetailManager($pdo);
-        $reglementsFournisseurManager = new ReglementFournisseurManager($pdo);
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+        $livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
+        $livraisonDetailManager = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
+        $reglementsFournisseurManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
         //classes and vars
         $idFournisseur = 0;
-        $projets = $projetManager->getProjets();
+        $company = $companyManager->getCompanyById($companyID);
+        $projets = $projetManager->getProjetsByCompanyID($companyID);
         $fournisseurs = $fournisseurManager->getFournisseurs();
         $projet = $projetManager->getProjets();
         $livraisonNumber = 0;
@@ -100,21 +102,29 @@
                     <div class="span12">
                         <!-- BEGIN PAGE TITLE & BREADCRUMB-->           
                         <h3 class="page-title">
-                            Détails des réglements - Fournisseur : <strong><?= $fournisseurManager->getFournisseurById($idFournisseur)->nom() ?></strong>
+                            Réglements des livraisons
                         </h3>
                         <ul class="breadcrumb">
                             <li>
                                 <i class="icon-home"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <a href="company-choice.php">Accueil</a> 
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $companyID ?>">Société <?= $company->nom() ?></a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
                                 <i class="icon-truck"></i>
-                                <a href="livraisons-group.php">Gestion des livraisons <strong>Société Annahda</strong></a>
+                                <a href="livraisons-group.php?companyID=<?= $companyID ?>">Gestion des livraisons
+                                <i class="icon-angle-right"></i>
+                                <?= ucfirst($fournisseurManager->getFournisseurById($idFournisseur)->nom()) ?>
+                                </a>
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
-                                <a>Détails des réglement - Fournisseur <strong><?= $fournisseurManager->getFournisseurById($idFournisseur)->nom() ?></strong></a>
+                                <a><strong>Réglements des livraisons</strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->
@@ -144,12 +154,12 @@
                         ?>
                         <!-- addReglement box begin-->
                         <div id="addReglement" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                <h3>Nouveau réglement - <strong><?= $fournisseurManager->getFournisseurById($_GET['idFournisseur'])->nom() ?></strong></h3>
-                            </div>
-                            <div class="modal-body">
-                                <form id="addReglementForm" class="form-horizontal" action="controller/ReglementFournisseurActionController.php" method="post">
+                            <form id="addReglementForm" class="form-horizontal" action="controller/ReglementFournisseurActionController.php" method="post">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                    <h3>Nouveau réglement - <strong><?= ucfirst($fournisseurManager->getFournisseurById($_GET['idFournisseur'])->nom()) ?></strong></h3>
+                                </div>
+                                <div class="modal-body">
                                     <div class="control-group">
                                         <label class="control-label">Fournisseur</label>
                                         <div class="controls">
@@ -207,44 +217,29 @@
                                           </div>
                                        </div>
                                     </div>
+                                </div>
+                                <div class="modal-footer">
                                     <div class="control-group">
+                                        <input type="hidden" name="action" value="add">
+                                        <input type="hidden" name="source" value="reglements-fournisseur">  
+                                        <input type="hidden" name="idFournisseur" value="<?= $_GET['idFournisseur'] ?>" />
+                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                         <div class="controls">
-                                            <input type="hidden" name="action" value="add">
-                                            <input type="hidden" name="source" value="reglements-fournisseur">  
-                                            <input type="hidden" name="idFournisseur" value="<?= $_GET['idFournisseur'] ?>" />
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
-                        </div>
-                        <!-- addReglement box end -->
-                        <!--div class="row-fluid">
-                            <form action="" method="get">
-                                <div class="input-box autocomplet_container">
-                                    <input class="m-wrap" name="projet" id="nomProjet" type="text" placeholder="Recherche..." />
-                                    <input class="m-wrap" name="projet" id="nomProjet" type="text" onkeyup="autocompletProjet()" placeholder="Projet">
-                                        <ul id="projetList"></ul>
-                                    </input>
-                                    <input name="idFournisseur" id="idFournisseur" type="hidden" />
-                                    <input name="idProjet" id="idProjet" type="hidden" />
-                                    <button type="submit" class="btn red"><i class="icon-search"></i></button>
-                                    <a href="#printBilanFournisseur" class="btn blue pull-right" data-toggle="modal">
-                                        <i class="icon-print"></i>&nbsp;Imprimer Bilan
-                                    </a>
                                 </div>
                             </form>
-                        </div-->
+                        </div>
                         <!-- printCharge box begin-->
                         <div id="printBilanFournisseur" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                <h3><i class="icon-print"></i>&nbsp;Bilan de <strong><?= $fournisseurManager->getFournisseurById($idFournisseur)->nom() ?></strong></h3>
-                            </div>
-                            <div class="modal-body">
-                                <form class="form-horizontal" action="controller/BilanFournisseurPrintController.php" method="post" enctype="multipart/form-data">
-                                    <!--p><strong>Séléctionner les charges à imprimer</strong></p-->
+                            <form target="_blank" class="form-horizontal" action="controller/BilanFournisseurPrintController.php" method="post" enctype="multipart/form-data">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                    <h3><i class="icon-print"></i>&nbsp;Bilan de <strong><?= ucfirst($fournisseurManager->getFournisseurById($idFournisseur)->nom()) ?></strong></h3>
+                                </div>
+                                <div class="modal-body">
                                     <div class="control-group">
                                       <label class="control-label">Imprimer</label>
                                       <div class="controls">
@@ -293,16 +288,18 @@
                                           </div>
                                        </div>
                                    </div>
+                                </div>
+                                <div class="modal-footer">
                                     <div class="control-group">
+                                        <input type="hidden" name="idFournisseur" value="<?= $idFournisseur ?>" />
+                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                         <div class="controls">
-                                            <input type="hidden" name="idFournisseur" value="<?= $idFournisseur ?>" />
-                                            <input type="hidden" name="societe" value="1" />
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                         <!-- printCharge box end -->
                         <!-- BEGIN Terrain TABLE PORTLET-->
@@ -334,18 +331,6 @@
                             unset($_SESSION['reglement-action-message']);
                             unset($_SESSION['reglement-type-message']);
                          ?>
-                        <!--table class="table table-striped table-bordered table-advance table-hover">
-                            <tbody>
-                                <tr>
-                                    <th style="width: 15%"><strong>Σ Total Livraisons</strong></th>
-                                    <th style="width: 15%"><strong><a><?php //number_format($totalLivraison, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
-                                    <th style="width: 15%"><strong>Σ Total Réglements</strong></th>
-                                    <th style="width: 15%"><strong><a><?php //number_format($totalReglement, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
-                                    <th style="width: 15%"><strong>Σ Solde</strong></th>
-                                    <th style="width: 15%"><strong><a><?php //number_format($totalLivraison-$totalReglement, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
-                                </tr>
-                            </tbody>
-                        </table-->
                         <div class="portlet box light-grey">
                             <div class="portlet-title">
                                 <h4>Détails des réglements : <?= $fournisseurManager->getFournisseurById($idFournisseur)->nom() ?></h4>
@@ -360,17 +345,8 @@
                                             <i class="icon-print"></i>&nbsp;Imprimer Bilan
                                         </a>
                                     </div>
-                                    <!--div class="btn-group pull-right">
-                                        <button class="btn dropdown-toggle" data-toggle="dropdown">Tools <i class="icon-angle-down"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="#">Print</a></li>
-                                            <li><a href="#">Save as PDF</a></li>
-                                            <li><a href="#">Export to Excel</a></li>
-                                        </ul>
-                                    </div-->
                                 </div>
-                            <table class="table table-striped table-bordered table-hover" id="sample_1">
+                                <table class="table table-striped table-bordered table-hover" id="sample_1">
                                     <thead>
                                         <tr>
                                             <?php
@@ -390,10 +366,7 @@
                                             <th style="width: 20%">Numéro Opération</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <!--form action="LivraisonListDeleteController.php<?= $livraisonListDeleteLink ?>" method="post">
-                                            <button type="submit" class="btn red">Supprimer les livraisons sélectionnées</button>
-                                            <br-->                                          
+                                    <tbody>                    
                                         <?php
                                         foreach($reglements as $reglement){
                                             $destination = "Plusieurs Projets";
@@ -430,12 +403,12 @@
                                         </tr>
                                         <!-- updateReglement box begin-->
                                         <div id="updateReglement<?= $reglement->id() ?>" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                                <h3>Modifier réglement - <strong><?= $fournisseurManager->getFournisseurById($_GET['idFournisseur'])->nom() ?></strong></h3>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form id="addReglementForm" class="form-horizontal" action="controller/ReglementFournisseurActionController.php" method="post">
+                                            <form id="addReglementForm" class="form-horizontal" action="controller/ReglementFournisseurActionController.php" method="post">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                                    <h3>Modifier réglement - <strong><?= ucfirst($fournisseurManager->getFournisseurById($_GET['idFournisseur'])->nom()) ?></strong></h3>
+                                                </div>
+                                                <div class="modal-body">
                                                     <div class="control-group">
                                                         <label class="control-label">Fournisseur</label>
                                                         <div class="controls">
@@ -495,63 +468,54 @@
                                                           </div>
                                                        </div>
                                                     </div>
+                                                </div>
+                                                <div class="modal-footer">
                                                     <div class="control-group">
+                                                        <input type="hidden" name="action" value="update">
+                                                        <input type="hidden" name="source" value="reglements-fournisseur">  
+                                                        <input type="hidden" name="idReglement" value="<?= $reglement->id() ?>" />
+                                                        <input type="hidden" name="idFournisseur" value="<?= $reglement->idFournisseur() ?>" />
+                                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                                         <div class="controls">
-                                                            <input type="hidden" name="action" value="update">
-                                                            <input type="hidden" name="source" value="reglements-fournisseur">  
-                                                            <input type="hidden" name="idReglement" value="<?= $reglement->id() ?>" />
-                                                            <input type="hidden" name="idFournisseur" value="<?= $reglement->idFournisseur() ?>" />
                                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                                         </div>
                                                     </div>
-                                                </form>
-                                            </div>
+                                                </div>
+                                            </form>
                                         </div>
                                         <!-- updateLivraison box end -->            
                                         <!-- delete box begin-->
                                         <div id="deleteReglement<?= $reglement->id() ?>" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                                <h3>Supprimer le réglement</h3>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form class="form-horizontal loginFrm" action="controller/ReglementFournisseurActionController.php" method="post">
-                                                    <p>Êtes-vous sûr de vouloir supprimer le réglement ?</p>
+                                            <form class="form-horizontal loginFrm" action="controller/ReglementFournisseurActionController.php" method="post">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                                    <h3>Supprimer le réglement</h3>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p class="dangerous-action">Êtes-vous sûr de vouloir supprimer le réglement ?</p>
+                                                </div>
+                                                <div class="modal-footer">
                                                     <div class="control-group">
                                                         <label class="right-label"></label>
                                                         <input type="hidden" name="action" value="delete" />
                                                         <input type="hidden" name="idReglement" value="<?= $reglement->id() ?>" />
                                                         <input type="hidden" name="idFournisseur" value="<?= $reglement->idFournisseur() ?>" />
-                                                        <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
-                                                        <button type="submit" class="btn red" aria-hidden="true">Oui</button>
+                                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />
+                                                        <div class="controls">
+                                                            <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
+                                                            <button type="submit" class="btn red" aria-hidden="true">Oui</button>
+                                                        </div>
                                                     </div>
-                                                </form>
-                                            </div>
+                                                </div>
+                                            </form>
                                         </div>
                                         <!-- delete box end --> 
                                         <?php
                                         }//end of loop
                                         ?>
                                     </tbody>
-                                    <?php
-                                    /*if($livraisonNumber != 0){
-                                        echo $pagination;   
-                                    }*/
-                                    ?>
                                 </table>
-                                <!--table class="table table-striped table-bordered table-advance table-hover">
-                                    <tbody>
-                                        <tr>
-                                            <th style="width: 15%"><strong>Σ Total Livraisons</strong></th>
-                                            <th style="width: 15%"><strong><a id="totalLivraison"><?php //number_format($totalLivraison, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
-                                            <th style="width: 15%"><strong>Σ Total Réglements</strong></th>
-                                            <th style="width: 15%"><strong><a><?php //number_format($totalReglement, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
-                                            <th style="width: 15%"><strong>Σ Solde</strong></th>
-                                            <th style="width: 15%"><strong><a><?php //number_format($totalLivraison-$totalReglement, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
-                                        </tr>
-                                    </tbody>
-                                </table-->
                                 </div><!-- END DIV SCROLLER -->    
                             </div>
                         </div>

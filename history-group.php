@@ -9,13 +9,12 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('config.php');  
-    include('lib/pagination.php');
+    include('config/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
         //les sources
-        $historyManager = new HistoryManager($pdo);    
+        $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());    
         $histories =$historyManager->getHistoryGroupByMonth();
 ?>
 <!DOCTYPE html>

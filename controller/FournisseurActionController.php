@@ -16,6 +16,7 @@
     
     //post input processing
     $action = htmlentities($_POST['action']);
+    $companyID = htmlentities($_POST['companyID']);
     //In this session variable we put all the POST, to get it in the contrats-add file
     //in case of error, and this help the user to do not put again what he filled out.
     $_SESSION['fournisseur-data-form'] = $_POST;
@@ -69,12 +70,9 @@
             $typeMessage = "error";
         }
         //in this line we specify the response url basing on the source of our request
-        $redirectLink = "Location:../fournisseurs.php";
+        $redirectLink = "Location:../fournisseurs.php?companyID=".$companyID;
         if( isset($_POST['source']) and $_POST['source']=='livraisons-group' ) {
-            $redirectLink = "Location:../livraisons-group.php";   
-        }
-        else if( isset($_POST['source']) and $_POST['source']=='livraisons-group-iaaza' ) {
-            $redirectLink = "Location:../livraisons-group-iaaza.php";   
+            $redirectLink = "Location:../livraisons-group.php?companyID=".$companyID;   
         }
     }
     //Action Add Processing End
@@ -114,7 +112,7 @@
             $actionMessage = "<strong>Erreur Modification Fournisseur</strong> : Vous devez remplir le champ <strong>Nom</strong>.";
             $typeMessage = "error";
         }
-        $redirectLink = "Location:../fournisseurs.php";
+        $redirectLink = "Location:../fournisseurs.php?companyID=".$companyID;
     }
     //Action Update Processing End
     //Action Delete Processing Begin
@@ -136,7 +134,7 @@
         $historyManager->add($history);
         $actionMessage = "<strong>Opération Valide</strong> : fournisseur Supprimée avec succès.";
         $typeMessage = "success";
-        $redirectLink = "Location:../fournisseurs.php";
+        $redirectLink = "Location:../fournisseurs.php?companyID=".$companyID;
     }
     //Action Delete Processing End
     $_SESSION['fournisseur-action-message'] = $actionMessage;

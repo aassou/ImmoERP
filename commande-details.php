@@ -9,8 +9,7 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('config.php');  
-    include('lib/pagination.php');
+    include('config/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
@@ -19,11 +18,11 @@
         $mois = htmlentities($_GET['mois']);
         $annee = htmlentities($_GET['annee']);
         //classManagers
-        $companyManager = new CompanyManager($pdo);
-        $projetManager = new ProjetManager($pdo);
-        $fournisseurManager = new FournisseurManager($pdo);
-        $commandeManager = new CommandeManager($pdo);
-        $commandeDetailManager = new CommandeDetailManager($pdo);
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+        $commandeManager = new CommandeManager(PDOFactory::getMysqlConnection());
+        $commandeDetailManager = new CommandeDetailManager(PDOFactory::getMysqlConnection());
         //objs and vars
         $company = $companyManager->getCompanyById($companyID);
         $commandeDetailNumber = 0;
@@ -33,7 +32,7 @@
         $nomProjet = "Non mentionné";
         $idProjet = "";
         $fournisseurs = $fournisseurManager->getFournisseurs();
-        $projets = $projetManager->getProjets();
+        $projets = $projetManager->getProjetsByCompanyID($companyID);
         if( isset($_GET['codeCommande']) ){
             $commande = $commandeManager->getCommandeByCode($_GET['codeCommande']);
             $fournisseur = $fournisseurManager->getFournisseurById($commande->idFournisseur());
@@ -163,7 +162,7 @@
                                     <div class="span3">
                                       <div class="control-group">
                                          <div class="controls">
-                                           <a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 200px">
+                                           <a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 245px">
                                                <strong>N° Commande : <?= $commande->numeroCommande() ?></strong>
                                            </a>
                                          </div>
@@ -172,7 +171,7 @@
                                    <div class="span3">
                                       <div class="control-group">
                                          <div class="controls">
-                                            <a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 200px">
+                                            <a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 245px">
                                                 <strong>Nombre Articles : <?= $nombreArticle ?></strong>
                                             </a>   
                                          </div>
@@ -181,7 +180,7 @@
                                     <div class="span3">
                                       <div class="control-group">
                                          <div class="controls">
-                                            <a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 200px">
+                                            <a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 245px">
                                                 <strong>Date Commande : <?= date('d/m/Y', strtotime($commande->dateCommande())) ?></strong>
                                             </a>
                                          </div>
@@ -190,7 +189,7 @@
                                     <div class="span3">
                                       <div class="control-group">
                                          <div class="controls">
-                                            <a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 200px">
+                                            <a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 245px">
                                                 <strong>Projet : <?= $nomProjet ?></strong>
                                             </a>   
                                          </div>
@@ -200,12 +199,12 @@
                             <!-- END Livraison Form -->
                             <!-- updateLivraison box begin-->
                             <div id="updateCommande" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                    <h3>Modifier les informations de la commande </h3>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="update-livraison-form" class="form-horizontal" action="controller/CommandeActionController.php" method="post">
+                                <form id="update-livraison-form" class="form-horizontal" action="controller/CommandeActionController.php" method="post">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                        <h3>Modifier les informations de la commande </h3>
+                                    </div>
+                                    <div class="modal-body">
                                         <div class="control-group">
                                             <label class="control-label">Fournisseur</label>
                                             <div class="controls">
@@ -250,21 +249,23 @@
                                                 <input id="designation" type="text" name="designation" value="<?= $commande->designation() ?>" />
                                             </div>
                                         </div>
-                                        <div class="control-group">
-                                            <div class="controls">  
-                                                <input type="hidden" name="action" value="update" />
-                                                <input type="hidden" name="source" value="commande-details" />
-                                                <input type="hidden" name="companyID" value="<?= $companyID ?>" />
-                                                <input type="hidden" name="mois" value="<?= $mois ?>" />
-                                                <input type="hidden" name="annee" value="<?= $annee ?>" />
-                                                <input type="hidden" name="codeCommande" value="<?= $commande->codeLivraison() ?>" />
-                                                <input type="hidden" name="idCommande" value="<?= $commande->id() ?>" />    
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="control-group">  
+                                            <input type="hidden" name="action" value="update" />
+                                            <input type="hidden" name="source" value="commande-details" />
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
+                                            <input type="hidden" name="mois" value="<?= $mois ?>" />
+                                            <input type="hidden" name="annee" value="<?= $annee ?>" />
+                                            <input type="hidden" name="codeCommande" value="<?= $commande->codeLivraison() ?>" />
+                                            <input type="hidden" name="idCommande" value="<?= $commande->id() ?>" />
+                                            <div class="controls">    
                                                 <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                                 <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                             </div>
                                         </div>
-                                    </form>
-                                </div>
+                                    </div>
+                                </form>
                             </div>
                             <!-- addLivraison box end -->
                             <!-- BEGIN Ajouter Article Link -->
@@ -286,12 +287,12 @@
                             <!-- END Ajouter Article Link -->
                             <!-- BEGIN addArticle Box -->
                             <div id="addArticle" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                    <h3>Ajouter un artcile </h3>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="add-detail-commande-form" class="form-horizontal" action="controller/CommandeDetailActionController.php" method="post">
+                                <form id="add-detail-commande-form" class="form-horizontal" action="controller/CommandeDetailActionController.php" method="post">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                        <h3>Ajouter un article</h3>
+                                    </div>
+                                    <div class="modal-body">
                                         <div class="control-group">
                                             <label class="control-label">Reference</label>
                                             <div class="controls">
@@ -310,20 +311,22 @@
                                                 <input required="required" type="text" id="quantite" name="quantite" value="" />
                                             </div>  
                                         </div>
-                                        <div class="control-group">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="control-group">  
+                                            <input type="hidden" name="action" value="add" />
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
+                                            <input type="hidden" name="mois" value="<?= $mois ?>" />
+                                            <input type="hidden" name="annee" value="<?= $annee ?>" />
+                                            <input type="hidden" name="idCommande" value="<?= $commande->id() ?>" />
+                                            <input type="hidden" name="codeCommande" value="<?= $commande->codeLivraison() ?>" />
                                             <div class="controls">  
-                                                <input type="hidden" name="action" value="add" />
-                                                <input type="hidden" name="companyID" value="<?= $companyID ?>" />
-                                                <input type="hidden" name="mois" value="<?= $mois ?>" />
-                                                <input type="hidden" name="annee" value="<?= $annee ?>" />
-                                                <input type="hidden" name="idCommande" value="<?= $commande->id() ?>">
-                                                <input type="hidden" name="codeCommande" value="<?= $commande->codeLivraison() ?>">
                                                 <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                                 <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                             </div>
                                         </div>
-                                    </form>
-                                </div>
+                                    </div>
+                                </form>
                             </div>
                             <!-- END addArticle BOX -->
                             <br><br>
@@ -357,7 +360,7 @@
                                     $_SESSION['userImmoERPV2']->profil() == "user" 
                                     ) {
                                 ?>
-                                <td class="hidden-phone">
+                                <td>
                                     <a class="btn mini green" href="#updateCommandeDetail<?= $detail->id();?>" data-toggle="modal" data-id="<? $detail->id(); ?>">
                                         <i class="icon-refresh "></i>
                                     </a>
@@ -380,13 +383,12 @@
                             </tr>
                             <!-- BEGIN  updateCommandeDetail BOX -->
                             <div id="updateCommandeDetail<?= $detail->id() ?>" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                    <h3>Modifier Article </h3>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="update-detail-commande-form" class="form-horizontal" action="controller/CommandeDetailActionController.php" method="post">
-                                        <p>Êtes-vous sûr de vouloir modifier cet article ?</p>
+                                <form id="update-detail-commande-form" class="form-horizontal" action="controller/CommandeDetailActionController.php" method="post">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                        <h3>Modifier Article </h3>
+                                    </div>
+                                    <div class="modal-body">
                                         <div class="control-group">
                                             <label class="control-label" for="reference">Reference</label>
                                             <div class="controls">
@@ -405,6 +407,8 @@
                                                 <input required="required" id="quantite" name="quantite" class="m-wrap" type="text" value="<?= $detail->quantite() ?>" />
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="modal-footer">
                                         <div class="control-group">
                                             <input type="hidden" name="action" value="update" />
                                             <input type="hidden" name="companyID" value="<?= $companyID ?>" />
@@ -417,19 +421,21 @@
                                                 <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                             </div>
                                         </div>
-                                    </form>
-                                </div>
+                                    </div>
+                                </form>
                             </div>
                             <!-- END  update LivraisonDetail   BOX -->
                             <!-- BEGIN  delete LivraisonDetail BOX -->
                             <div id="deleteCommandeDetail<?= $detail->id();?>" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                    <h3>Supprimer Article</h3>
-                                </div>
-                                <div class="modal-body">
-                                    <form class="form-horizontal loginFrm" action="controller/CommandeDetailActionController.php" method="post">
-                                        <p>Êtes-vous sûr de vouloir supprimer cet article ?</p>
+                                <form class="form-horizontal loginFrm" action="controller/CommandeDetailActionController.php" method="post">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                        <h3>Supprimer Article</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p class="dangerous-action">Êtes-vous sûr de vouloir supprimer cet article <strong><?= $detail->libelle() ?></strong> ?</p>
+                                    </div>
+                                    <div class="modal-footer">
                                         <div class="control-group">
                                             <input type="hidden" name="action" value="delete" />
                                             <input type="hidden" name="companyID" value="<?= $companyID ?>" />
@@ -440,8 +446,8 @@
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
-                                    </form>
-                                </div>
+                                    </div>
+                                </form>
                             </div>
                             <!-- END delete LivraisonDetail BOX -->
                             <?php

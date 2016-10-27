@@ -1,25 +1,24 @@
 <?php
 //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('model/'.$myClass.'.php')){
-            include('model/'.$myClass.'.php');
-        }
-        elseif(file_exists('controller/'.$myClass.'.php')){
-            include('controller/'.$myClass.'.php');
-        }
+function classLoad ($myClass) {
+    if(file_exists('model/'.$myClass.'.php')){
+        include('model/'.$myClass.'.php');
     }
-    spl_autoload_register("classLoad"); 
-    include('config.php');  
-    include('lib/pagination.php');
-    //classes loading end
-    session_start();
-    if( isset($_SESSION['userImmoERPV2']) ){
-        //les sources
-        $clientsManager = new ClientManager($pdo);
-        $clientNumber = $clientsManager->getClientsNumber();
-        if($clientNumber!=0){
-            $clients = $clientsManager->getClients();     
-        }
+    elseif(file_exists('controller/'.$myClass.'.php')){
+        include('controller/'.$myClass.'.php');
+    }
+}
+spl_autoload_register("classLoad");  
+require('config/PDOFactory.php');
+//classes loading end
+session_start();
+if( isset($_SESSION['userImmoERPV2']) ){
+    //les sources
+    $clientsManager = new ClientManager(PDOFactory::getMysqlConnection());
+    $clientNumber = $clientsManager->getClientsNumber();
+    if($clientNumber!=0){
+        $clients = $clientsManager->getClients();     
+    }
 ?>
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->

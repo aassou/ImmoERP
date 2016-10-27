@@ -5081,7 +5081,11 @@ input[type="text"].input-error-text{
 .textarea-width{
 	width: 300px;
 }
-
+/* this class is used for danger messages like "Etes-vous sur de vouloir supprimer cette entrée ?" */
 .dangerous-action{
 	color: red;
+}
+/* this class is used to mention the current element menu */
+.current-menu-element{
+	font-weight: bold;
 }

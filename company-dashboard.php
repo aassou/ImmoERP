@@ -9,28 +9,27 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('config.php');  
+    include('config/PDOFactory.php');  
     //classes loading end
     session_start();
     if ( isset($_SESSION['userImmoERPV2']) ) {
         $companyID = htmlentities($_GET['companyID']);
         //classes managers
-        $companyManager = new CompanyManager($pdo);
-        $usersManager = new UserManager($pdo);
-        $mailsManager = new MailManager($pdo);
-        $notesClientsManager = new NotesClientManager($pdo);
-        $projetManager = new ProjetManager($pdo);
-        $contratManager = new ContratManager($pdo);
-        $clientManager = new ClientManager($pdo);
-        $livraisonsManager = new LivraisonManager($pdo);
-        $fournisseursManager = new FournisseurManager($pdo);
-        $caisseManager = new CaisseManager($pdo);
-        $operationsManager = new OperationManager($pdo);
-        $compteBancaire = new CompteBancaireManager($pdo);
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+        $usersManager = new UserManager(PDOFactory::getMysqlConnection());
+        $mailsManager = new MailManager(PDOFactory::getMysqlConnection());
+        $notesClientsManager = new NotesClientManager(PDOFactory::getMysqlConnection());
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $contratManager = new ContratManager(PDOFactory::getMysqlConnection());
+        $clientManager = new ClientManager(PDOFactory::getMysqlConnection());
+        $livraisonsManager = new LivraisonManager(PDOFactory::getMysqlConnection());
+        $fournisseursManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+        $caisseManager = new CaisseManager(PDOFactory::getMysqlConnection());
+        $operationsManager = new OperationManager(PDOFactory::getMysqlConnection());
+        $compteBancaire = new CompteBancaireManager(PDOFactory::getMysqlConnection());
         //classes and vars
         //users number
         $soldeCaisse = $caisseManager->getTotalCaisseByType("Entree", $companyID) - $caisseManager->getTotalCaisseByType("Sortie", $companyID);
-        $projetNumber = ($projetManager->getProjetsNumber());
         $usersNumber = $usersManager->getUsersNumber();
         $fournisseurNumber = $fournisseursManager->getFournisseurNumbers();
         $mailsNumberToday = $mailsManager->getMailsNumberToday();
@@ -113,7 +112,7 @@
                             </li>
                             <li>
                                 <i class="icon-sitemap"></i>
-                                <a>Société <?= $company->nom() ?></a>
+                                <a><strong>Société <?= $company->nom() ?></strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->
@@ -169,7 +168,6 @@
                                         Projets
                                     </div>
                                     <div class="number">
-                                        <?= $projetNumber ?>
                                     </div>
                                 </div>
                             </div>

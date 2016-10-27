@@ -9,33 +9,20 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    include('../config/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
+        $companyID = htmlentities($_POST['companyID']);
         //class manager
-        $projetManager = new ProjetManager($pdo);
-        $fournisseurManager = new FournisseurManager($pdo);
-        $livraisonManager = "";
-        $livraisonDetailManager = "";
-        $reglementsFournisseurManager = "";
-        $titreSociete = "";
-        
-        $societe = htmlentities($_POST['societe']);
-        
-        if ( $societe == 1 ) {
-            $livraisonManager = new LivraisonManager($pdo);
-            $livraisonDetailManager = new LivraisonDetailManager($pdo);
-            $reglementsFournisseurManager = new ReglementFournisseurManager($pdo);
-            $titreSociete = "Société Annahda";
-        }
-        else if ( $societe == 2 ) {
-            $livraisonManager = new LivraisonIaazaManager($pdo);
-            $livraisonDetailManager = new LivraisonDetailIaazaManager($pdo);
-            $reglementsFournisseurManager = new ReglementFournisseurIaazaManager($pdo);
-            $titreSociete = "Société Iaaza";
-        }
-        //classes and vars
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+        $livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
+        $livraisonDetailManager = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
+        $reglementsFournisseurManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
+        //obj and vars
+        $company = $companyManager->getCompanyById($companyID);
         $idFournisseur = $_POST['idFournisseur'];
         $fournisseur = $fournisseurManager->getFournisseurById($idFournisseur);
         $reglements = "";
@@ -98,6 +85,9 @@
 ob_start();
 ?>
 <style type="text/css">
+    h1, h2{
+        font-size: 16px;
+    }
     p, h1, h2, h3{
         text-align: center;
         text-decoration: underline;
@@ -118,10 +108,10 @@ ob_start();
             background-color: grey;
         }
 </style>
-<page backtop="15mm" backbottom="20mm" backleft="10mm" backright="10mm">
+<page backtop="5mm" backbottom="20mm" backleft="10mm" backright="10mm">
     <!--img src="../assets/img/logo_company.png" style="width: 110px" /-->
-    <h3><?= $titreSociete ?></h3>
-    <h3><?= $titreLivraison ?></h3>
+    <h1><?= $company->nom() ?></h1>
+    <h2><?= $titreLivraison ?></h2>
     <p>Imprimé le <?= date('d/m/Y - h:i') ?> </p>
     <br>
     <h4>Récapitulatif</h4>

@@ -9,21 +9,21 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('config.php');  
-	include('lib/pagination.php');
+    include('config/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
         //post processing
-        $companyId = htmlentities($_GET['companyID']);
+        $companyID = htmlentities($_GET['companyID']);
     	//Class Managers
-    	$companyManager = new CompanyManager($pdo);
-    	$projetManager = new ProjetManager($pdo);
-		$fournisseurManager = new FournisseurManager($pdo);
-		$livraisonManager = new LivraisonManager($pdo);
-		$livraisonDetailManager = new LivraisonDetailManager($pdo);
-		$reglementsFournisseurManager = new ReglementFournisseurManager($pdo);
+    	$companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+    	$projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+		$fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+		$livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
+		$livraisonDetailManager = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
+		$reglementsFournisseurManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
 		//objs and vars
+		$company = $companyManager->getCompanyById($companyID);
 		$livraisonDetailNumber = 0;
 		$totalReglement = 0;
 		$totalLivraison = 0;
@@ -33,7 +33,7 @@
 		$nomProjet = "Non mentionné";
         $idProjet = "";
         $fournisseurs = $fournisseurManager->getFournisseurs();
-        $projets = $projetManager->getProjets();
+        $projets = $projetManager->getProjetsByCompanyID($companyID);
 		if( isset($_GET['codeLivraison']) ){
 			$livraison = $livraisonManager->getLivraisonByCode($_GET['codeLivraison']);
 			$fournisseur = $fournisseurManager->getFournisseurById($livraison->idFournisseur());
@@ -103,32 +103,33 @@
 					<div class="span12">
 						<!-- BEGIN PAGE TITLE & BREADCRUMB-->			
 						<h3 class="page-title">
-							Gestion des livraisons - Fournisseur : <strong><?= $fournisseur->nom() ?></strong> 
+							Gestion des livraisons 
 						</h3>
 						<ul class="breadcrumb">
 							<li>
-								<i class="icon-home"></i>
-								<a href="dashboard.php">Accueil</a> 
-								<i class="icon-angle-right"></i>
-							</li>
-							<li>
-								<i class="icon-truck"></i>
-								<a href="livraisons-group.php">Gestion des livraisons <strong>Société Annahda</strong></a>
-								<i class="icon-angle-right"></i>
-							</li>
-							<li>
-                                <a href="livraisons-fournisseur-mois.php?idFournisseur=<?= $livraison->idFournisseur() ?>">
-                                    Livraisons de <strong><?= $fournisseurManager->getFournisseurById($livraison->idFournisseur())->nom() ?></strong>
-                                </a>
+                                <i class="icon-home"></i>
+                                <a href="company-choice.php">Accueil</a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
-                                <a href="livraisons-fournisseur-mois-list.php?idFournisseur=<?= $livraison->idFournisseur() ?>&mois=<?= $_GET['mois'] ?>&annee=<?= $_GET['annee'] ?>">
-                                    <strong><?= $_GET['mois'] ?>/<?= $_GET['annee'] ?></strong>
-                                </a>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $companyID ?>">Société <?= $company->nom() ?></a> 
                                 <i class="icon-angle-right"></i>
                             </li>
-							<li><a>Détails de Livraison</a></li>
+                            <li>
+                                <i class="icon-truck"></i>
+                                <a href="livraisons-group.php?companyID=<?= $companyID ?>">Gestion des livraisons</a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <a href="livraisons-fournisseur-mois.php?companyID=<?= $companyID ?>&idFournisseur=<?= $fournisseur->id() ?>"><?= ucfirst($fournisseur->nom()) ?> 
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <a href="livraisons-fournisseur-mois-list.php?idFournisseur=<?= $fournisseur->id() ?>&mois=<?= $_GET['mois'] ?>&annee=<?= $_GET['annee'] ?>&companyID=<?= $companyID ?>"><?= $_GET['mois'] ?>/<?= $_GET['annee'] ?></a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+							<li><a><strong>Détails de Livraison</strong></a></li>
 						</ul>
 						<!-- END PAGE TITLE & BREADCRUMB-->
 					</div>
@@ -169,7 +170,7 @@
 								    <div class="span3">
                                       <div class="control-group">
                                          <div class="controls">
-                                           <a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 200px">
+                                           <a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 245px">
                                                <strong>N° BL : <?= $livraison->libelle() ?></strong>
                                            </a>
                                          </div>
@@ -178,7 +179,7 @@
                                    <div class="span3">
                                       <div class="control-group">
                                          <div class="controls">
-                                            <a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 200px">
+                                            <a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 245px">
                                                 <strong>Nombre Articles : <?= $nombreArticle ?></strong>
                                             </a>   
                                          </div>
@@ -187,7 +188,7 @@
                                     <div class="span3">
                                       <div class="control-group">
                                          <div class="controls">
-                                            <a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 200px">
+                                            <a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 245px">
                                                 <strong>Date Livraison : <?= date('d/m/Y', strtotime($livraison->dateLivraison())) ?></strong>
                                             </a>
                                          </div>
@@ -196,7 +197,7 @@
 									<div class="span3">
 									  <div class="control-group">
 										 <div class="controls">
-											<a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 200px">
+											<a class="btn" href="<?= $updateLink ?>" data-toggle="modal" style="width: 245px">
 											    <strong>Projet : <?= $nomProjet ?></strong>
 										    </a>   
 										 </div>
@@ -206,12 +207,12 @@
 							<!-- END Livraison Form -->
 							<!-- updateLivraison box begin-->
                             <div id="updateLivraison" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                    <h3>Modifier les informations de la livraison </h3>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="update-livraison-form" class="form-horizontal" action="controller/LivraisonActionController.php" method="post">
+                                <form id="update-livraison-form" class="form-horizontal" action="controller/LivraisonActionController.php" method="post">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                        <h3>Modifier les informations de la livraison </h3>
+                                    </div>
+                                    <div class="modal-body">
                                         <div class="control-group">
                                             <label class="control-label">Fournisseur</label>
                                             <div class="controls">
@@ -249,24 +250,27 @@
                                                 <input required="required" id="libelle" type="text" name="libelle" value="<?= $livraison->libelle() ?>" />
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="modal-footer">
                                         <div class="control-group">
-                                            <div class="controls">  
-                                                <input type="hidden" name="action" value="update" />
-                                                <input type="hidden" name="source" value="details-livraison" />
-                                                <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
-                                                <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />
-                                                <input type="hidden" name="codeLivraison" value="<?= $livraison->code() ?>" />
-                                                <input type="hidden" name="idLivraison" value="<?= $livraison->id() ?>" />    
+                                            <input type="hidden" name="action" value="update" />
+                                            <input type="hidden" name="source" value="details-livraison" />
+                                            <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
+                                            <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />
+                                            <input type="hidden" name="codeLivraison" value="<?= $livraison->code() ?>" />
+                                            <input type="hidden" name="idLivraison" value="<?= $livraison->id() ?>" />
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
+                                            <div class="controls">    
                                                 <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                                 <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                             </div>
                                         </div>
-                                    </form>
-                                </div>
+                                    </div>
+                                </form>
                             </div>
                             <!-- addLivraison box end -->
 							<!-- BEGIN Ajouter Article Link -->
-							<a target="_blank" href="controller/LivraisonDetailPrintController.php?idLivraison=<?= $livraison->id() ?>&societe=1" class="get-down btn blue pull-right">
+							<a target="_blank" href="controller/LivraisonDetailPrintController.php?idLivraison=<?= $livraison->id() ?>&companyID=<?= $companyID ?>" class="get-down btn blue pull-right">
                                 <i class="icon-print"></i>&nbsp;Bon de livraison
                             </a>
                             <?php
@@ -284,18 +288,12 @@
 							<!-- END Ajouter Article Link -->
 							<!-- BEGIN addArticle Box -->
 							<div id="addArticle" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-									<h3>Ajouter un artcile </h3>
-								</div>
-								<div class="modal-body">
-									<form id="add-detail-livraison-form" class="form-horizontal" action="controller/LivraisonDetailsActionController.php" method="post">
-										<!--div class="control-group">
-											<label class="control-label">Libelle</label>
-											<div class="controls">
-												<input type="text" name="libelle" value="" />
-											</div>
-										</div-->
+							    <form id="add-detail-livraison-form" class="form-horizontal" action="controller/LivraisonDetailsActionController.php" method="post">
+    								<div class="modal-header">
+    									<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+    									<h3>Ajouter un artcile </h3>
+    								</div>
+    								<div class="modal-body">
 										<div class="control-group">
 											<label class="control-label">Désignation</label>
 											<div class="controls">
@@ -314,19 +312,22 @@
 												<input required="required" type="text" id="quantite" name="quantite" value="" />
 											</div>	
 										</div>
-										<div class="control-group">
-											<div class="controls">	
-											    <input type="hidden" name="action" value="add" />
-											    <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
-                                                <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />
-												<input type="hidden" name="idLivraison" value="<?= $livraison->id() ?>" />
-												<input type="hidden" name="codeLivraison" value="<?= $livraison->code() ?>" />
-												<button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
-												<button type="submit" class="btn red" aria-hidden="true">Oui</button>
-											</div>
-										</div>
-									</form>
-								</div>
+									</div>
+									<div class="modal-footer">
+									    <div class="control-group">
+									        <input type="hidden" name="action" value="add" />
+                                            <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
+                                            <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />
+                                            <input type="hidden" name="idLivraison" value="<?= $livraison->id() ?>" />
+                                            <input type="hidden" name="codeLivraison" value="<?= $livraison->code() ?>" />
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
+                                            <div class="controls">
+                                                <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
+                                                <button type="submit" class="btn red" aria-hidden="true">Oui</button>
+                                            </div>
+                                        </div>
+								    </div>
+								</form>
 							</div>
 							<!-- END addArticle BOX -->
 							<br><br>
@@ -387,13 +388,12 @@
 							</tr>
 							<!-- BEGIN  updateLivraisonDetail BOX -->
 							<div id="updateLivraisonDetail<?= $detail->id() ?>" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-									<h3>Modifier les détails de livraison </h3>
-								</div>
-								<div class="modal-body">
-									<form id="update-detail-livraison-form" class="form-horizontal" action="controller/LivraisonDetailsActionController.php" method="post">
-										<p>Êtes-vous sûr de vouloir modifier cet article ?</p>
+							    <form id="update-detail-livraison-form" class="form-horizontal" action="controller/LivraisonDetailsActionController.php" method="post">
+    								<div class="modal-header">
+    									<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+    									<h3>Modifier les détails de livraison </h3>
+    								</div>
+    								<div class="modal-body">
 										<div class="control-group">
 											<label class="control-label" for="designation">Désignation</label>
 											<div class="controls">
@@ -412,41 +412,49 @@
 												<input required="required" id="prixUnitaire" name="prixUnitaire" class="m-wrap" type="text" value="<?= $detail->prixUnitaire() ?>" />
 											</div>
 										</div>
-										<div class="control-group">
-										    <input type="hidden" name="action" value="update" />
-										    <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
+									</div>
+									<div class="modal-footer">
+									    <div class="control-group">
+                                            <input type="hidden" name="action" value="update" />
+                                            <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
                                             <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />
-											<input type="hidden" name="idLivraisonDetail" value="<?= $detail->id() ?>" />
-											<input type="hidden" name="codeLivraison" value="<?= $livraison->code() ?>" />
-											<div class="controls">	
-												<button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
-												<button type="submit" class="btn red" aria-hidden="true">Oui</button>
-											</div>
-										</div>
-									</form>
-								</div>
+                                            <input type="hidden" name="idLivraisonDetail" value="<?= $detail->id() ?>" />
+                                            <input type="hidden" name="codeLivraison" value="<?= $livraison->code() ?>" />
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
+                                            <div class="controls">  
+                                                <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
+                                                <button type="submit" class="btn red" aria-hidden="true">Oui</button>
+                                            </div>
+                                        </div>
+								    </div>
+								</form>
 							</div>
 							<!-- END  update LivraisonDetail   BOX -->
 							<!-- BEGIN  delete LivraisonDetail BOX -->
 							<div id="deleteLivraisonDetail<?= $detail->id();?>" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-									<h3>Supprimer Article</h3>
-								</div>
-								<div class="modal-body">
-									<form class="form-horizontal loginFrm" action="controller/LivraisonDetailsActionController.php" method="post">
-										<p>Êtes-vous sûr de vouloir supprimer cet article ?</p>
-										<div class="control-group">
-										    <input type="hidden" name="action" value="delete" />
-										    <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
+							    <form class="form-horizontal loginFrm" action="controller/LivraisonDetailsActionController.php" method="post">
+    								<div class="modal-header">
+    									<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+    									<h3>Supprimer Article</h3>
+    								</div>
+    								<div class="modal-body">
+										<p class="dangerous-action">Êtes-vous sûr de vouloir supprimer cet article ?</p>
+									</div>
+									<div class="modal-footer">
+									    <div class="control-group">
+                                            <input type="hidden" name="action" value="delete" />
+                                            <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
                                             <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />
-											<input type="hidden" name="idLivraisonDetail" value="<?= $detail->id() ?>" />
-											<input type="hidden" name="codeLivraison" value="<?= $livraison->code() ?>" />
-											<button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
-											<button type="submit" class="btn red" aria-hidden="true">Oui</button>
-										</div>
-									</form>
-								</div>
+                                            <input type="hidden" name="idLivraisonDetail" value="<?= $detail->id() ?>" />
+                                            <input type="hidden" name="codeLivraison" value="<?= $livraison->code() ?>" />
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
+                                            <div class="controls">
+                                                <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
+                                                <button type="submit" class="btn red" aria-hidden="true">Oui</button>
+                                            </div>
+                                        </div>
+								    </div>
+								</form>
 							</div>
 							<!-- END delete LivraisonDetail BOX -->
 							<?php

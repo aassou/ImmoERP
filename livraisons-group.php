@@ -9,20 +9,19 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('config.php');  
-    include('lib/pagination.php');
+    include('config/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
         //post processing
         $companyID = htmlentities($_GET['companyID']);
         //Class Managers
-        $companyManager = new CompanyManager($pdo);
-        $projetManager = new ProjetManager($pdo);
-        $fournisseurManager = new FournisseurManager($pdo);
-        $livraisonManager = new LivraisonManager($pdo);
-        $livraisonDetailManager = new LivraisonDetailManager($pdo);
-        $reglementsFournisseurManager = new ReglementFournisseurManager($pdo);
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+        $livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
+        $livraisonDetailManager = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
+        $reglementsFournisseurManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
         //objs and vars
         $company = $companyManager->getCompanyById($companyID);
         $projets = $projetManager->getProjets();
@@ -32,7 +31,7 @@
         $totalReglement = 0;
         $totalLivraison = 0;
         $titreLivraison ="Liste de toutes les livraisons";
-        $hrefLivraisonBilanPrintController = "controller/Livraison2BilanPrintController.php";
+        $hrefLivraisonBilanPrintController = "controller/LivraisonBilanPrintController.php";
         $livraisonListDeleteLink = "";
         $titreLivraison ="Société Annahda";
         $livraisonNumber = $livraisonManager->getLivraisonNumber($companyID);
@@ -40,7 +39,7 @@
             $livraisons = $livraisonManager->getLivraisonsByGroup($companyID);
             $totalReglement = $reglementsFournisseurManager->getTotalReglement();
             $totalLivraison = $livraisonDetailManager->getTotalLivraison(); 
-            $hrefLivraisonBilanPrintController = "controller/Livraison2BilanPrintController.php?societe=1";
+            $hrefLivraisonBilanPrintController = "controller/LivraisonBilanPrintController.php?companyID=$companyID";
         }
 ?>
 <!DOCTYPE html>
@@ -108,7 +107,7 @@
                             </li>
                             <li>
                                 <i class="icon-truck"></i>
-                                <a>Gestion des livraisons</a>
+                                <a><strong>Gestion des livraisons</strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->
@@ -153,12 +152,12 @@
                         ?>
                         <!-- addFournisseur box begin-->
                         <div id="addFournisseur" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                <h3>Ajouter un nouveau fournisseur </h3>
-                            </div>
-                            <div class="modal-body">
-                                <form class="form-horizontal" action="controller/FournisseurActionController.php" method="post">
+                            <form class="form-horizontal" action="controller/FournisseurActionController.php" method="post">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                    <h3>Ajouter un nouveau fournisseur </h3>
+                                </div>
+                                <div class="modal-body">
                                     <div class="control-group">
                                         <label class="control-label">Nom</label>
                                         <div class="controls">
@@ -195,27 +194,29 @@
                                             <input type="text" name="email" value="" />
                                         </div>  
                                     </div>
+                                </div>
+                                <div class="modal-footer">    
                                     <div class="control-group">
-                                        <div class="controls">  
-                                            <input type="hidden" name="action" value="add" />
-                                            <input type="hidden" name="source" value="livraisons-group" />
-                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
+                                        <input type="hidden" name="action" value="add" />
+                                        <input type="hidden" name="source" value="livraisons-group" />
+                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />
+                                        <div class="controls">
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                         <!-- addFournisseur box end -->
                         <!-- addLivraison box begin-->
                         <div id="addLivraison" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                <h3>Ajouter une nouvelle livraison </h3>
-                            </div>
-                            <div class="modal-body">
-                                <form id="addLivraisonForm" class="form-horizontal" action="controller/LivraisonActionController.php" method="post">
+                            <form id="addLivraisonForm" class="form-horizontal" action="controller/LivraisonActionController.php" method="post">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                    <h3>Ajouter une nouvelle livraison </h3>
+                                </div>
+                                <div class="modal-body">
                                     <div class="control-group">
                                         <label class="control-label">Fournisseur</label>
                                         <div class="controls">
@@ -256,27 +257,29 @@
                                             <input id="designation" type="text" name="designation" value="" />
                                         </div>
                                     </div>
+                                </div>
+                                <div class="modal-footer">
                                     <div class="control-group">
+                                        <input type="hidden" name="action" value="add" />
+                                        <input type="hidden" name="source" value="livraisons-group" />  
+                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                         <div class="controls">  
-                                            <input type="hidden" name="action" value="add" />
-                                            <input type="hidden" name="source" value="livraisons-group" />  
-                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />  
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
-                                    </div>
-                                </form>
-                            </div>
+                                    </div>    
+                                </div>
+                            </form>
                         </div>
                         <!-- addLivraison box end -->
                         <!-- addReglement box begin-->
                         <div id="addReglement" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                <h3>Ajouter un nouveau réglement </h3>
-                            </div>
-                            <div class="modal-body">
-                                <form id="addReglementForm" class="form-horizontal" action="controller/ReglementFournisseurActionController.php" method="post">
+                            <form id="addReglementForm" class="form-horizontal" action="controller/ReglementFournisseurActionController.php" method="post">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                    <h3>Ajouter un nouveau réglement </h3>
+                                </div>
+                                <div class="modal-body">
                                     <div class="control-group">
                                         <label class="control-label">Fournisseur</label>
                                         <div class="controls">
@@ -334,17 +337,19 @@
                                           </div>
                                        </div>
                                     </div>
+                                </div>
+                                <div class="modal-footer">
                                     <div class="control-group">
+                                        <input type="hidden" name="action" value="add" />
+                                        <input type="hidden" name="source" value="livraisons-group" />  
+                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                         <div class="controls">
-                                            <input type="hidden" name="action" value="add" />
-                                            <input type="hidden" name="source" value="livraisons-group" />  
-                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                         <!-- addReglement box end -->
                         <div class="row-fluid">

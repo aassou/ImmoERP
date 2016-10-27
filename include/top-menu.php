@@ -14,10 +14,10 @@
 		<?php
 		//In this section we will count the number of tasks assigned to the current session user
 		//classes managers
-		$bugManager = new BugManager($pdo);
-		$taskManager = new TaskManager($pdo);
-        $alertManager = new AlertManager($pdo);
-        $todoManager = new TodoManager($pdo);
+		$bugManager = new BugManager(PDOFactory::getMysqlConnection());
+		$taskManager = new TaskManager(PDOFactory::getMysqlConnection());
+        $alertManager = new AlertManager(PDOFactory::getMysqlConnection());
+        $todoManager = new TodoManager(PDOFactory::getMysqlConnection());
         //obj and vars
         $taskNumber = $taskManager->getTaskNumberByUser($_SESSION['userImmoERPV2']->login());
         $bugNumber = $bugManager->getBugsNumber();

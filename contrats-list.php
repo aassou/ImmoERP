@@ -9,21 +9,22 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('config.php');  
-	include('lib/pagination.php');
+    require('config/PDOFactory.php');
     //classes loading end
     session_start();
     if(isset($_SESSION['userImmoERPV2'])){
     	//les sources
     	$idProjet = 0;
-    	$projetManager = new ProjetManager($pdo);
-		$clientManager = new ClientManager($pdo);
-        $companyManager = new CompanyManager($pdo);
-		$contratManager = new ContratManager($pdo);
-        $compteBancaireManager = new CompteBancaireManager($pdo);
-		$operationManager = new OperationManager($pdo);
-		$locauxManager = new LocauxManager($pdo);
-		$appartementManager = new AppartementManager($pdo);
+        //class managers
+    	$projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+		$clientManager = new ClientManager(PDOFactory::getMysqlConnection());
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+		$contratManager = new ContratManager(PDOFactory::getMysqlConnection());
+        $compteBancaireManager = new CompteBancaireManager(PDOFactory::getMysqlConnection());
+		$operationManager = new OperationManager(PDOFactory::getMysqlConnection());
+		$locauxManager = new LocauxManager(PDOFactory::getMysqlConnection());
+		$appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
+        //objects and vars
         $comptesBancaires = $compteBancaireManager->getCompteBancaires();
 		if(isset($_GET['idProjet']) and ($_GET['idProjet'])>0 and $_GET['idProjet']<=$projetManager->getLastId()){
 			$idProjet = $_GET['idProjet'];

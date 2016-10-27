@@ -9,28 +9,19 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    include('../config/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
-        $projetManager = new ProjetManager($pdo);
-		$fournisseurManager = new FournisseurManager($pdo);
-        $livraisonManager = "";
-        $livraisonDetailManager = "";
-        $reglementsFournisseurManager = "";
-        //get societe value
-        $societe = $_GET['societe'];
-        if ( $societe == 1 ) {
-            $livraisonManager = new LivraisonManager($pdo);
-            $livraisonDetailManager = new LivraisonDetailManager($pdo);
-            $reglementsFournisseurManager = new ReglementFournisseurManager($pdo);    
-        }
-        else if ( $societe == 2 ) {
-            $livraisonManager = new LivraisonIaazaManager($pdo);
-            $livraisonDetailManager = new LivraisonDetailIaazaManager($pdo);
-            $reglementsFournisseurManager = new ReglementFournisseurIaazaManager($pdo);
-        }
-		//classes and vars
+        $companyID = $_GET['companyID'];
+        //class managers
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+		$fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+        $livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
+        $livraisonDetailManager = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
+        $reglementsFournisseurManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
+		//obj and vars
 		$livraisonDetailNumber = 0;
 		$totalReglement = 0;
 		$totalLivraison = 0;
@@ -40,9 +31,9 @@
 		$projet = "Vide";
 		if( isset($_GET['idLivraison']) ){
 			$livraison = $livraisonManager->getLivraisonById($_GET['idLivraison']);
-            $nomProjet = "Non mentionnée";
+            $projet = "Non mentionnée";
             if ( $livraison->idProjet() != 0 ) {
-                $nomProjet = $projetManager->getProjetById($livraison->idProjet());   
+                $projet = $projetManager->getProjetById($livraison->idProjet())->nom();   
             }
 			$fournisseur = $fournisseurManager->getFournisseurById($livraison->idFournisseur());
 			$livraisonDetail = $livraisonDetailManager->getLivraisonsDetailByIdLivraison($livraison->id());
@@ -54,6 +45,9 @@
 ob_start();
 ?>
 <style type="text/css">
+    h1, h2{
+        font-size: 16px;
+    }
 	p, h1, h2, h3, h4{
 		text-align: center;
 		text-decoration: underline;
@@ -79,10 +73,10 @@ ob_start();
 		background-color: grey;
 	}
 </style>
-<page backtop="15mm" backbottom="20mm" backleft="10mm" backright="10mm">
+<page backtop="5mm" backbottom="20mm" backleft="10mm" backright="10mm">
     <!--img src="../assets/img/logo_company.png" style="width: 110px" /-->
-    <h3><?= $titreLivraison.$livraison->libelle()." - Fournisseur : ".$fournisseur->nom()." - Projet : ".$nomProjet ?></h3>
-    <h4>Date Livraison : <?= date('d/m/Y', strtotime($livraison->dateLivraison())) ?> | Nombre d'articles : <?= $nombreArticle ?></h4>
+    <h1><?= $titreLivraison.$livraison->libelle()." - Fournisseur : ".$fournisseur->nom()." - Projet : ".$projet ?></h1>
+    <h1>Date Livraison : <?= date('d/m/Y', strtotime($livraison->dateLivraison())) ?> | Nombre d'articles : <?= $nombreArticle ?></h1>
     <p>Imprimé le <?= date('d/m/Y') ?> | <?= date('h:i') ?> </p>
     <table>
 		<tr>

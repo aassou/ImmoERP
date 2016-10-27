@@ -9,14 +9,14 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    include('../config/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
         //classes managers  
-        $projetManager = new ProjetManager($pdo);
-        $caisseManager = new CaisseManager($pdo);
-        $companyManager = new CompanyManager($pdo);
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $caisseManager = new CaisseManager(PDOFactory::getMysqlConnection());
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
         //objs and vars
         $companyID = htmlentities($_POST['companyID']);
         $projets = $projetManager->getProjets();
@@ -37,16 +37,16 @@
                 $caisseManager->getTotalCaisseByTypeByDate('Entree', $dateFrom, $dateTo, $companyID) - $caisseManager->getTotalCaisseByTypeByDate('Sortie', $dateFrom, $dateTo, $companyID);   
             }
             else {
-                $caisses = $caisseManager->getCaissesByDatesByType($dateFrom, $dateTo, $type);
+                $caisses = $caisseManager->getCaissesByDatesByType($dateFrom, $dateTo, $type, $companyID);
                 $titreDocument = "Liste des opérations d'".$type." entre : ".date('d/m/Y', strtotime($dateFrom)).' - '.date('d/m/Y', strtotime($dateTo));
                 $totalCaisse = 
-                $caisseManager->getTotalCaisseByType($type, $dateFrom, $dateTo);
+                $caisseManager->getTotalCaisseByType($type, $dateFrom, $dateTo, $companyID);
             }
         }
         else if ( $criteria=="toutesCaisse" ) {
-            $caisses = $caisseManager->getCaisses();
+            $caisses = $caisseManager->getCaisses($companyID);
             $titreDocument = "Bilan de toutes les opérations de caisse";
-            $totalCaisse = $caisseManager->getTotalCaisseByType('Entree') - $caisseManager->getTotalCaisseByType('Sortie');   
+            $totalCaisse = $caisseManager->getTotalCaisseByType('Entree', $companyID) - $caisseManager->getTotalCaisseByType('Sortie', $companyID);   
             /*if ( isset($_POST['type']) ) {
                 $type = htmlentities($_POST['type']);
                 $caisses = $caisseManager->getCaissesByType($type);
@@ -57,62 +57,65 @@
 ob_start();
 ?>
 <style type="text/css">
-    p, h1{
+    h1, h2{
+        font-size: 16px;
+    }
+    p, h1, h2{
         text-align: center;
         text-decoration: underline;
     }
     table {
-            border-collapse: collapse;
-            width:100%;
-        }
-        
-        table, th, td {
-            border: 1px solid black;
-        }
-        td, th{
-            padding : 5px;
-        }
-        
-        th{
-            background-color: grey;
-        }
+        border-collapse: collapse;
+        width:100%;
+    }
+    
+    table, th, td {
+        border: 1px solid black;
+    }
+    td, th{
+        padding : 5px;
+    }
+    
+    th{
+        background-color: grey;
+    }
 </style>
-<page backtop="15mm" backbottom="20mm" backleft="10mm" backright="10mm">
+<page backtop="5mm" backbottom="20mm" backleft="10mm" backright="10mm">
     <!--img src="../assets/img/logo_company.png" style="width: 110px" /-->
     <h1><?= $titre ?></h1>
-    <h1><?= $titreDocument ?></h1>
+    <h2><?= $titreDocument ?></h2>
     <p>Imprimé le <?= date('d-m-Y') ?> | <?= date('h:i') ?> </p>
     <br>
     <table>
         <tr>
             <!--th style="width: 20%">Type</th-->
-            <th style="width: 20%">Date opération</th>
-            <th style="width: 20%">Crédit</th>
-            <th style="width: 20%">Débit</th>
-            <th style="width: 20%">Désignation</th>
+            <th style="width: 15%">DateOpé</th>
+            <th style="width: 15%">Crédit</th>
+            <th style="width: 15%">Débit</th>
+            <th style="width: 35%">Désignation</th>
             <th style="width: 20%">Destination</th>
         </tr>
         <?php
         foreach($caisses as $caisse){
         ?>      
         <tr>
-            <td><?= date('d/m/Y', strtotime($caisse->dateOperation())) ?></td>
+            <td style="width: 15%"><?= date('d/m/Y', strtotime($caisse->dateOperation())) ?></td>
             <?php
             if ( $caisse->type() == "Entree" ) {
             ?>
-            <td><?= number_format($caisse->montant(), 2, ',', ' ') ?></td>
-            <td></td>
+            <td style="width: 15%"><?= number_format($caisse->montant(), 2, ',', ' ') ?></td>
+            <td style="width: 15%"></td>
             <?php  
             }
             else {
             ?>
-            <td></td>
-            <td><?= number_format($caisse->montant(), 2, ',', ' ') ?></td>
+            <td style="width: 15%"></td>
+            <td style="width: 15%"><?= number_format($caisse->montant(), 2, ',', ' ') ?></td>
             <?php
             }
             ?>
-            <td><?= $caisse->designation() ?></td>
-            <td><?= $caisse->destination() ?></td>
+            <td style="width: 35%"><?= $caisse->designation() ?></td>
+            <td style="width: 20%"><?= $caisse->destination() ?></td>
         </tr>   
         <?php
         }//end of loop
@@ -120,17 +123,17 @@ ob_start();
     </table>
     <table>
         <tr>
-            <th style="width: 20%">Solde</th>
-            <td style="width: 40%"><strong><?= number_format($totalCaisse, 2, ' ', ',') ?>&nbsp;DH</strong></td>
-            <td style="width: 20%"></td>
+            <th style="width: 15%">Solde</th>
+            <td style="width: 30%; padding-left: 80px;"><strong><?= number_format($totalCaisse, 2, ',', ' ') ?>&nbsp;DH</strong></td>
+            <td style="width: 35%"></td>
             <td style="width: 20%"></td>
         </tr>
     </table>
     <br><br>
     <page_footer>
     <hr/>
-    <p style="text-align: center;font-size: 9pt;">STE GROUPE ANNAHDA LIL IAAMAR SARL – Quartier Ouled Brahim N°B-1 en face Lycée Nador Jadid (Anaanaa), Nador. 
-        <br>Tél : 05 36 33 10 31 - Fax : 05 36 33 10 32 </p>
+    <p style="text-align: center;font-size: 9pt;">Société <?= $company->nom() ?> - <?= $company->adresse() ?>  
+        <br>Tél : </p>
     </page_footer>
 </page>    
 <?php

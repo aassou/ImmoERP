@@ -9,16 +9,15 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('config.php');  
-    include('lib/pagination.php');
+    require('config/PDOFactory.php');
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
         $companyID = htmlentities($_GET['companyID']);
         //les sources
-        $companyManager = new CompanyManager($pdo);
-        $projetManager = new ProjetManager($pdo);
-        $caisseManager = new CaisseManager($pdo);
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $caisseManager = new CaisseManager(PDOFactory::getMysqlConnection());
         //objs and vars
         $company = $companyManager->getCompanyById($companyID);
         $projets = $projetManager->getProjets();    

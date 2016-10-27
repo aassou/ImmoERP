@@ -16,11 +16,13 @@
         //post processing
         $companyID = htmlentities($_GET['companyID']);
         //Class Managers
+        $companyManager = new CompanyManager($pdo);
         $projetManager = new ProjetManager($pdo);
         $fournisseurManager = new FournisseurManager($pdo);
         $commandeManager = new CommandeManager($pdo);
         $commandeDetailManager = new CommandeDetailManager($pdo);
         //objs and vars
+        $company = $companyManager->getCompanyById($companyID);
         $livraisonDetailNumber = 0;
         $totalReglement = 0;
         $totalLivraison = 0;
@@ -67,7 +69,7 @@ ob_start();
         background-color: grey;
     }
 </style>
-<page backtop="15mm" backbottom="20mm" backleft="10mm" backright="10mm">
+<page backtop="10mm" backbottom="20mm" backleft="10mm" backright="10mm">
     <!--img src="../assets/img/logo_company.png" style="width: 110px" /-->
     <h4><?= $titreLivraison.$commande->numeroCommande()." - Fournisseur : ".$fournisseur->nom() ?></h4>
     <h4>Date Commande : <?= date('d/m/Y', strtotime($commande->dateCommande())) ?> | Nombre d'articles : <?= $nombreArticle ?></h4>
@@ -91,7 +93,7 @@ ob_start();
     </table>
     <page_footer>
     <hr/>
-    <p style="text-align: center;font-size: 9pt;"></p>
+    <p style="text-align: center;font-size: 9pt;">Société <?= $company->nom() ?> - <?= $company->adresse() ?></p>
     </page_footer>
 </page>    
 <?php

@@ -16,6 +16,7 @@
     
     //post input processing
     $action = htmlentities($_POST['action']);
+    $companyID = htmlentities($_POST['companyID']);
     //In this session variable we put all the POST, to get it in the contrats-add file
     //in case of error, and this help the user to do not put again what he filled out.
     $_SESSION['reglement-data-form'] = $_POST;
@@ -66,21 +67,21 @@
         $redirectLink = "";
         if( isset($_POST['source']) ) {
             if( $_POST['source'] == 'livraisons-group' ) {
-                $redirectLink = "Location:../livraisons-group.php";   
+                $redirectLink = "Location:../livraisons-group.php?companyID=$companyID";   
             }
             else if( $_POST['source'] == 'livraisons-fournisseur-mois' ) {
                 $idFournisseur = htmlentities($_POST['idFournisseur']);
-                $redirectLink = "Location:../livraisons-fournisseur-mois.php?idFournisseur=".$idFournisseur;   
+                $redirectLink = "Location:../livraisons-fournisseur-mois.php?idFournisseur=$idFournisseur&companyID=$companyID";   
             }
             else if ( $_POST['source'] == "livraisons-fournisseur-mois-list" ) {
                 $idFournisseur = htmlentities($_POST['idFournisseur']);
                 $mois = htmlentities($_POST['mois']);
                 $annee = htmlentities($_POST['annee']);
-                $redirectLink = "Location:../livraisons-fournisseur-mois.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee;
+                $redirectLink = "Location:../livraisons-fournisseur-mois.php?idFournisseur=$idFournisseur&mois=$mois&annee=$annee&companyID=$companyID";
             }
             else if( $_POST['source'] == 'reglements-fournisseur' ) {
                 $idFournisseur = htmlentities($_POST['idFournisseur']);
-                $redirectLink = "Location:../reglements-fournisseur.php?idFournisseur=".$idFournisseur;   
+                $redirectLink = "Location:../reglements-fournisseur.php?idFournisseur=$idFournisseur&companyID=$companyID";   
             }   
         }
     }
@@ -121,7 +122,7 @@
             $actionMessage = "<strong>Erreur Modification Réglement</strong> : Vous devez remplir les champs <strong>Montant</strong>.";
             $typeMessage = "error";
         }
-        $redirectLink = "Location:../reglements-fournisseur.php?idFournisseur=".$idFournisseur;
+        $redirectLink = "Location:../reglements-fournisseur.php?idFournisseur=$idFournisseur&companyID=$companyID";
     }
     else if($action=="delete"){
         $idReglement = $_POST['idReglement'];
@@ -143,7 +144,7 @@
         $historyManager->add($history);
         $actionMessage = "<strong>Opération Valide</strong> : Réglement Supprimé avec succès.";
         $typeMessage = "success";
-        $redirectLink = "Location:../reglements-fournisseur.php?idFournisseur=".$idFournisseur;
+        $redirectLink = "Location:../reglements-fournisseur.php?idFournisseur=$idFournisseur&companyID=$companyID";
     }
     
     $_SESSION['reglement-action-message'] = $actionMessage;

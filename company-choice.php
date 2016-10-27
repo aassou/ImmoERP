@@ -9,14 +9,13 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('config.php');  
-    include('lib/pagination.php');
-    include('include/tiles-colors.php');
+    require('config/PDOFactory.php');  
+    require('include/tiles-colors.php');
     //classes loading end
     session_start();
     if ( isset($_SESSION['userImmoERPV2']) and $_SESSION['userImmoERPV2']->profil() == "admin" ) {
         //les sources
-        $companyManager = new CompanyManager($pdo);
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
         $companies = $companyManager->getCompanys();
 ?>
 <!DOCTYPE html>
@@ -86,7 +85,7 @@
                         <ul class="breadcrumb">
                             <li>
                                 <i class="icon-home"></i>
-                                <a>Accueil</a>
+                                <a><strong>Accueil</strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->

@@ -9,14 +9,14 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    include('../config/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
-        $projetManager = new ProjetManager($pdo);
-		$fournisseurManager = new FournisseurManager($pdo);
-		$livraisonManager = new LivraisonManager($pdo);
-		$reglementsFournisseurManager = new ReglementFournisseurManager($pdo);
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+		$fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+		$livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
+		$reglementsFournisseurManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
 		if( isset($_GET['idFournisseur']) and isset($_GET['idProjet']) and 
 		$fournisseurManager->getOneFournisseurBySearch($_GET['idFournisseur']>=1)){
 			$fournisseur = $fournisseurManager->getOneFournisseurBySearch(htmlentities($_GET['idFournisseur']));

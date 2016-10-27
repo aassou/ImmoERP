@@ -9,27 +9,29 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('config.php');  
-    include('lib/pagination.php');
+    include('config/PDOFactory.php');  
     //classes loading end
     session_start();
     if ( isset($_SESSION['userImmoERPV2']) ) {
+        $companyID = $_GET['companyID'];
         //classManagers
-        $projetManager = new ProjetManager($pdo);
-        $fournisseurManager = new FournisseurManager($pdo);
-        $livraisonManager = new LivraisonManager($pdo);
-        $livraisonDetailManager = new LivraisonDetailManager($pdo);
-        $reglementsFournisseurManager = new ReglementFournisseurManager($pdo);
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+        $livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
+        $livraisonDetailManager = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
+        $reglementsFournisseurManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
         //classes and vars
+        $company = $companyManager->getCompanyById($companyID);
         $idFournisseur = 0;
-        $projets = $projetManager->getProjets();
+        $projets = $projetManager->getProjetsByCompanyID($companyID);
         $fournisseurs = $fournisseurManager->getFournisseurs();
-        $projet = $projetManager->getProjets();
+        $projet = $projetManager->getProjetsByCompanyID($companyID);
         $livraisonNumber = 0;
         $totalReglement = 0;
         $totalLivraison = 0;
         $titreLivraison ="Liste de toutes les livraisons";
-        $hrefLivraisonBilanPrintController = "controller/Livraison2BilanPrintController.php";
+        $hrefLivraisonBilanPrintController = "controller/LivraisonBilanPrintController.php?companyID=$companyID";
         $livraisonListDeleteLink = "";
         if( isset($_GET['idFournisseur']) and !empty($_GET['idProjet']) and 
         $fournisseurManager->getOneFournisseurBySearch($_GET['idFournisseur']>=1)){
@@ -37,7 +39,7 @@
             $idProjet = $_GET['idProjet'];
             $livraisonNumber = $livraisonManager->getLivraisonsNumberByIdFournisseurByProjet($fournisseur, $idProjet);
             if($livraisonNumber != 0){
-                $livraisonPerPage = 10;
+                /*$livraisonPerPage = 10;
                 $pageNumber = ceil($livraisonNumber/$livraisonPerPage);
                 $p = 1;
                 if(isset($_GET['p']) and ($_GET['p']>0 and $_GET['p']<=$pageNumber)){
@@ -45,7 +47,7 @@
                 }
                 else{
                     $p = 1;
-                }
+                }*/
                 $livraisonListDeleteLink = "?idFournisseur=".$_GET['idFournisseur']."&idProjet=".$_GET['idProjet']."&p=".$p;
                 $begin = ($p - 1) * $livraisonPerPage;
                 $pagination = paginate('livraisons2.php?idFournisseur='.$_GET['idFournisseur'].'&idProjet='.$_GET['idProjet'], '&p=', $pageNumber, $p);
@@ -73,7 +75,7 @@
             $fournisseur = $fournisseurManager->getFournisseurById($idFournisseur);
             $livraisonNumber = $livraisonManager->getLivraisonsNumberByIdFournisseur($idFournisseur);
             if($livraisonNumber != 0){
-                $livraisonPerPage = 100;
+                /*$livraisonPerPage = 100;
                 $pageNumber = ceil($livraisonNumber/$livraisonPerPage);
                 $p = 1;
                 if(isset($_GET['p']) and ($_GET['p']>0 and $_GET['p']<=$pageNumber)){
@@ -81,10 +83,10 @@
                 }
                 else{
                     $p = 1;
-                }
-                $livraisonListDeleteLink = "?idFournisseur=".$_GET['idFournisseur']."&p=".$p;
-                $begin = ($p - 1) * $livraisonPerPage;
-                $pagination = paginate('livraisons-fournisseur.php?idFournisseur='.$_GET['idFournisseur'], '&p=', $pageNumber, $p);
+                }*/
+                $livraisonListDeleteLink = "?idFournisseur=".$_GET['idFournisseur'];
+                //$begin = ($p - 1) * $livraisonPerPage;
+                //$pagination = paginate('livraisons-fournisseur.php?idFournisseur='.$_GET['idFournisseur'], '&p=', $pageNumber, $p);
                 //$livraisons = $livraisonManager->getLivraisonsByIdFournisseurByLimits($idFournisseur, $begin, $livraisonPerPage);
                 $livraisons = $livraisonManager->getLivraisonsByIdFournisseurByMoisByAnnee($idFournisseur, $mois, $annee);
                 $titreLivraison ="Liste des livraisons du fournisseur <strong>".$fournisseurManager->getFournisseurById($idFournisseur)->nom()."</strong>";
@@ -98,7 +100,7 @@
                 $totalLivraison = 
                 $livraisonManager->getTotalLivraisonsIdFournisseur($idFournisseur)+
                 $sommeDetailsLivraisons;
-                $hrefLivraisonBilanPrintController = "controller/Livraison2BilanPrintController.php?idFournisseur=".$idFournisseur;
+                $hrefLivraisonBilanPrintController = "controller/LivraisonBilanPrintController.php?idFournisseur=".$idFournisseur;
             }
         }       
 ?>
@@ -152,25 +154,30 @@
                     <div class="span12">
                         <!-- BEGIN PAGE TITLE & BREADCRUMB-->           
                         <h3 class="page-title">
-                            Gestion des livraisons - Fournisseur : <strong><?= $fournisseurManager->getFournisseurById($idFournisseur)->nom() ?></strong>
+                            Gestion des livraisons
                         </h3>
                         <ul class="breadcrumb">
                             <li>
                                 <i class="icon-home"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <a href="company-choice.php">Accueil</a> 
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $companyID ?>">Société <?= $company->nom() ?></a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
                                 <i class="icon-truck"></i>
-                                <a href="livraisons-group.php">Gestion des livraisons <strong>Société Annahda</strong></a>
+                                <a href="livraisons-group.php?companyID=<?= $companyID ?>">Gestion des livraisons</a>
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
-                                <a href="livraisons-fournisseur-mois.php?idFournisseur=<?= $idFournisseur ?>">Livraisons de <strong><?= $fournisseurManager->getFournisseurById($idFournisseur)->nom() ?> 
+                                <a href="livraisons-fournisseur-mois.php?companyID=<?= $companyID ?>&idFournisseur=<?= $idFournisseur ?>"><?= ucfirst($fournisseurManager->getFournisseurById($idFournisseur)->nom()) ?> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
-                                <?= $_GET['mois'] ?>/<?= $_GET['annee'] ?></strong></a>
+                                <strong><?= $_GET['mois'] ?>/<?= $_GET['annee'] ?></strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->
@@ -203,12 +210,12 @@
                         ?>
                         <!-- addLivraison box begin-->
                         <div id="addLivraison" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                <h3>Nouvelle livraison - <strong><?= $fournisseurManager->getFournisseurById($_GET['idFournisseur'])->nom() ?></strong></h3>
-                            </div>
-                            <div class="modal-body">
-                                <form id="addLivraisonForm" class="form-horizontal" action="controller/LivraisonActionController.php" method="post">
+                            <form id="addLivraisonForm" class="form-horizontal" action="controller/LivraisonActionController.php" method="post">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                    <h3>Nouvelle livraison - <strong><?= $fournisseurManager->getFournisseurById($_GET['idFournisseur'])->nom() ?></strong></h3>
+                                </div>
+                                <div class="modal-body">
                                     <div class="control-group">
                                         <label class="control-label">Fournisseur</label>
                                         <div class="controls">
@@ -249,28 +256,31 @@
                                             <input id="designation" type="text" name="designation" value="" />
                                         </div>
                                     </div>
-                                    <div class="control-group">
-                                        <div class="controls">  
-                                            <input type="hidden" name="action" value="add" />
-                                            <input type="hidden" name="source" value="livraisons-fournisseur-mois-list" />
-                                            <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
-                                            <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />    
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="control-group">  
+                                        <input type="hidden" name="action" value="add" />
+                                        <input type="hidden" name="source" value="livraisons-fournisseur-mois-list" />
+                                        <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
+                                        <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />
+                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />  
+                                        <div class="controls">    
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                         <!-- addLivraison box end -->
                         <!-- addReglement box begin-->
                         <div id="addReglement" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                <h3>Nouveau réglement - <strong><?= $fournisseurManager->getFournisseurById($_GET['idFournisseur'])->nom() ?></strong></h3>
-                            </div>
-                            <div class="modal-body">
-                                <form id="addReglementForm" class="form-horizontal" action="controller/ReglementFournisseurActionController.php" method="post">
+                            <form id="addReglementForm" class="form-horizontal" action="controller/ReglementFournisseurActionController.php" method="post">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                    <h3>Nouveau réglement - <strong><?= $fournisseurManager->getFournisseurById($_GET['idFournisseur'])->nom() ?></strong></h3>
+                                </div>
+                                <div class="modal-body">
                                     <div class="control-group">
                                         <label class="control-label">Fournisseur</label>
                                         <div class="controls">
@@ -328,30 +338,32 @@
                                           </div>
                                        </div>
                                     </div>
+                                </div>
+                                <div class="modal-footer">
                                     <div class="control-group">
+                                        <input type="hidden" name="action" value="add" />
+                                        <input type="hidden" name="source" value="livraisons-fournisseur-mois-list" />
+                                        <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
+                                        <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />  
+                                        <input type="hidden" name="idFournisseur" value="<?= $_GET['idFournisseur'] ?>" />
+                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />  
                                         <div class="controls">
-                                            <input type="hidden" name="action" value="add" />
-                                            <input type="hidden" name="source" value="livraisons-fournisseur-mois-list" />
-                                            <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
-                                            <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />  
-                                            <input type="hidden" name="idFournisseur" value="<?= $_GET['idFournisseur'] ?>" />
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                         <!-- addReglement box end -->
                         <!-- printCharge box begin-->
                         <div id="printBilanFournisseur" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                <h3><i class="icon-print"></i>&nbsp;Bilan de <strong><?= $fournisseurManager->getFournisseurById($idFournisseur)->nom() ?></strong></h3>
-                            </div>
-                            <div class="modal-body">
-                                <form class="form-horizontal" action="controller/BilanFournisseurPrintController.php" method="post" enctype="multipart/form-data">
-                                    <!--p><strong>Séléctionner les charges à imprimer</strong></p-->
+                            <form class="form-horizontal" action="controller/BilanFournisseurPrintController.php" method="post" enctype="multipart/form-data">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                    <h3><i class="icon-print"></i>&nbsp;Bilan de <strong><?= $fournisseurManager->getFournisseurById($idFournisseur)->nom() ?></strong></h3>
+                                </div>
+                                <div class="modal-body">
                                     <div class="control-group">
                                       <label class="control-label">Imprimer</label>
                                       <div class="controls">
@@ -400,26 +412,29 @@
                                           </div>
                                        </div>
                                    </div>
+                                </div>
+                                <div class="modal-footer">
                                     <div class="control-group">
+                                        <input type="hidden" name="idFournisseur" value="<?= $idFournisseur ?>" />
+                                        <input type="hidden" name="societe" value="1" />
+                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                         <div class="controls">
-                                            <input type="hidden" name="idFournisseur" value="<?= $idFournisseur ?>" />
-                                            <input type="hidden" name="societe" value="1" />
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                         <!-- printCharge box end -->
                         <!-- updateStatusLivraison box begin-->
                         <div id="updateStatusLivraison" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                <h3>Modifier Status des BLs </h3>
-                            </div>
-                            <div class="modal-body">
-                                <form class="form-horizontal" action="controller/LivraisonActionController.php" method="post">
+                            <form class="form-horizontal" action="controller/LivraisonActionController.php" method="post">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                    <h3>Modifier Status des BLs </h3>
+                                </div>
+                                <div class="modal-body">
                                     <?php
                                     foreach ( $livraisons as $livraison ) {
                                     ?> 
@@ -448,19 +463,22 @@
                                             </select>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="modal-footer">
                                     <div class="control-group">
+                                        <input type="hidden" name="action" value="updateStatus" />
+                                        <input type="hidden" name="idFournisseur" value="<?= $_GET['idFournisseur'] ?>" />
+                                        <input type="hidden" name="source" value="livraisons-fournisseur-mois-list" />
+                                        <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
+                                        <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />
+                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />  
                                         <div class="controls">  
-                                            <input type="hidden" name="action" value="updateStatus" />
-                                            <input type="hidden" name="idFournisseur" value="<?= $_GET['idFournisseur'] ?>" />
-                                            <input type="hidden" name="source" value="livraisons-fournisseur-mois-list" />
-                                            <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
-                                            <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />  
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                         <!-- updateStatusLivraison box end -->     
                         <!-- BEGIN Terrain TABLE PORTLET-->
@@ -492,18 +510,6 @@
                             unset($_SESSION['reglement-action-message']);
                             unset($_SESSION['reglement-type-message']);
                          ?>
-                        <!--table class="table table-striped table-bordered table-advance table-hover">
-                            <tbody>
-                                <tr>
-                                    <th style="width: 15%"><strong>Σ Total Livraisons</strong></th>
-                                    <th style="width: 15%"><strong><a><?php //number_format($totalLivraison, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
-                                    <th style="width: 15%"><strong>Σ Total Réglements</strong></th>
-                                    <th style="width: 15%"><strong><a><?php //number_format($totalReglement, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
-                                    <th style="width: 15%"><strong>Σ Solde</strong></th>
-                                    <th style="width: 15%"><strong><a><?php //number_format($totalLivraison-$totalReglement, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
-                                </tr>
-                            </tbody>
-                        </table-->
                         <div class="portlet box light-grey">
                             <div class="portlet-title">
                                 <h4>Livraison de <?= $fournisseurManager->getFournisseurById($idFournisseur)->nom() ?></h4>
@@ -584,7 +590,7 @@
                                                 <?php
                                                 }
                                                 ?>
-                                                <a class="btn mini" href="livraisons-details.php?codeLivraison=<?= $livraison->code() ?>&mois=<?= $_GET['mois'] ?>&annee=<?= $_GET['annee'] ?>" title="Voir Détail Livraison" >
+                                                <a class="btn mini" href="livraisons-details.php?codeLivraison=<?= $livraison->code() ?>&mois=<?= $_GET['mois'] ?>&annee=<?= $_GET['annee'] ?>&companyID=<?= $companyID ?>" title="Voir Détail Livraison" >
                                                     <i class="icon-eye-open"></i>
                                                 </a>
                                             </td>
@@ -599,38 +605,14 @@
                                             </td>
                                             <td><?= $status ?></td>
                                         </tr>
-                                        <!-- add file box begin-->
-                                        <div id="addPieces<?= $livraison->id() ?>" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                                <h3>Ajouter des pièces pour cette livraison</h3>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form class="form-horizontal" action="controller/LivraisonPiecesAddController.php" method="post" enctype="multipart/form-data">
-                                                    <p>Êtes-vous sûr de vouloir ajouter des pièces pour cette livraison ?</p>
-                                                    <div class="control-group">
-                                                        <label class="right-label">Nom Pièce</label>
-                                                        <input type="text" name="nom" />
-                                                        <label class="right-label">Lien</label>
-                                                        <input type="file" name="url" />
-                                                        <input type="hidden" name="idLivraison" value="<?= $livraison->id() ?>" />
-                                                        <label class="right-label"></label>
-                                                        <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
-                                                        <button type="submit" class="btn red" aria-hidden="true">Oui</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        <!-- add files box end -->
                                         <!-- updateLivraison box begin-->
                                         <div id="updateLivraison<?= $livraison->id() ?>" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                                <h3>Modifier les informations de la livraison </h3>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form class="form-horizontal" action="controller/LivraisonActionController.php" method="post">
-                                                    <p>Êtes-vous sûr de vouloir modifier la livraison <strong>N°<?= $livraison->id() ?></strong>  ?</p>
+                                            <form class="form-horizontal" action="controller/LivraisonActionController.php" method="post">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                                    <h3>Modifier les informations de la livraison </h3>
+                                                </div>
+                                                <div class="modal-body">
                                                     <div class="control-group">
                                                         <label class="control-label">Fournisseur</label>
                                                         <div class="controls">
@@ -675,43 +657,51 @@
                                                             <input id="designation" type="text" name="designation" value="<?= $livraison->designation() ?>" />
                                                         </div>
                                                     </div>
-                                                    <div class="control-group">
-                                                        <div class="controls">  
-                                                            <input type="hidden" name="action" value="update" />
-                                                            <input type="hidden" name="idLivraison" value="<?= $livraison->id() ?>" />
-                                                            <input type="hidden" name="idFournisseur" value="<?= $_GET['idFournisseur'] ?>" />
-                                                            <input type="hidden" name="source" value="livraisons-fournisseur-mois-list" />
-                                                            <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
-                                                            <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />  
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <div class="control-group">  
+                                                        <input type="hidden" name="action" value="update" />
+                                                        <input type="hidden" name="idLivraison" value="<?= $livraison->id() ?>" />
+                                                        <input type="hidden" name="idFournisseur" value="<?= $_GET['idFournisseur'] ?>" />
+                                                        <input type="hidden" name="source" value="livraisons-fournisseur-mois-list" />
+                                                        <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
+                                                        <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />
+                                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />
+                                                        <div class="controls">    
                                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                                         </div>
                                                     </div>
-                                                </form>
-                                            </div>
+                                                </div>
+                                            </form>
                                         </div>
                                         <!-- updateLivraison box end -->            
                                         <!-- delete box begin-->
                                         <div id="deleteLivraison<?= $livraison->id() ?>" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                                <h3>Supprimer la livraison </h3>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form class="form-horizontal loginFrm" action="controller/LivraisonActionController.php" method="post">
+                                            <form class="form-horizontal loginFrm" action="controller/LivraisonActionController.php" method="post">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                                    <h3>Supprimer la livraison </h3>
+                                                </div>
+                                                <div class="modal-body">
                                                     <p>Êtes-vous sûr de vouloir supprimer la livraison <strong>N°<?= $livraison->id() ?></strong> ?</p>
+                                                </div>
+                                                <div class="modal-footer">
                                                     <div class="control-group">
-                                                        <label class="right-label"></label>
-                                                        <input type="hidden" name="action" value="delete" />
-                                                        <input type="hidden" name="idLivraison" value="<?= $livraison->id() ?>" />
-                                                        <input type="hidden" name="idFournisseur" value="<?= $_GET['idFournisseur'] ?>" />
-                                                        <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
-                                                        <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />  
-                                                        <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
-                                                        <button type="submit" class="btn red" aria-hidden="true">Oui</button>
+                                                    <label class="right-label"></label>
+                                                    <input type="hidden" name="action" value="delete" />
+                                                    <input type="hidden" name="idLivraison" value="<?= $livraison->id() ?>" />
+                                                    <input type="hidden" name="idFournisseur" value="<?= $_GET['idFournisseur'] ?>" />
+                                                    <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
+                                                    <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />  
+                                                    <input type="hidden" name="companyID" value="<?= $companyID ?>" />
+                                                        <div class="controls">  
+                                                            <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
+                                                            <button type="submit" class="btn red" aria-hidden="true">Oui</button>
+                                                        </div>    
                                                     </div>
-                                                </form>
-                                            </div>
+                                                </div>
+                                            </form>
                                         </div>
                                         <!-- delete box end --> 
                                         <?php
@@ -719,11 +709,6 @@
                                         }//end of if
                                         ?>
                                     </tbody>
-                                    <?php
-                                    /*if($livraisonNumber != 0){
-                                        echo $pagination;   
-                                    }*/
-                                    ?>
                                 </table>
                                 <table class="table table-striped table-bordered table-advance table-hover">
                                     <tbody>

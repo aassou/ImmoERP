@@ -114,9 +114,14 @@ class CaisseManager{
         return $data['total'];
     }
 
-	public function getCaisses(){
+	public function getCaisses($companyID){
 		$caisses = array();
-		$query = $this->_db->query('SELECT * FROM t_caisse ORDER BY type ASC, dateOperation DESC');
+		$query = $this->_db->prepare(
+		'SELECT * FROM t_caisse 
+		WHERE companyID=:companyID
+		ORDER BY type ASC, dateOperation DESC');
+        $query->bindValue(':companyID', $companyID);
+        $query->execute();
 		while($data = $query->fetch(PDO::FETCH_ASSOC)){
 			$caisses[] = new Caisse($data);
 		}

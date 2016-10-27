@@ -9,25 +9,24 @@
         }
     }
     spl_autoload_register("classLoad"); 
-    include('config.php');  
-    include('lib/pagination.php');
+    include('config/PDOFactory.php');  
     //classes loading end
     session_start();
     if ( isset($_SESSION['userImmoERPV2']) ) {
         //post processing
         $companyID = htmlentities($_GET['companyID']);
         //classManagers
-        $companyManager = new CompanyManager($pdo);
-        $projetManager = new ProjetManager($pdo);
-        $fournisseurManager = new FournisseurManager($pdo);
-        $commandeManager = new CommandeManager($pdo);
-        $commandeDetailManager = new CommandeDetailManager($pdo);
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+        $commandeManager = new CommandeManager(PDOFactory::getMysqlConnection());
+        $commandeDetailManager = new CommandeDetailManager(PDOFactory::getMysqlConnection());
         //objs and vars
         $company = $companyManager->getCompanyById($companyID);
         $commandes = "";
-        $projets = $projetManager->getProjets();
+        $projets = $projetManager->getProjetsByCompanyID($companyID);
         $fournisseurs = $fournisseurManager->getFournisseurs();
-        $projet = $projetManager->getProjets();
+        //$projet = $projetManager->getProjets();
         $livraisonListDeleteLink = "";
         if( isset($_GET['mois']) and isset($_GET['annee']) ){
             $mois = $_GET['mois'];
@@ -115,12 +114,12 @@
                     <div class="span12">
                         <!-- addCommande box begin-->
                         <div id="addCommande" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                <h3>Nouvelle Commande</h3>
-                            </div>
-                            <div class="modal-body">
-                                <form id="addCommandeForm" class="form-horizontal" action="controller/CommandeActionController.php" method="post">
+                            <form id="addCommandeForm" class="form-horizontal" action="controller/CommandeActionController.php" method="post">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                    <h3>Nouvelle Commande</h3>
+                                </div>
+                                <div class="modal-body">
                                     <div class="control-group">
                                         <label class="control-label">Fournisseur</label>
                                         <div class="controls">
@@ -161,19 +160,21 @@
                                             <input id="designation" type="text" name="designation" value="" />
                                         </div>
                                     </div>
-                                    <div class="control-group">
-                                        <div class="controls">  
-                                            <input type="hidden" name="action" value="add" />
-                                            <input type="hidden" name="source" value="commande-mois-annee" />
-                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
-                                            <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
-                                            <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />    
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="control-group">  
+                                        <input type="hidden" name="action" value="add" />
+                                        <input type="hidden" name="source" value="commande-mois-annee" />
+                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />
+                                        <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
+                                        <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />
+                                        <div class="controls">    
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                         <!-- addLivraison box end -->
                         
@@ -274,13 +275,12 @@
                                         </tr>
                                         <!-- updateCommande box begin-->
                                         <div id="updateCommande<?= $commande->id() ?>" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                                <h3>Modifier les informations de la commande </h3>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form class="form-horizontal" action="controller/CommandeActionController.php" method="post">
-                                                    <p>Êtes-vous sûr de vouloir modifier la commande <strong>N°<?= $commande->numeroCommande() ?></strong>  ?</p>
+                                            <form class="form-horizontal" action="controller/CommandeActionController.php" method="post">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                                    <h3>Modifier les informations de la commande </h3>
+                                                </div>
+                                                <div class="modal-body">
                                                     <div class="control-group">
                                                         <label class="control-label">Fournisseur</label>
                                                         <div class="controls">
@@ -325,32 +325,36 @@
                                                             <input id="designation" type="text" name="designation" value="<?= $commande->designation() ?>" />
                                                         </div>
                                                     </div>
-                                                    <div class="control-group">
-                                                        <div class="controls">  
-                                                            <input type="hidden" name="action" value="update" />
-                                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
-                                                            <input type="hidden" name="idCommande" value="<?= $commande->id() ?>" />
-                                                            <input type="hidden" name="codeCommande" value="<?= $commande->codeLivraison() ?>" />
-                                                            <input type="hidden" name="source" value="commande-mois-annee" />
-                                                            <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
-                                                            <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />  
+                                                </div>    
+                                                <div class="modal-footer">
+                                                    <div class="control-group"> 
+                                                        <input type="hidden" name="action" value="update" />
+                                                        <input type="hidden" name="companyID" value="<?= $companyID ?>" />
+                                                        <input type="hidden" name="idCommande" value="<?= $commande->id() ?>" />
+                                                        <input type="hidden" name="codeCommande" value="<?= $commande->codeLivraison() ?>" />
+                                                        <input type="hidden" name="source" value="commande-mois-annee" />
+                                                        <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
+                                                        <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />
+                                                        <div class="controls">   
                                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                                         </div>
                                                     </div>
-                                                </form>
-                                            </div>
+                                                </div>
+                                            </form>
                                         </div>
                                         <!-- updateCommande box end -->            
                                         <!-- delete box begin-->
                                         <div id="deleteCommande<?= $commande->id() ?>" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                                <h3>Supprimer la commande </h3>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form class="form-horizontal loginFrm" action="controller/CommandeActionController.php" method="post">
-                                                    <p>Êtes-vous sûr de vouloir supprimer la commande <strong>N°<?= $commande->numeroCommande() ?></strong> ?</p>
+                                            <form class="form-horizontal loginFrm" action="controller/CommandeActionController.php" method="post">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                                    <h3>Supprimer la commande </h3>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p class="dangerous-action">Êtes-vous sûr de vouloir supprimer la commande <strong>N°<?= $commande->numeroCommande() ?></strong> ?</p>
+                                                </div>
+                                                <div class="modal-footer">
                                                     <div class="control-group">
                                                         <label class="right-label"></label>
                                                         <input type="hidden" name="action" value="delete" />
@@ -359,12 +363,14 @@
                                                         <input type="hidden" name="codeCommande" value="<?= $commande->codeLivraison() ?>" />
                                                         <input type="hidden" name="source" value="commande-mois-annee" />
                                                         <input type="hidden" name="mois" value="<?= $_GET['mois'] ?>" />
-                                                        <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />  
-                                                        <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
-                                                        <button type="submit" class="btn red" aria-hidden="true">Oui</button>
+                                                        <input type="hidden" name="annee" value="<?= $_GET['annee'] ?>" />
+                                                        <div class="controls">  
+                                                            <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
+                                                            <button type="submit" class="btn red" aria-hidden="true">Oui</button>
+                                                        </div>
                                                     </div>
-                                                </form>
-                                            </div>
+                                                </div>
+                                            </form>
                                         </div>
                                         <!-- delete box end --> 
                                         <?php
