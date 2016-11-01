@@ -11,8 +11,8 @@ class AlertManager{
 
 	//BAISC CRUD OPERATIONS
 	public function add(Alert $alert){
-    	$query = $this->_db->prepare(' INSERT INTO t_alert (
-		alert, status, created, createdBy)
+    	$query = $this->_db->prepare(
+    	'INSERT INTO t_alert (alert, status, created, createdBy)
 		VALUES (:alert, :status, :created, :createdBy)')
 		or die (print_r($this->_db->errorInfo()));
 		$query->bindValue(':alert', $alert->alert());
