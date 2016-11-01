@@ -1,16 +1,6 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
@@ -22,11 +12,12 @@
     $typeMessage = "";
 
     //Component Class Manager
-    $CompteBancaireManager = new CompteBancaireManager($pdo);
+    $CompteBancaireManager = new CompteBancaireManager(PDOFactory::getMysqlConnection());
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
+    
 	//Action Add Processing Begin
-    	if($action == "add"){
+    if($action == "add"){
         if( !empty($_POST['numero']) ){
 			$numero = htmlentities($_POST['numero']);
             $denomination = htmlentities($_POST['denomination']);
@@ -62,6 +53,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idCompteBancaire = htmlentities($_POST['idCompteBancaire']);
@@ -102,6 +94,7 @@
         }
     }
     //Action Update Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idCompteBancaire = htmlentities($_POST['idCompteBancaire']);
@@ -123,7 +116,11 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['CompteBancaire-action-message'] = $actionMessage;
     $_SESSION['CompteBancaire-type-message'] = $typeMessage;
-    header('Location:../compte-bancaire.php');
+    
+    //set redirection link
+    header('Location:../views/compte-bancaire.php');
 

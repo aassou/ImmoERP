@@ -1,24 +1,16 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
         //classes managers  
         $idProjet = 0;
-        $projetManager = new ProjetManager($pdo);
-        $contratEmployeManager = new ContratEmployeManager($pdo);
-        $contratDetaislManager = new ContratDetailsManager($pdo);
-        $employesManager = new EmployeManager($pdo);
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $contratEmployeManager = new ContratEmployeManager(PDOFactory::getMysqlConnection());
+        $contratDetaislManager = new ContratDetailsManager(PDOFactory::getMysqlConnection());
+        $employesManager = new EmployeManager(PDOFactory::getMysqlConnection());
+        //objs and vars and tests
         if(isset($_GET['idContratEmploye']) and ($_GET['idContratEmploye'])>0 and $_GET['idContratEmploye']<=$contratEmployeManager->getLastId()){
             $idProjet = $_GET['idProjet'];
             $idContratEmploye = $_GET['idContratEmploye'];
@@ -52,7 +44,6 @@ ob_start();
         }
 </style>
 <page backtop="15mm" backbottom="20mm" backleft="10mm" backright="10mm">
-    <!--img src="../assets/img/logo_company.png" style="width: 110px" /-->
     <h1>Détails Contrat <?= $contratEmploye->employe() ?></h1>
     <h3>Projet <?= ucfirst($projet->nom()) ?></h3>
     <p>Imprimé le <?= date('d/m/Y') ?> | <?= date('h:i') ?> </p>
@@ -126,6 +117,6 @@ ob_start();
     }
 }
 else{
-    header("Location:index.php");
+    header("Location:../index.php");
 }
 ?>

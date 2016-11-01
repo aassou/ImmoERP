@@ -1,29 +1,20 @@
 <?php
 
 // Include the main TCPDF library (search for installation path).
-//classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     require_once('../lib/tcpdf/tcpdf.php');
     //classes loading end
     session_start();
     
     //classes managers
-    $contratManager = new ContratManager($pdo);
-    $companyManager = new CompanyManager($pdo);
-    $clientManager = new ClientManager($pdo);
-    $projetManager = new ProjetManager($pdo);
-    $reglementsPrevu = new ReglementPrevu($pdo);
-    $contratCasLibre = new ContratCasLibre($pdo);
+    $contratManager = new ContratManager(PDOFactory::getMysqlConnection());
+    $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+    $clientManager = new ClientManager(PDOFactory::getMysqlConnection());
+    $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+    $reglementsPrevu = new ReglementPrevu(PDOFactory::getMysqlConnection());
+    $contratCasLibre = new ContratCasLibre(PDOFactory::getMysqlConnection());
     //classes
     $idContrat = $_GET['idContrat'];
     $contrat = $contratManager->getContratById($idContrat);
@@ -37,7 +28,7 @@
     $cave = "";
     $etage = "";
     if ( $contrat->typeBien() == "appartement" ) {
-        $appartementManager = new AppartementManager($pdo);
+        $appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
         $bien = $appartementManager->getAppartementById($contrat->idBien());
         $typeBien = "شقة";
         if ( $bien->cave() == "Avec" ) {
@@ -50,7 +41,7 @@
         $etage = $bien->niveau();        
     }
     else if ( $contrat->typeBien() == "localCommercial" ) {
-        $locauxManager = new LocauxManager($pdo);
+        $locauxManager = new LocauxManager(PDOFactory::getMysqlConnection());
         $bien = $locauxManager->getLocauxById($contrat->idBien());
         $typeBien = "محل تجاري";
         $contratTitle = "عقد حفظ الحق في ملكية محل تجاري";

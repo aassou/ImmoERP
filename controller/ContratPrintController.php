@@ -1,24 +1,15 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
-        $clientManager = new ClientManager($pdo);
-        $contratManager = new ContratManager($pdo);
-        $companyManager = new CompanyManager($pdo);
-        $projetManager = new ProjetManager($pdo);
-        $appartementManager = new AppartementManager($pdo);
-		$locauxManager = new LocauxManager($pdo);
+        $clientManager = new ClientManager(PDOFactory::getMysqlConnection());
+        $contratManager = new ContratManager(PDOFactory::getMysqlConnection());
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
+		$locauxManager = new LocauxManager(PDOFactory::getMysqlConnection());
 		$biens = "";
 		$idContrat = 0;
         if( isset($_GET['idContrat']) and ($_GET['idContrat']>0 and $_GET['idContrat']<=$contratManager->getLastId()) ){
@@ -201,6 +192,6 @@ ob_start();
     }
 }
 else{
-    header("Location:index.php");
+    header("Location:../index.php");
 }
 ?>

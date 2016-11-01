@@ -1,17 +1,8 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
-    //classes loading end
+    
     session_start();
     
     //post input processing
@@ -20,9 +11,10 @@
     $actionMessage = "";
     $typeMessage = "";
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
-    $projetManager = new ProjetManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
+    $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
     
+    //Action Add Process Begins
     if($action == "add"){
         if( !empty($_POST['nom']) ){
             $nom = htmlentities($_POST['nom']);
@@ -60,6 +52,9 @@
             $typeMessage = "error";
         }
     }
+    //Action Add Process Ends
+
+    //Action Update Process Begins    
     else if($action == "update"){
         $idProjet = htmlentities($_POST['idProjet']);
         if(!empty($_POST['nom'])){
@@ -98,8 +93,11 @@
             $typeMessage = "error";
         }
     }
+    //Action Update Process Ends
     
+    //set session informations
     $_SESSION['projet-action-message'] = $actionMessage;
     $_SESSION['projet-type-message'] = $typeMessage;
-    header('Location:../projets.php');
+    //set redirection link
+    header('Location:../views/projets.php');
     

@@ -1,22 +1,15 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config/PDOFactory.php');  
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');;  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
+        //class managers
         $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
 		$fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
 		$livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
 		$reglementsFournisseurManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
+        //obj vars and tests
 		if( isset($_GET['idFournisseur']) and isset($_GET['idProjet']) and 
 		$fournisseurManager->getOneFournisseurBySearch($_GET['idFournisseur']>=1)){
 			$fournisseur = $fournisseurManager->getOneFournisseurBySearch(htmlentities($_GET['idFournisseur']));
@@ -161,6 +154,6 @@ ob_start();
     }
 }
 else{
-    header("Location:index.php");
+    header("Location:../index.php");
 }
 ?>

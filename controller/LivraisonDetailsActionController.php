@@ -1,17 +1,8 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
-    //classes loading end
+    
     session_start();
     
     //post input processing
@@ -26,11 +17,12 @@
     $redirectLink = "";
     //process begins
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    //$historyManager = new HistoryManager($pdo);
-    $livraisonDetailManager = new LivraisonDetailManager($pdo);
+    //$historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
+    $livraisonDetailManager = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
     $codeLivraison = htmlentities($_POST['codeLivraison']);
     $mois = htmlentities($_POST['mois']);
     $annee = htmlentities($_POST['annee']);
+    
     //Action Add Processing Begin
     if($action == "add"){
         if( 
@@ -51,27 +43,18 @@
             'designation' => $designation, 'idLivraison' => $idLivraison, 'createdBy' => $createdBy, 'created' => $created));
             //add it to db
             $livraisonDetailManager->add($livraisonDetail);
-            //add History data
-            /*$history = new History(array(
-                'action' => "Ajout",
-                'target' => "Table des détails livraisons",
-                'description' => "Ajout d'un article à la livraison : ".$idLivraison." - Société : Annahda",
-                'created' => $created,
-                'createdBy' => $createdBy
-            ));*/
-            //add it to db
-            //$historyManager->add($history);
             $actionMessage = "<strong>Opération Valide</strong> : Article Ajouté avec succès.";  
             $typeMessage = "success";
-            $redirectLink = "Location:../livraisons-details.php?codeLivraison=$codeLivraison&mois=$mois&annee=$annee&companyID=$companyID";
+            $redirectLink = "Location:../views/livraisons-details.php?codeLivraison=$codeLivraison&mois=$mois&annee=$annee&companyID=$companyID";
         }
         else{
             $actionMessage = "<strong>Erreur Ajout Article</strong> : Vous devez vérifier les champs <strong>Prix unitaire</strong> et <strong>Quantité</strong>.";
             $typeMessage = "error";
-            $redirectLink = "Location:../livraisons-details.php?codeLivraison=$codeLivraison&mois=$mois&annee=$annee&companyID=$companyID";
+            $redirectLink = "Location:../views/livraisons-details.php?codeLivraison=$codeLivraison&mois=$mois&annee=$annee&companyID=$companyID";
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         if( !empty($_POST['prixUnitaire']) and 
@@ -90,17 +73,6 @@
             'prixUnitaire' => $prixUnitaire, 'quantite' => $quantite, 'updatedBy' => $updatedBy,
             'updated' => $updated));
             $livraisonDetailManager->update($livraisonDetail);
-            /*$createdBy = $_SESSION['userImmoERPV2']->login();
-            //$created = date('Y-m-d h:i:s');
-            $history = new History(array(
-                'action' => "Modification",
-                'target' => "Table des détails livraisons",
-                'description' => "Modification de l'article ".$idLivraisonDetail." - Société : Annahda",
-                'created' => $created,
-                'createdBy' => $createdBy
-            ));
-            //add it to db
-            $historyManager->add($history);*/
             $actionMessage = "<strong>Opération Valide</strong> : Article Modifié avec succès.";
             $typeMessage = "success";
         }
@@ -108,30 +80,24 @@
             $actionMessage = "<strong>Erreur Modification Article</strong> : Vous devez vérifier les champs <strong>Prix unitaire</strong> et <strong>Quantité</strong>.";
             $typeMessage = "error";
         }
-        $redirectLink = "Location:../livraisons-details.php?codeLivraison=$codeLivraison&mois=$mois&annee=$annee&companyID=$companyID";
+        $redirectLink = "Location:../views/livraisons-details.php?codeLivraison=$codeLivraison&mois=$mois&annee=$annee&companyID=$companyID";
     }
     //Action Update Processing End
+    
     //Action Delete Processing Begin
     else if($action=="delete"){
         $idLivraisonDetail = htmlentities($_POST['idLivraisonDetail']);
         $livraisonDetailManager->delete($idLivraisonDetail);
-        /*$createdBy = $_SESSION['userImmoERPV2']->login();
-        $created = date('Y-m-d h:i:s');
-        $history = new History(array(
-            'action' => "Suppression",
-            'target' => "Table des détails livraisons",
-            'description' => "Suppression de l'article ".$idLivraisonDetail." - Société : Annahda",
-            'created' => $created,
-            'createdBy' => $createdBy
-        ));
-        //add it to db
-        $historyManager->add($history);*/
         $actionMessage = "<strong>Opération Valide</strong> : Article Supprimé avec succès.";
         $typeMessage = "success";
         $redirectLink = "Location:../livraisons-details.php?codeLivraison=$codeLivraison&mois=$mois&annee=$annee&companyID=$companyID";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['livraison-detail-action-message'] = $actionMessage;
     $_SESSION['livraison-detail-type-message'] = $typeMessage;
+    
+    //set redirection link
     header($redirectLink);
     

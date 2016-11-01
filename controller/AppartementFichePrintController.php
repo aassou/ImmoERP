@@ -1,30 +1,21 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ) {
-        $clientManager = new ClientManager($pdo);
-        $appartementManager = new AppartementManager($pdo);
-		$contratManager = new ContratManager($pdo);
-		$projetManager = new ProjetManager($pdo);
+        //class managers
+        $clientManager = new ClientManager(PDOFactory::getMysqlConnection());
+        $appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
+		$contratManager = new ContratManager(PDOFactory::getMysqlConnection());
+		$projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        //objs vars and inputs
 		$idAppartement = 0;
 		if(isset($_GET['idAppartement']) and $_GET['idAppartement']>0 and $_GET['idAppartement']<=$appartementManager->getLastId()){
 			$idAppartement = $_GET['idAppartement'];
 			$appartement = $appartementManager->getAppartementById($idAppartement);
-	        //$contrat = $contratManager->getContratByIdBien($appartement->id());
-	        //$client = $clientManager->getClientById($contrat->idClient());
 	        $projet = $projetManager->getProjetById($appartement->idProjet());
-			$piecesAppartementManager = new AppartementPiecesManager($pdo);
+			$piecesAppartementManager = new AppartementPiecesManager(PDOFactory::getMysqlConnection());
 			$pieces = $piecesAppartementManager->getPiecesAppartementByIdAppartement($idAppartement);
 			$piecesNumber = $piecesAppartementManager->getPiecesAppartementNumberByIdAppartement($idAppartement);
 			$image = "";
@@ -32,7 +23,6 @@
 				$image = $pieces[0]->url();	
 			}
 		}
-//property data
 
 ob_start();
 ?>
@@ -121,6 +111,6 @@ ob_start();
     }
 }
 else{
-    header("Location:index.php");
+    header("Location:../index.php");
 }
 ?>

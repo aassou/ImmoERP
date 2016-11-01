@@ -1,15 +1,6 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     include('../lib/ForeignExchange.php');
     //classes loading end
@@ -26,10 +17,12 @@
     $redirectLink = "";
     //process begins
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
-    $operationManager = new OperationManager($pdo);
-    $projetManager = new ProjetManager($pdo);
-    $clientManager = new ClientManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
+    $operationManager = new OperationManager(PDOFactory::getMysqlConnection());
+    $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+    $clientManager = new ClientManager(PDOFactory::getMysqlConnection());
+    
+    //Action Add Process Begins
     if( $action == "add" ) {
         if( !empty($_POST['montant']) and !empty($_POST['numeroOperation']) ) {
             $reference = 'Q'.date('Ymd-his');
@@ -82,18 +75,21 @@
             $typeMessage = "error";
         }
     }
+    //Action Add Process Ends
+    
+    //Action UpdatePiece Process Begins
     else if ($action == "updatePiece") {
         $codeContrat = htmlentities($_POST['codeContrat']);
         $url = "";
         $idOperation = htmlentities($_POST['idOperation']);
         if(file_exists($_FILES['urlPiece']['tmp_name']) || is_uploaded_file($_FILES['urlPiece']['tmp_name'])) {
             $url = imageProcessing($_FILES['urlPiece'], '/pieces/pieces_reglements/');
-            $operationManager = new OperationManager($pdo);
+            $operationManager = new OperationManager(PDOFactory::getMysqlConnection());
             $operationManager->updatePiece($idOperation, $url);
             $actionMessage = "<strong>Opération valide : </strong>La pièce de réglement est modifiée avec succès.";
             $typeMessage = "success";
             //add history data to db
-            $historyManager = new HistoryManager($pdo);
+            $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
             $createdBy = $_SESSION['userImmoERPV2']->login();
             $created = date('Y-m-d h:i:s');
             $history = new History(array(
@@ -110,7 +106,10 @@
             $actionMessage = "<strong>Erreur Modification Pièce de réglement : </strong>Vous devez séléctionner un fichier.";
             $typeMessage = "error";
         }
-    } 
+    }
+    //Action UpdatePiece Process Ends
+    
+    //Action Update Process Begins 
     else if($action == "update"){
         if( !empty($_POST['montant']) and !empty($_POST['numeroOperation']) ) {
             $idOperation = htmlentities($_POST['idOperation']);
@@ -149,6 +148,9 @@
             $typeMessage = "error";
         }
     }
+    //Action Update Process Ends
+    
+    //Action Validate Process Begins
     else if($action=="validate"){
         $idOperation = $_POST['idOperation'];
         $operationManager->validate($idOperation, 1);
@@ -167,6 +169,9 @@
         $actionMessage = "<strong>Opération Valide</strong> : Paiement client validé avec succès.";
         $typeMessage = "success";
     }
+    //Action Validate Process Ends
+    
+    //Action Cancel Process Begins
     else if($action=="cancel"){
         $idOperation = $_POST['idOperation'];
         $operationManager->cancel($idOperation, 0);
@@ -185,6 +190,9 @@
         $actionMessage = "<strong>Opération Valide</strong> : Paiement client annulé avec succès.";
         $typeMessage = "success";
     }
+    //Action Cancel Process Ends
+    
+    //Action Hide Process Begins
     else if($action=="hide"){
         $idOperation = $_POST['idOperation'];
         $operationManager->hide($idOperation, 2);
@@ -203,6 +211,9 @@
         $actionMessage = "<strong>Opération Valide</strong> : Paiement retiré  avec succès.";
         $typeMessage = "success";
     }
+    //Action Hide Process Ends
+    
+    //Action Delete Process Begins
     else if($action=="delete"){
         $idOperation = $_POST['idOperation'];
         $operationManager->delete($idOperation);
@@ -221,32 +232,37 @@
         $actionMessage = "<strong>Opération Valide</strong> : Paiement Client Supprimé avec succès.";
         $typeMessage = "success";
     }
+    //Action Hide Process Ends
     
     //define the redirection url based on the source page
     if ( isset($_POST['source']) and $_POST['source'] == "contrat" ) {
         $codeContrat = htmlentities($_POST['codeContrat']);
         $idProjet = htmlentities($_POST['idProjet']);
-        $redirectLink = "Location:../contrat.php?codeContrat=".$codeContrat."&idProjet=".$idProjet."#detailsReglements";   
+        $redirectLink = "Location:../views/contrat.php?codeContrat=".$codeContrat."&idProjet=".$idProjet."#detailsReglements";   
     }
     else if ( isset($_POST['source']) and $_POST['source'] == "operations-status" ) {
         $mois = $_POST['mois'];
         $annee = $_POST['annee'];
-        $redirectLink = "Location:../operations-status.php?mois=".$mois."&annee=".$annee;
+        $redirectLink = "Location:../views/operations-status.php?mois=".$mois."&annee=".$annee;
         if ($action == "hide") {
-            $redirectLink = "Location:../operations-status-group.php";
+            $redirectLink = "Location:../views/operations-status-group.php";
         } 
     }
     else if ( isset($_POST['source']) and $_POST['source'] == "operations-status-group" ) {
-        $redirectLink = "Location:../operations-status-group.php";
+        $redirectLink = "Location:../views/operations-status-group.php";
     }
     else if ( isset($_POST['source']) and $_POST['source'] == "contrats-list" ) {
         $idProjet = htmlentities($_POST['idProjet']);
-        $redirectLink = "Location:../contrats-list.php?idProjet=".$idProjet;
+        $redirectLink = "Location:../views/contrats-list.php?idProjet=".$idProjet;
     }
     else if ( isset($_POST['source']) and $_POST['source'] == "clients-search" ) {
-    	$redirectLink = "Location:../clients-search.php";
+    	$redirectLink = "Location:../views/clients-search.php";
     }
+    
+    //set session informations
     $_SESSION['operation-action-message'] = $actionMessage;
     $_SESSION['operation-type-message'] = $typeMessage;
+    
+    //set redirection link
     header($redirectLink);
     

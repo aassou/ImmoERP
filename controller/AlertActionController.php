@@ -1,16 +1,6 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    include('../app/classLoad.php');
+    require('../db/PDOFactory.php');;  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
@@ -20,10 +10,9 @@
     //This var contains result message of CRUD action
     $actionMessage = "";
     $typeMessage = "";
-
     //Component Class Manager
-
-    $alertManager = new AlertManager($pdo);
+    $alertManager = new AlertManager(PDOFactory::getMysqlConnection());
+    
 	//Action Add Processing Begin
     if($action == "add"){
         if( !empty($_POST['alert']) ){
@@ -49,6 +38,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idAlert = htmlentities($_POST['idAlert']);
@@ -74,6 +64,7 @@
         }
     }
     //Action Update Processing End
+    
     //Action UpdateStatus Processing Begin
     else if($action == "updateStatus"){
         $idAlert = htmlentities($_POST['idAlert']);
@@ -83,6 +74,7 @@
         $typeMessage = "success";
     }
     //Action Update Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idAlert = htmlentities($_POST['idAlert']);
@@ -91,7 +83,11 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['alert-action-message'] = $actionMessage;
     $_SESSION['alert-type-message'] = $typeMessage;
-    header('Location:../alert.php');
-
+    
+    //set redirection link
+    header('Location:../views/alert.php');
+    

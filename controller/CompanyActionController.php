@@ -1,29 +1,21 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
     
     //post input processing
     $action = htmlentities($_POST['action']);
+    
     //This var contains result message of CRUD action
     $actionMessage = "";
     $typeMessage = "";
     $redirectLink = "";
+    
     //Component Class Manager
-
-    $companyManager = new CompanyManager($pdo);
+    $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+    
 	//Action Add Processing Begin
     if($action == "add"){
         if( !empty($_POST['nom']) ){
@@ -53,9 +45,10 @@
             $actionMessage = "Erreur Ajout company : Vous devez remplir le champ 'nom'.";
             $typeMessage = "error";
         }
-        $redirectLink = "Location:../company-choice.php";
+        $redirectLink = "Location:../views/company-choice.php";
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idCompany = htmlentities($_POST['idCompany']);
@@ -85,19 +78,24 @@
             $actionMessage = "Erreur Modification Company : Vous devez remplir le champ 'nom'.";
             $typeMessage = "error";
         }
-        $redirectLink = "Location:../companies.php";
+        $redirectLink = "Location:../views/companies.php";
     }
     //Action Update Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idCompany = htmlentities($_POST['idCompany']);
         $companyManager->delete($idCompany);
         $actionMessage = "Opération Valide : Company supprimé(e) avec succès.";
         $typeMessage = "success";
-        $redirectLink = "Location:../companies.php";
+        $redirectLink = "Location:../views/companies.php";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['company-action-message'] = $actionMessage;
     $_SESSION['company-type-message'] = $typeMessage;
+    
+    //set redirection link
     header($redirectLink);
 

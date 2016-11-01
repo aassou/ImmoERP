@@ -1,18 +1,8 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
-    //classes loading end
+    
     session_start();
     
     //post input processing
@@ -20,10 +10,9 @@
     //This var contains result message of CRUD action
     $actionMessage = "";
     $typeMessage = "";
-
     //Component Class Manager
-
-    $todoManager = new TodoManager($pdo);
+    $todoManager = new TodoManager(PDOFactory::getMysqlConnection());
+    
 	//Action Add Processing Begin
     if($action == "add"){
         if( !empty($_POST['todo']) ){
@@ -51,6 +40,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idTodo = htmlentities($_POST['idTodo']);
@@ -78,6 +68,7 @@
         }
     }
     //Action Update Processing End
+    
     //Action UpdatePriority Processing Begin
     else if($action == "update-priority"){
         $idTodo = htmlentities($_POST['idTodo']);
@@ -87,6 +78,7 @@
         $typeMessage = "success";
     }
     //Action UpdatePriority Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idTodo = htmlentities($_POST['idTodo']);
@@ -95,7 +87,10 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['todo-action-message'] = $actionMessage;
     $_SESSION['todo-type-message'] = $typeMessage;
-    header('Location:../todo.php');
-
+    //set redirection link
+    header('Location:../views/todo.php');
+    

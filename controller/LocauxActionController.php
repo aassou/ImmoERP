@@ -1,17 +1,8 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
-    //classes loading end
+    
     session_start();
     
     //post input processing
@@ -19,12 +10,15 @@
     //This var contains result message of CRUD action
     $actionMessage = "";
     $typeMessage = "";
+    //class managers
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
-    $locauxManager = new LocauxManager($pdo);
-    $projetManager = new ProjetManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
+    $locauxManager = new LocauxManager(PDOFactory::getMysqlConnection());
+    $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+    //obj and vars
     $idProjet = htmlentities($_POST['idProjet']);
     $nomProjet = $projetManager->getProjetById($idProjet)->nom();
+    
     //Action Add Processing Begin
     if($action == "add"){
         if( !empty($_POST['code']) ){
@@ -63,6 +57,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         if(!empty($_POST['code'])){
@@ -102,6 +97,7 @@
         }
     }
     //Action Update Processign End
+    
     //Action UpdateStatus Processing Begin
     else if($action=="updateStatus"){
         $idLocaux = $_POST['idLocaux'];
@@ -124,6 +120,7 @@
         $typeMessage = "success";
     }
     //Action UpdateStatus Processing End
+    
     //Action UpdateClient Processing Begin
     else if($action=="updateClient"){
         $idLocaux = $_POST['idLocaux'];
@@ -146,6 +143,7 @@
         $typeMessage = "success";
     }
     //Action UpdateClient Processing End
+    
     //Action Delete Processing Begin
     else if($action=="delete"){
         $idLocaux = $_POST['idLocaux'];
@@ -167,7 +165,11 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['locaux-action-message'] = $actionMessage;
     $_SESSION['locaux-type-message'] = $typeMessage;
-    header('Location:../locaux.php?idProjet='.$idProjet);
+    
+    //set redirection link
+    header('Location:../views/locaux.php?idProjet='.$idProjet);
     

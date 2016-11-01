@@ -1,16 +1,7 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
-    //classes loading end
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');  
+    
     session_start();
     
     //post input processing
@@ -25,7 +16,7 @@
 			}
 		}
 		$recherche = htmlentities($_POST['search']);
-		$clientManager = new ClientManager($pdo);
+		$clientManager = new ClientManager(PDOFactory::getMysqlConnection());
 		$_SESSION['searchClientResult'] = $clientManager->getClientBySearch($recherche, $testRadio);
 		header('Location:../clients-search.php');
     }
@@ -33,7 +24,7 @@
         $_SESSION['client-search-error'] = 
         "<strong>Erreur Recherche Client</strong> : Vous devez séléctionner un choix 'Nom' ou 'CIN' 
         et 'Tapez votre recherche'";
-		header('Location:../clients-search.php');
+		header('Location:../views/clients-search.php');
     }
     
     

@@ -1,33 +1,27 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
     
     //post input processing
     $action = htmlentities($_POST['action']);
+    
     //This var contains result message of CRUD action
     $actionMessage = "";
     $typeMessage = "";
     $redirectLink = "";
+    
+    //vars and inputs
     $companyID = htmlentities($_POST['companyID']);
     $mois = htmlentities($_POST['mois']);
     $annee = htmlentities($_POST['annee']);
     $codeCommande = htmlentities($_POST['codeCommande']);
-    $redirectLink = "Location:../commande-details.php?codeCommande=".$codeCommande."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
+    $redirectLink = "Location:../views/commande-details.php?codeCommande=".$codeCommande."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
     //Component Class Manager
-    $commandeDetailManager = new CommandeDetailManager($pdo);
+    $commandeDetailManager = new CommandeDetailManager(PDOFactory::getMysqlConnection());
+	
 	//Action Add Processing Begin
     if($action == "add"){
         if( !empty($_POST['reference']) ){
@@ -57,6 +51,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idCommandeDetail = htmlentities($_POST['idCommandeDetail']);
@@ -84,6 +79,7 @@
         }
     }
     //Action Update Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idCommandeDetail = htmlentities($_POST['idCommandeDetail']);
@@ -92,7 +88,11 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['commande-detail-action-message'] = $actionMessage;
     $_SESSION['commande-detail-type-message'] = $typeMessage;
+    
+    //set redirection link
     header($redirectLink);
 

@@ -1,17 +1,8 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
-    //classes loading end
+    
     session_start();
     
     //post input processing
@@ -19,12 +10,16 @@
     //This var contains result message of CRUD action
     $actionMessage = "";
     $typeMessage = "";
-    $terrainManager = new TerrainManager($pdo);
-    $projetManager = new ProjetManager($pdo);
+    //class managers
+    $terrainManager = new TerrainManager(PDOFactory::getMysqlConnection());
+    $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
+    //get form inputs
     $idProjet = htmlentities($_POST['idProjet']);
     $nomProjet = $projetManager->getProjetById($idProjet)->nom();
+    
+    //Action Add Processing Begin
     if ( $action == "add" ) {
         if ( !empty($_POST['prix']) ) {
             $vendeur = htmlentities($_POST['vendeur']);    
@@ -57,6 +52,9 @@
             $typeMessage = "error";
         }
     }
+    //Action Add Processing End
+    
+    //Action Update Processing Begin
     else if($action == "update"){
         if(!empty($_POST['prix'])){
             $id = htmlentities($_POST['idTerrain']);
@@ -90,6 +88,9 @@
             $typeMessage = "error";
         }
     }
+    //Action Update Processing End
+    
+    //Action Delete Processing Begin
     else if($action=="delete"){
         $idTerrain = $_POST['idTerrain'];
         $emplacementTerrain = $terrainManager->getTerrainById($idTerrain)->emplacement();
@@ -109,8 +110,11 @@
         $actionMessage = "Opération Valide : Terrain Supprimé avec succès.";
         $typeMessage = "success";
     }
+    //Action Delete Processing End
     
+    //set session informations
     $_SESSION['terrain-action-message'] = $actionMessage;
     $_SESSION['terrain-type-message'] = $typeMessage;
+    //set redirection link
     header('Location:../terrain.php?idProjet='.$idProjet);
     

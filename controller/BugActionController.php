@@ -1,16 +1,6 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
@@ -22,10 +12,10 @@
     $typeMessage = "";
 
     //Component Class Manager
-
-    $bugManager = new BugManager($pdo);
+    $bugManager = new BugManager(PDOFactory::getMysqlConnection());
+    
 	//Action Add Processing Begin
-    	if($action == "add"){
+    if($action == "add"){
         if( !empty($_POST['bug']) ){
 			$bug = htmlentities($_POST['bug']);
 			$lien = htmlentities($_POST['lien']);
@@ -51,6 +41,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idBug = htmlentities($_POST['idBug']);
@@ -76,6 +67,7 @@
         }
     }
     //Action Update Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idBug = htmlentities($_POST['idBug']);
@@ -84,7 +76,10 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['bug-action-message'] = $actionMessage;
     $_SESSION['bug-type-message'] = $typeMessage;
-    header('Location:../bugs.php');
-
+    
+    //set redirection link
+    header('Location:../views/bugs.php');

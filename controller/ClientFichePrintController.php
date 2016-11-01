@@ -1,38 +1,28 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) and $_SESSION['userImmoERPV2']->profil()=="admin" ){
         //classes managers	
-        $clientManager = new ClientManager($pdo);
-        $contratManager = new ContratManager($pdo);
-        $projetManager = new ProjetManager($pdo);
-		//classes and attributes
+        $clientManager = new ClientManager(PDOFactory::getMysqlConnection());
+        $contratManager = new ContratManager(PDOFactory::getMysqlConnection());
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+		//objs and vars
 		$idContrat = $_GET['idContrat'];
         $contrat = $contratManager->getContratById($idContrat);
         $client = $clientManager->getClientById($contrat->idClient());
         $projet = $projetManager->getProjetById($contrat->idProjet());
-//property data
-$programme  = $projet->nom();
-$nomClient = $client->nomArabe();
-$adresse = $client->adresse();
-$cin = $client->cin();
-$telephone1 = $client->telephone1();
-$telephone2 = $client->telephone2();
-$email = $client->email();
-$dateContrat = date('d-m-Y', strtotime($contrat->dateCreation()));
-
-ob_start();
+        //property data
+        $programme  = $projet->nom();
+        $nomClient = $client->nomArabe();
+        $adresse = $client->adresse();
+        $cin = $client->cin();
+        $telephone1 = $client->telephone1();
+        $telephone2 = $client->telephone2();
+        $email = $client->email();
+        $dateContrat = date('d-m-Y', strtotime($contrat->dateCreation()));
+        ob_start();
 ?>
 <style type="text/css">
 	h1{
@@ -197,6 +187,6 @@ ob_start();
     }
 }
 else{
-    header("Location:index.php");
+    header("Location:../index.php");
 }
 ?>

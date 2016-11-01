@@ -1,16 +1,6 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');  
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
@@ -24,10 +14,11 @@
     $redirectLink = "";
     //Component Class Manager
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
-    $reglementPrevuManager = new ReglementPrevuManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
+    $reglementPrevuManager = new ReglementPrevuManager(PDOFactory::getMysqlConnection());
+    
 	//Action Add Processing Begin
-    	if($action == "add"){
+    if($action == "add"){
         if( !empty($_POST['datePrevu']) ){
 			$datePrevu = htmlentities($_POST['datePrevu']);
 			$codeContrat = htmlentities($_POST['codeContrat']);
@@ -63,6 +54,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idReglementPrevu = htmlentities($_POST['idReglementPrevu']);
@@ -102,6 +94,7 @@
         }
     }
     //Action Update Processing End
+    
     //Action UpdateStatus Processing Begin
     else if ($action == "updateStatus"){
         $idReglementPrevu = htmlentities($_POST['idReglementPrevu']);
@@ -121,9 +114,10 @@
         $historyManager->add($history);
         $codeContrat = htmlentities($_POST['codeContrat']);
         $idProjet = htmlentities($_POST['idProjet']);
-        $redirectLink = "Location:../contrat.php?codeContrat=".$codeContrat.'&idProjet='.$idProjet.'#reglementsPrevus';
+        $redirectLink = "Location:../views/contrat.php?codeContrat=".$codeContrat.'&idProjet='.$idProjet.'#reglementsPrevus';
     }
     //Action UpdateStatus Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idReglementPrevu = htmlentities($_POST['idReglementPrevu']);
@@ -144,7 +138,11 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['reglementPrevu-action-message'] = $actionMessage;
     $_SESSION['reglementPrevu-type-message'] = $typeMessage;
+    
+    //set redirection link
     header($redirectLink);
 

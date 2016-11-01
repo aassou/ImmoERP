@@ -1,16 +1,6 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
@@ -22,10 +12,10 @@
     $typeMessage = "";
 
     //Component Class Manager
-    $chargeManager = new ChargeCommunManager($pdo);
-    $typeChargeManager = new TypeChargeCommunManager($pdo);
+    $chargeManager = new ChargeCommunManager(PDOFactory::getMysqlConnection());
+    $typeChargeManager = new TypeChargeCommunManager(PDOFactory::getMysqlConnection());
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
 	//Action Add Processing Begin
     //begin process: test the action
     //Action Add Processing Begin
@@ -70,6 +60,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idCharge = htmlentities($_POST['idCharge']);
@@ -114,6 +105,7 @@
         }
     }
     //Action Update Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idCharge = htmlentities($_POST['idCharge']);
@@ -137,12 +129,16 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['charge-action-message'] = $actionMessage;
     $_SESSION['charge-type-message'] = $typeMessage;
-    $redirectLink = "Location:../charges-communs-grouped.php";
+    
+    //set redirection link
+    $redirectLink = "Location:../views/charges-communs-grouped.php";
     if( isset($_POST['typeCharge']) and isset($_POST['source']) and $_POST['source']=="charges-communs-type" ) {
         $typeCharge = htmlentities($_POST['typeCharge']);
-        $redirectLink = "Location:../charges-communs-type.php?type=".$typeCharge;
+        $redirectLink = "Location:../views/charges-communs-type.php?type=".$typeCharge;
     }
     header($redirectLink);
 

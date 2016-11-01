@@ -1,16 +1,6 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
@@ -24,8 +14,9 @@
     
     //Component Class Manager
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
-    $caisseManager = new CaisseManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
+    $caisseManager = new CaisseManager(PDOFactory::getMysqlConnection());
+    
 	//Action Add Processing Begin
     if($action == "add"){
         if( !empty($_POST['type']) ){
@@ -68,6 +59,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idCaisse = htmlentities($_POST['idCaisse']);
@@ -112,6 +104,7 @@
         }
     }
     //Action Update Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idCaisse = htmlentities($_POST['idCaisse']);
@@ -133,16 +126,19 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['caisse-action-message'] = $actionMessage;
     $_SESSION['caisse-type-message'] = $typeMessage;
-    $redirecktLink = 'Location:../caisse.php';
+    
+    //set redirection link
+    $redirecktLink = 'Location:../views/caisse.php';
     if ( isset ($_POST['source']) and $_POST['source'] == "caisse-group" ) {
-        $redirecktLink = "Location:../caisse-group.php?companyID=".$companyID;
+        $redirecktLink = "Location:../views/caisse-group.php?companyID=".$companyID;
     }
     else if ( isset($_POST['source']) and $_POST['source'] == "caisse-mois-annee" ) {
         $mois = $_POST['mois'];
         $annee = $_POST['annee'];
-        $redirecktLink = "Location:../caisse-mois-annee.php?mois=".$mois."&annee=".$annee."&companyID=".$companyID;
+        $redirecktLink = "Location:../views/caisse-mois-annee.php?mois=".$mois."&annee=".$annee."&companyID=".$companyID;
     } 
     header($redirecktLink);
-

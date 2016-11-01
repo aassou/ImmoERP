@@ -1,18 +1,7 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
-    include('../lib/image-processing.php');
-    //classes loading end
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
+    
     session_start();
     
     //post input processing
@@ -23,10 +12,11 @@
 
     //Component Class Manager
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
-    $taskManager = new TaskManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
+    $taskManager = new TaskManager(PDOFactory::getMysqlConnection());
+	
 	//Action Add Processing Begin
-    	if($action == "add"){
+    if($action == "add"){
         if( !empty($_POST['user']) ){
 			$user = htmlentities($_POST['user']);
 			$content = htmlentities($_POST['content']);
@@ -62,6 +52,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idTask = htmlentities($_POST['idTask']);
@@ -101,6 +92,7 @@
         }
     }
     //Action Update Processing End
+    
     //Action UpdateStatus Processing Begin
     else if($action == "updateStatus"){
         $idTask = htmlentities($_POST['idTask']);
@@ -130,6 +122,7 @@
         $typeMessage = "success";
     }
     //Action UpdateStatus Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idTask = htmlentities($_POST['idTask']);
@@ -150,6 +143,7 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
     //Action Delete List Of Tasks Processing Begin
     else if($action == "deleteValideTasks"){
         $user = htmlentities($_POST['user']);
@@ -170,7 +164,11 @@
         $typeMessage = "success";
     }
     //Action Delete List Of Tasks Processing End
+    
+    //set session informations
     $_SESSION['task-action-message'] = $actionMessage;
     $_SESSION['task-type-message'] = $typeMessage;
-    header('Location:../tasks.php');
+    
+    //set redirection link
+    header('Location:../views/tasks.php');
 

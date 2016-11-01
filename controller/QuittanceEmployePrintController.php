@@ -1,35 +1,25 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
-    //classes loading end
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');  
+    
     session_start();
+    
     if( isset($_SESSION['userImmoERPV2']) ){
         //classes managers  
         $idProjet = 0;
-        $projetManager = new ProjetManager($pdo);
-        $contratEmployeManager = new ContratEmployeManager($pdo);
-        $contratDetaislManager = new ContratDetailsManager($pdo);
-        $employesManager = new EmployeManager($pdo);
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $contratEmployeManager = new ContratEmployeManager(PDOFactory::getMysqlConnection());
+        $contratDetaislManager = new ContratDetailsManager(PDOFactory::getMysqlConnection());
+        $employesManager = new EmployeManager(PDOFactory::getMysqlConnection());
+        //obj and vars
         $contratDetails = "";
         if(isset($_GET['idContratDetail']) and ($_GET['idContratDetail'])>0 and $_GET['idContratDetail']<=$contratDetaislManager->getLastId()){
             $idProjet = $_GET['idProjet'];
             $idContratDetail = $_GET['idContratDetail'];
             $projet = $projetManager->getProjetById($idProjet);
-            //$contratEmploye = $contratEmployeManager->getContratEmployeById($idContratEmploye);
-            //$contratDetails = $contratDetaislManager->getContratDetailsByIdContratEmploye($idContratEmploye);
             $contratDetails = $contratDetaislManager->getContratDetailsById($idContratDetail);
             $contrat = $contratEmployeManager->getContratEmployeById($contratDetails->idContratEmploye());
             $employe = $employesManager->getEmployeById($contrat->employe());
-            //$totalPaye = $contratDetaislManager->getContratDetailsTotalByIdContratEmploye($idContratEmploye);
         }
 
 ob_start();
@@ -56,7 +46,6 @@ ob_start();
         }
 </style>
 <page backtop="15mm" backbottom="20mm" backleft="10mm" backright="10mm">
-    <!--img src="../assets/img/logo_company.png" style="width: 110px" /-->
     <h3>Quittance pour <?= $employe->nom() ?> - <?= ucfirst($projet->nom()) ?> - <?= $contrat->traveaux() ?></h3>
     <p>Imprimé le <?= date('d/m/Y') ?> | <?= date('h:i') ?> </p>
     <br><br>
@@ -67,7 +56,6 @@ ob_start();
             <th style="width:30%">Montant</th>
         </tr>
         <?php
-        //foreach($contratDetails as $contrat){
         ?>      
         <tr>
             <td style="width:40%"><?= date('d/m/Y', strtotime($contratDetails->dateOperation()) ) ?></td>
@@ -75,7 +63,6 @@ ob_start();
             <td style="width:30%"><?= number_format($contratDetails->montant(), 2, ',', ' ') ?></td>
         </tr>  
         <?php
-        //}//end of loop
         ?>
     </table>
     <br><br><br>
@@ -109,6 +96,6 @@ ob_start();
     }
 }
 else{
-    header("Location:index.php");
+    header("Location:../index.php");
 }
 ?>

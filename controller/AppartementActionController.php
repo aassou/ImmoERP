@@ -1,30 +1,23 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
-    
     //post input processing
     $action = htmlentities($_POST['action']);
     //This var contains result message of CRUD action
     $actionMessage = "";
     $typeMessage = "";
-    $appartementManager = new AppartementManager($pdo);
-    $projetManager = new ProjetManager($pdo);
+    $appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
+    $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
+    //obj and vars
     $idProjet = htmlentities($_POST['idProjet']);
     $nomProjet = $projetManager->getProjetById($idProjet)->nom();
+    
+    //Action Add Process Begin
     if($action == "add"){
         if( !empty($_POST['code']) ){
             $code = htmlentities($_POST['code']);
@@ -63,6 +56,9 @@
             $typeMessage = "error";
         }
     }
+    //Action Add Process Ends
+    
+    //Action Update Process Begin
     else if($action == "update"){
         if(!empty($_POST['code'])){
             $id = htmlentities($_POST['idAppartement']);
@@ -102,6 +98,9 @@
             $typeMessage = "error";
         }
     }
+    //Action Update Process Ends
+    
+    //Action UpdateStatus Process Begin
     else if($action=="updateStatus"){
         $idAppartement = $_POST['idAppartement'];
         $status = htmlentities($_POST['status']);
@@ -122,6 +121,9 @@
         $actionMessage = "Opération Valide : Appartement Status Modifié avec succès.";
         $typeMessage = "success";
     }
+    //Action UpdateStatus Process Ends
+    
+    //Action UpdateClient Process Begin
     else if($action=="updateClient"){
         $idAppartement = $_POST['idAppartement'];
         $par = htmlentities($_POST['par']);
@@ -142,6 +144,9 @@
         $actionMessage = "Opération Valide : Appartement Réservation Modifiée avec succès.";
         $typeMessage = "success";
     }
+    //Action UpdateClient Process Ends
+    
+    //Action Delete Process Begin
     else if($action=="delete"){
         $idAppartement = $_POST['idAppartement'];
         $nomAppartement = $appartementManager->getAppartementById($idAppartement)->nom();
@@ -161,8 +166,12 @@
         $actionMessage = "Opération Valide : Appartement Supprimé avec succès.";
         $typeMessage = "success";
     }
+    //Action Delete Process Ends
     
+    //set session informations
     $_SESSION['appartement-action-message'] = $actionMessage;
     $_SESSION['appartement-type-message'] = $typeMessage;
-    header('Location:../appartements.php?idProjet='.$idProjet);
+    
+    //set redirection link
+    header('Location:../views/appartements.php?idProjet='.$idProjet);
     

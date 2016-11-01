@@ -1,15 +1,6 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
@@ -21,13 +12,20 @@
     $actionMessage = "";
     $typeMessage = "";
     $redirectLink = "";
+    
     //process begins
+    
+    //class managers
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
-    $livraisonManager = new LivraisonManager($pdo);
-    $fournisseurManager = new FournisseurManager($pdo);
-    $projetManager = new ProjetManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
+    $livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
+    $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+    $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+    
+    //objs and vars
     $idFournisseur = htmlentities($_POST['idFournisseur']);
+    
+    //Action Add Process Begins
     if($action == "add"){
         if( !empty($_POST['libelle']) and !empty($_POST['dateLivraison']) ){
             $idProjet = htmlentities($_POST['idProjet']);
@@ -61,25 +59,28 @@
             $historyManager->add($history);
             $actionMessage = "<strong>Opération Valide</strong> : Livraison Ajoutée avec succès.";  
             $typeMessage = "success";
-            $redirectLink = "Location:../livraisons-details.php?codeLivraison=$codeLivraison&mois=$mois&annee=$annee&companyID=$companyID";
+            $redirectLink = "Location:../views/livraisons-details.php?codeLivraison=$codeLivraison&mois=$mois&annee=$annee&companyID=$companyID";
         }
         else{
             $actionMessage = "<strong>Erreur Ajout Livraison</strong> : Vous devez remplir le champ <strong>N° BL</strong>.";
             $typeMessage = "error";
             //test the source of this request for the reason of exact redirection
             if ( isset($_POST['source']) and $_POST['source'] == "livraisons-group" ) {
-                $redirectLink = "Location:../livraisons-group.php?companyID=$companyID";    
+                $redirectLink = "Location:../views/livraisons-group.php?companyID=$companyID";    
             }
             else if ( isset($_POST['source']) and $_POST['source'] == "livraisons-fournisseur-mois" ) {
-                $redirectLink = "Location:../livraisons-fournisseur-mois.php?idFournisseur=$idFournisseur&companyID=$companyID";    
+                $redirectLink = "Location:../views/livraisons-fournisseur-mois.php?idFournisseur=$idFournisseur&companyID=$companyID";    
             }
             else if ( isset($_POST['source']) and $_POST['source'] == "livraisons-fournisseur-mois-list" ) {
                 $mois = htmlentities($_POST['mois']);
                 $annee = htmlentities($_POST['annee']);
-                $redirectLink = "Location:../livraisons-fournisseur-mois-list.php?idFournisseur=$idFournisseur&mois=$mois&annee=$annee&companyID=.$companyID";    
+                $redirectLink = "Location:../views/livraisons-fournisseur-mois-list.php?idFournisseur=$idFournisseur&mois=$mois&annee=$annee&companyID=.$companyID";    
             }
         }
     }
+    //Action Add Process Ends
+    
+    //Action Update Process Begins
     else if($action == "update"){
         $mois = htmlentities($_POST['mois']);
         $annee = htmlentities($_POST['annee']);
@@ -120,15 +121,18 @@
             $actionMessage = "<strong>Erreur Modification Livraison</strong> : Vous devez remplir le champ <strong>N° BL</strong>.";
             $typeMessage = "error";
         }
-        //$redirectLink = "Location:../livraisons-fournisseur.php?idFournisseur=".$idFournisseur;
-        $redirectLink = "Location:../livraisons-fournisseur-mois-list.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
+        
+        $redirectLink = "Location:../views/livraisons-fournisseur-mois-list.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
         //this case treat the updated request comming from livraisons-details.php page,
         //not livraisons-fournisseur.php page
         if( isset($_POST['source']) and $_POST['source']=="details-livraison" ){
             $codeLivraison = $_POST['codeLivraison'];
-            $redirectLink = "Location:../livraisons-details.php?codeLivraison=".$codeLivraison."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
+            $redirectLink = "Location:../views/livraisons-details.php?codeLivraison=".$codeLivraison."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
         }
     }
+    //Action Update Process Ends
+    
+    //Action UpdateStatus Process Begins
     else if($action == "updateStatus"){
         $mois = htmlentities($_POST['mois']);
         $annee = htmlentities($_POST['annee']);
@@ -152,11 +156,14 @@
         $historyManager->add($history);
         $actionMessage = "<strong>Opération Valide</strong> : Livraison Status Modifiée avec succès.";
         $typeMessage = "success";
-        $redirectLink = "Location:../livraisons-fournisseur-mois-list.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
+        $redirectLink = "Location:../views/livraisons-fournisseur-mois-list.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
         
     }
+    //Action UpdateStatus Process Ends
+    
+    //Action Delete Process Begins
     else if($action=="delete"){
-        $livraisonDetailManager = new LivraisonDetailManager($pdo);
+        $livraisonDetailManager = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
         $idLivraison = $_POST['idLivraison'];
         $mois = htmlentities($_POST['mois']);
         $annee = htmlentities($_POST['annee']);
@@ -178,11 +185,14 @@
         $livraisonDetailManager->deleteLivraison($idLivraison);
         $actionMessage = "<strong>Opération Valide</strong> : Livraison Supprimée avec succès.";
         $typeMessage = "success";
-        $redirectLink = "Location:../livraisons-fournisseur-mois-list.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
+        $redirectLink = "Location:../views/livraisons-fournisseur-mois-list.php?idFournisseur=".$idFournisseur."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;
         
     }
     
+    //set session informations
     $_SESSION['livraison-action-message'] = $actionMessage;
     $_SESSION['livraison-type-message'] = $typeMessage;
+    
+    //set redirection link
     header($redirectLink);
     

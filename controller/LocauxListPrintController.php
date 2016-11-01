@@ -1,23 +1,14 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
-    //classes loading end
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
+    
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
         //classes managers  
-        $projetManager = new ProjetManager($pdo);
-        $clientManager = new ClientManager($pdo);
-        $contratManager = new ContratManager($pdo);
-        $locauxManager = new LocauxManager($pdo);
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $clientManager = new ClientManager(PDOFactory::getMysqlConnection());
+        $contratManager = new ContratManager(PDOFactory::getMysqlConnection());
+        $locauxManager = new LocauxManager(PDOFactory::getMysqlConnection());
         //objs and vars
         $idProjet = $_GET['idProjet'];
         $projet = $projetManager->getProjetById($idProjet);
@@ -102,6 +93,6 @@ ob_start();
     }
 }
 else{
-    header("Location:index.php");
+    header("Location:../index.php");
 }
 ?>

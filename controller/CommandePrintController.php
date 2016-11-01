@@ -1,26 +1,17 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
         //post processing
         $companyID = htmlentities($_GET['companyID']);
         //Class Managers
-        $companyManager = new CompanyManager($pdo);
-        $projetManager = new ProjetManager($pdo);
-        $fournisseurManager = new FournisseurManager($pdo);
-        $commandeManager = new CommandeManager($pdo);
-        $commandeDetailManager = new CommandeDetailManager($pdo);
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+        $commandeManager = new CommandeManager(PDOFactory::getMysqlConnection());
+        $commandeDetailManager = new CommandeDetailManager(PDOFactory::getMysqlConnection());
         //objs and vars
         $company = $companyManager->getCompanyById($companyID);
         $livraisonDetailNumber = 0;
@@ -112,6 +103,6 @@ ob_start();
     }
 }
 else{
-    header("Location:index.php");
+    header("Location:../index.php");
 }
 ?>

@@ -1,16 +1,6 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
@@ -22,7 +12,8 @@
     $actionMessage = "";
     $typeMessage = "";
     //Comonent Manager
-    $contratEmployeManager = new ContratEmployeManager($pdo);
+    $contratEmployeManager = new ContratEmployeManager(PDOFactory::getMysqlConnection());
+	
 	//Action Add Processing Begin
     if($action == "add"){
         if( !empty($_POST['employe']) ){
@@ -84,6 +75,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idContratEmploye = htmlentities($_POST['idContratEmploye']);
@@ -141,6 +133,7 @@
         }
     }
     //Action Update Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idContratEmploye = htmlentities($_POST['idContratEmploye']);
@@ -149,7 +142,10 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['contratEmploye-action-message'] = $actionMessage;
     $_SESSION['contratEmploye-type-message'] = $typeMessage;
-    header('Location:../projet-contrat-employe.php?idProjet='.$idProjet);
-
+    
+    //set redirection link
+    header('Location:../views/projet-contrat-employe.php?idProjet='.$idProjet);

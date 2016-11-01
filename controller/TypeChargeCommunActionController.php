@@ -1,29 +1,16 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
-    //classes loading end
-    session_start();
     
+    session_start();
     //post input processing
     $action = htmlentities($_POST['action']);
     //This var contains result message of CRUD action
     $actionMessage = "";
     $typeMessage = "";
-
     //Component Class Manager
-
-    $typeChargeManager = new TypeChargeCommunManager($pdo);
+    $typeChargeManager = new TypeChargeCommunManager(PDOFactory::getMysqlConnection());
 	//Action Add Processing Begin
     if ( $action == "add" ) {
         if( !empty($_POST['nom']) ){
@@ -86,13 +73,19 @@
     //Action Delete Processing End
     $_SESSION['typeCharge-action-message'] = $actionMessage;
     $_SESSION['typeCharge-type-message'] = $typeMessage;
-    $redirectLink = "Location:../charges-communs-grouped.php";
+    //We have 3 forms that can request this resource, so we test which one of these forms requested this action
+    //and we will set the redirection link based on it.
+    //the first one and the normal case
+    $redirectLink = "Location:../views/charges-communs-grouped.php";
+    //the second one which comes from "charges-communs-type" url
     if( isset($_POST['typeCharge']) and isset($_POST['source']) and $_POST['source']=="charges-communs-type" ) {
         $typeCharge = htmlentities($_POST['typeCharge']);
-        $redirectLink = "Location:../charges-communs-type.php?type=".$typeCharge;
+        $redirectLink = "Location:../views/charges-communs-type.php?type=".$typeCharge;
     }
+    //the third one which comes from "type-charges-communs" url
     else if( isset($_POST['source']) and $_POST['source'] == "type-charges-communs" ) {
-        $redirectLink = "Location:../type-charges-communs.php";
+        $redirectLink = "Location:../views/type-charges-communs.php";
     }
+    
     header($redirectLink);
     

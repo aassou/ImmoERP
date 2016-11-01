@@ -1,15 +1,6 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
@@ -19,10 +10,11 @@
     //This var contains result message of CRUD action
     $actionMessage = "";
     $typeMessage = "";
-    $appartementPiecesManager = new AppartementPiecesManager($pdo);
+    $appartementPiecesManager = new AppartementPiecesManager(PDOFactory::getMysqlConnection());
     $idProjet = htmlentities($_POST['idProjet']);
     $idAppartement = htmlentities($_POST['idAppartement']);
     
+    //Action Add Process Begins
     if($action == "add"){
         if( file_exists($_FILES['url']['tmp_name']) || is_uploaded_file($_FILES['url']['tmp_name']) ){
             $url = imageProcessing($_FILES['url'], '/pieces/pieces_appartement/');
@@ -44,6 +36,9 @@
             $typeMessage = "error";
         }
     }
+    //Action Add Process Ends
+
+    //Action Update Process Begins
     else if($action == "update"){
         if( file_exists($_FILES['url']['tmp_name']) || is_uploaded_file($_FILES['url']['tmp_name']) ){
             $url = imageProcessing($_FILES['url'], '/pieces/pieces_appartement/');
@@ -65,14 +60,21 @@
             $typeMessage = "error";
         }
     }
+    //Action Update Process Ends
+    
+    //Action Delete Process Begins
     else if($action=="delete"){
         $idAppartementPiece = $_POST['idAppartementPiece'];
         $appartementManager->delete($idAppartementPiece);
         $actionMessage = "Opération Valide : Pièce Appartement Supprimé(e) avec succès.";
         $typeMessage = "success";
     }
+    //Action Delete Process Ends
     
+    //set session informations
     $_SESSION['appartement-piece-action-message'] = $actionMessage;
     $_SESSION['appartement-piece-type-message'] = $typeMessage;
-    header('Location:../appartements.php?idProjet='.$idProjet);
+    
+    //set redirection link
+    header('Location:../views/appartements.php?idProjet='.$idProjet);
     

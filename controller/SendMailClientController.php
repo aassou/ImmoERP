@@ -1,17 +1,12 @@
 <?php
-function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    //This is a simple test for some project purpose
+    //do not use it!!
+    
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     require_once('../lib/tcpdf/tcpdf.php');
-    //classes loading end
+    
     session_start();
     $to = $_POST['email'];
     $client = $_POST['client'];

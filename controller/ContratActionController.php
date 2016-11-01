@@ -3,26 +3,16 @@
  * This is a Model class for the Contract Component
  * 
  * Created By : AASSOU Abdelilah
- * Date       : 03/11/2015
  * Github     : aassou
  * Twitter    : @a_aassou
  * email      : aassou.abdelilah@gmail.com
  * Description: This controller is used to create a new contract based on the customer data
  *              received form the clients-add.php url.
  */
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
-    //classes loading end
+    
     session_start();
     
     //post input processing
@@ -44,15 +34,16 @@
     $typeMessage = "";
     $redirectLink = "";
     //class manager
-    $clientManager = new ClientManager($pdo);
-    $contratManager = new ContratManager($pdo);
-    $contratCasLibreManager = new ContratCasLibreManager($pdo);
-    $reglementPrevuManager = new ReglementPrevuManager($pdo);
-    $projetManager = new ProjetManager($pdo);
+    $clientManager = new ClientManager(PDOFactory::getMysqlConnection());
+    $contratManager = new ContratManager(PDOFactory::getMysqlConnection());
+    $contratCasLibreManager = new ContratCasLibreManager(PDOFactory::getMysqlConnection());
+    $reglementPrevuManager = new ReglementPrevuManager(PDOFactory::getMysqlConnection());
+    $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
     //process starts
     $nomProjet = $projetManager->getProjetById($idProjet)->nom();
+    
     //Action Add Processing Begin
     if($action == "add"){
         $codeClient = $_POST['codeClient'];
@@ -181,32 +172,33 @@
                 //in the next if elseif statement, we test the type of the property to change its status
                 //and its price
                 if($typeBien=="appartement"){
-                    $appartementManager = new AppartementManager($pdo);
+                    $appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
                     $appartementManager->changeStatus($idBien, "Vendu");
                     $appartementManager->updatePrix($prixNegocie, $idBien);
                 }
                 else if($typeBien=="localCommercial"){
-                    $locauxManager = new LocauxManager($pdo);
+                    $locauxManager = new LocauxManager(PDOFactory::getMysqlConnection());
                     $locauxManager->changeStatus($idBien, "Vendu");
                     $locauxManager->updatePrix($prixNegocie, $idBien);
                 }
                 //add contract note into db and show it in the dashboard
-                $notesClientManager = new NotesClientManager($pdo);
+                $notesClientManager = new NotesClientManager(PDOFactory::getMysqlConnection());
                 $notesClient = new NotesClient(array('note' => $note, 'created' => date('Y-m-d'), 
                 'idProjet' => $idProjet, 'codeContrat' => $codeContrat));
                 $notesClientManager->add($notesClient);
                 $actionMessage = "<strong>Opération valide : </strong>Contrat Client ajouté(e) avec succès.";
                 $typeMessage = "success";
-                $redirectLink = 'Location:../contrat.php?codeContrat='.$codeContrat."&idProjet=".$idProjet;
+                $redirectLink = 'Location:../views/contrat.php?codeContrat='.$codeContrat."&idProjet=".$idProjet;
             }
         }
         else{
             $actionMessage = "<strong>Erreur Création Contrat : </strong>Veuillez vérifier les champs saisies.";
             $typeMessage = "error";    
-            $redirectLink = 'Location:../contrats-add.php?idProjet='.$idProjet.'&codeClient='.$codeClient;
+            $redirectLink = 'Location:../views/contrats-add.php?idProjet='.$idProjet.'&codeClient='.$codeClient;
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idContrat = htmlentities($_POST['idContrat']);
@@ -231,8 +223,8 @@
             $updatedBy = $_SESSION['userImmoERPV2']->login();
             $updated = date('Y-m-d h:i:s');
             //create classes managers
-            $locauxManager = new LocauxManager($pdo);
-            $appartementManager = new AppartementManager($pdo);
+            $locauxManager = new LocauxManager(PDOFactory::getMysqlConnection());
+            $appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
             //create classes
             //this contrat object is used to test the type of a property based of 
             //the id of the current contrat objet
@@ -283,7 +275,7 @@
             //add it to db
             $historyManager->add($history);
             //update client's note
-            $notesClientManager = new NotesClientManager($pdo);
+            $notesClientManager = new NotesClientManager(PDOFactory::getMysqlConnection());
             $notesClient = new NotesClient(array('note' => $note, 'created' => date('Y-m-d'), 
             'idProjet' => $contrat->idProjet(), 'codeContrat' => $contrat->code()));
             $notesClientManager->add($notesClient);
@@ -314,18 +306,19 @@
             }
             $actionMessage = "<strong>Opération Valide : </strong>Contrat modifié(e) avec succès.";
             $typeMessage = "success";
-            $redirectLink = "Location:../contrat.php?codeContrat=".$codeContrat;
+            $redirectLink = "Location:../views/contrat.php?codeContrat=".$codeContrat;
             if ( isset($_POST['source']) and $_POST['source'] == "clients-list" ) {
-                $redirectLink = "Location:../clients-list.php";    
+                $redirectLink = "Location:../views/clients-list.php";    
             }
         }
         else{
             $actionMessage = "<strong>Erreur Modification Client : </strong>Vous devez remplir le champ <strong>&lt;Prix de vente&gt;</strong>.";
             $typeMessage = "error";
-            $redirectLink = "Location:../contrat.php?codeContrat=".$codeContrat;
+            $redirectLink = "Location:../views/contrat.php?codeContrat=".$codeContrat;
         }
     }
     //Action Update Processing End
+    
     //Action UpdateImageNote Processing Begin
     else if ($action == "updateImageNote") {
         $codeContrat = htmlentities($_POST['codeContrat']);
@@ -341,12 +334,13 @@
             $actionMessage = "<strong>Erreur Modification Image Note : </strong>Vous devez séléctionner un fichier.";
             $typeMessage = "error";
         }
-        $redirectLink = "Location:../contrat.php?codeContrat=".$codeContrat."&idProjet=".$idProjet;
+        $redirectLink = "Location:../views/contrat.php?codeContrat=".$codeContrat."&idProjet=".$idProjet;
         if ( isset($_POST['source']) and $_POST['source'] == "clients-modification" ) {
-            $redirectLink = "Location:../clients-modification.php";    
+            $redirectLink = "Location:../views/clients-modification.php";    
         }
     }
     //Action UpdateImageNote Processing END 
+    
     //Action Delete Processing Begin
     else if($action=="delete"){
         $idContrat = $_POST['idContrat'];
@@ -366,20 +360,21 @@
         //after the delete of our contract, we should change the property status to "Disponible"
         $actionMessage = "<strong>Opération Valide : </strong>Contrat Supprimé(e) avec succès.";
         $typeMessage = "success";
-        $redirectLink = "Location:../contrats-desistes-list.php?idProjet=".$idProjet;
+        $redirectLink = "Location:../views/contrats-desistes-list.php?idProjet=".$idProjet;
     }
     //Action Delete Processing End
+    
     //Action Desister Processing Begin
     else if ( $action == "desister" ) {
         $idContrat  = $_POST['idContrat'];
         $contrat = $contratManager->getContratById($idContrat);
         //Change status of the old contrat Bien from "Vendu" to "Disponible"
         if( $contrat->typeBien()=="appartement" ){
-            $appartementManager = new AppartementManager($pdo);
+            $appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
             $appartementManager->changeStatus($contrat->idBien(), "Disponible");
         }
         else if( $contrat->typeBien()=="localCommercial" ){
-            $locauxManager = new LocauxManager($pdo);
+            $locauxManager = new LocauxManager(PDOFactory::getMysqlConnection());
             $locauxManager->changeStatus($contrat->idBien(), "Disponible");
         }
         $contratManager->desisterContrat($idContrat);
@@ -397,12 +392,13 @@
         $historyManager->add($history);
         $actionMessage = "<strong>Opération valide : </strong>Le contrat est désisté avec succès.";
         $typeMessage = "success";
-        $redirectLink = 'Location:../contrats-list.php?idProjet='.$idProjet;
+        $redirectLink = 'Location:../views/contrats-list.php?idProjet='.$idProjet;
         if( isset($_POST["source"]) and $_POST["source"] == "clients-search" ){
-            $redirectLink = 'Location:../clients-search.php';
+            $redirectLink = 'Location:../views/clients-search.php';
         }
     }
     //Action Desister Processing End
+    
     //Action Activer Processing Begin
     else if ( $action == "activer" ) {
         $idContrat  = $_POST['idContrat'];
@@ -410,7 +406,7 @@
         $contrat = $contratManager->getContratById($idContrat);
         //test property type to decide which action to do
         if( $contrat->typeBien() == "appartement" ){
-            $appartementManager = new AppartementManager($pdo);
+            $appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
             if( $appartementManager->getAppartementById($contrat->idBien())->status() == "Disponible" ){
                 $appartementManager->changeStatus($contrat->idBien(), "Vendu");
                 $contratManager->activerContrat($idContrat);
@@ -435,7 +431,7 @@
             }
         }
         else if( $contrat->typeBien()=="localCommercial" ){
-            $locauxManager = new LocauxManager($pdo);
+            $locauxManager = new LocauxManager(PDOFactory::getMysqlConnection());
             if( $locauxManager->getLocauxById($contrat->idBien())->status()=="Disponible" ){
                 $locauxManager->changeStatus($contrat->idBien(), "Vendu");
                 $contratManager->activerContrat($idContrat);
@@ -460,12 +456,13 @@
             }
         }
         //set the redirect link
-        $redirectLink = 'Location:../contrats-desistes-list.php?idProjet='.$idProjet;
+        $redirectLink = 'Location:../views/contrats-desistes-list.php?idProjet='.$idProjet;
         if( isset($_POST["source"]) and $_POST["source"] == "clients-search" ){
-            $redirectLink = 'Location:../clients-search.php';
+            $redirectLink = 'Location:../views/clients-search.php';
         }    
     }
     //Action Activer Processing End
+    
     //Action Update Revendre Processing Begin
     else if ( $action == "revendre" ) {
         $idContrat  = $_POST['idContrat'];
@@ -473,11 +470,11 @@
         $typeBien = $_POST['typeBien'];
         $montantRevente = $_POST['montantRevente'];
         if ( $typeBien == "appartement" ) {
-            $appartementManager = new AppartementManager($pdo);
+            $appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
             $appartementManager->updateMontantRevente($montantRevente, $idBien);
         }
         else {
-            $locauxManager = new LocauxManager($pdo);
+            $locauxManager = new LocauxManager(PDOFactory::getMysqlConnection());
             $locauxManager->updateMontantRevente($montantRevente, $idBien);
         }
         $contrat = $contratManager->getContratById($idContrat);
@@ -502,13 +499,17 @@
         $historyManager->add($history);
         $actionMessage = "<strong>Opération valide : </strong>Le contrat est modifié avec succès.";
         $typeMessage = "success";
-        $redirectLink = 'Location:../contrats-list.php?idProjet='.$idProjet;
+        $redirectLink = 'Location:../views/contrats-list.php?idProjet='.$idProjet;
         if( isset($_POST["source"]) and $_POST["source"] == "clients-search" ){
-            $redirectLink = 'Location:../clients-search.php';
+            $redirectLink = 'Location:../views/clients-search.php';
         }
     }
     //Action Update Revendre Processing End
+    
+    //set session informations 
     $_SESSION['contrat-action-message'] = $actionMessage;
     $_SESSION['contrat-type-message'] = $typeMessage;
+    
+    //set redirection link
     header($redirectLink);
     

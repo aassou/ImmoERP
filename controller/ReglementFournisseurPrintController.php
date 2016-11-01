@@ -1,26 +1,20 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
-    //classes loading end
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
+    
     session_start();
+    
     if( isset($_SESSION['userImmoERPV2']) ){
-        $fournisseurManager = new FournisseurManager($pdo);
-		$projetManager = new ProjetManager($pdo);
-		$livraisonManager = new LivraisonManager($pdo);
+        //class managers
+        $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+		$projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+		$livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
+        //obj and vars
 		$idFournisseur = 0;
     	if( isset($_GET['idFournisseur']) and 
     	($_GET['idFournisseur']>0 and $_GET['idFournisseur']<=$fournisseurManager->getLastId()) ){
     		$idFournisseur = $_GET['idFournisseur'];
-    		$reglementsManager = new ReglementFournisseurManager($pdo);
+    		$reglementsManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
 			$reglementNumber = $reglementsManager->getReglementsNumberByIdFournisseurOnly($idFournisseur);
 			$reglements = $reglementsManager->getReglementFournisseursByIdFournisseur($idFournisseur);
 			$total = $reglementsManager->getTotalReglementByIdFournisseur($idFournisseur);
@@ -121,11 +115,7 @@ ob_start();
 				</strong>
 			</td>
 		</tr>
-	</table>
-    <!--br><br-->
-    <!--h2>Total des réglements = <?= number_format($total, 2, ',', ' ') ?></h2>
-    <h2>Total des livraisons = <?= number_format($totalLivraisons, 2, ',', ' ') ?></h2>
-    <h2>Total Livraisons - Total Réglements = <?= number_format($totalLivraisons-$total, 2, ',', ' ') ?></h2--> 
+	</table> 
     <br><br>
     <page_footer>
     <hr/>
@@ -148,6 +138,6 @@ ob_start();
     }
 }
 else{
-    header("Location:index.php");
+    header("Location:../index.php");
 }
 ?>

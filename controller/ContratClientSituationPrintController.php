@@ -1,26 +1,19 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
         //classes managers	
         $idProjet = 0;
-    	$projetManager = new ProjetManager($pdo);
-		$clientManager = new ClientManager($pdo);
-		$contratManager = new ContratManager($pdo);
-		$operationManager = new OperationManager($pdo);
-        $contratCasLibreManager = new ContratCasLibreManager($pdo);
-        $reglementPrevuManager = new ReglementPrevuManager($pdo);
+    	$projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+		$clientManager = new ClientManager(PDOFactory::getMysqlConnection());
+		$contratManager = new ContratManager(PDOFactory::getMysqlConnection());
+		$operationManager = new OperationManager(PDOFactory::getMysqlConnection());
+        $contratCasLibreManager = new ContratCasLibreManager(PDOFactory::getMysqlConnection());
+        $reglementPrevuManager = new ReglementPrevuManager(PDOFactory::getMysqlConnection());
+        
+        //objs, vars and tests
 		if(isset($_GET['codeContrat']) and (bool)$contratManager->getCodeContrat($_GET['codeContrat']) ){
 			$codeContrat = $_GET['codeContrat'];
 			$contrat = $contratManager->getContratByCode($codeContrat);
@@ -31,13 +24,13 @@
             $typeBien = "";
 			$niveau = "";
 			if($contrat->typeBien()=="appartement"){
-				$appartementManager = new AppartementManager($pdo);
+				$appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
 				$biens = $appartementManager->getAppartementById($contrat->idBien());
                 $typeBien = "Appartement";
 				$niveau = $biens->niveau();
 			}
 			else if($contrat->typeBien()=="localCommercial"){
-				$locauxManager = new LocauxManager($pdo);
+				$locauxManager = new LocauxManager(PDOFactory::getMysqlConnection());
 				$biens = $locauxManager->getLocauxById($contrat->idBien());
                 $typeBien = "Local Commercial";
 			}
@@ -108,7 +101,6 @@ ob_start();
 	}
 </style>
 <page backtop="10mm" backbottom="20mm" backleft="10mm" backright="10mm">
-    <!--img src="../assets/img/logo_company.png" style="width: 110px" /-->
     <h1>Résumé du Contrat Client - Projet : <?= $projet->nom() ?></h1>
     <p>Imprimé le <?= date('d/m/Y') ?> | <?= date('h:i') ?> </p>
     <hr>
@@ -122,12 +114,6 @@ ob_start();
             </tr>
         </table>
 		<table style="width: 100%">
-			<!--tr>
-				<td style="width:25%"><h4>Informations du client</h4></td>
-				<td style="width:25%"></td>
-				<td style="width:25%"><h4>Informations du contrat</h4></td>
-				<td style="width:25%"></td>
-			</tr-->
 			<tr>
 				<td style="width:25%"><strong>Client</strong></td>
 				<td style="width:25%"><strong><?= $client->nom() ?></strong></td>
@@ -330,17 +316,6 @@ ob_start();
 			}//end of loop
 			}//end of if
 			?>
-			<!--tr>
-				<td style="border: 1px solid black"><a><?= date('d/m/Y', strtotime($contrat->dateCreation())) ?></a></td>											
-				<?php
-				if($contrat->avance()!=0 or $contrat->avance()!='NULL' ){
-				?> 
-					<td style="border: 1px solid black"><?= number_format($contrat->avance(), 2, ',', ' ')." DH";?></td>
-				<?php
-				}
-				?>
-				<td style="border: 1px solid black"><?= $contrat->modePaiement() ?></td>
-			</tr-->
 			<tr>
 				<td>Somme Réglements</td>
 				<td><?= number_format($operationManager->sommeOperations($contrat->id()), 2, ',', ' ')." DH";?></td>

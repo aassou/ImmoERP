@@ -1,15 +1,6 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');  
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
@@ -26,9 +17,11 @@
     $redirectLink = "";
     //process begins
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
-    $reglementManager = new ReglementFournisseurManager($pdo);
-    $fournisseurManager = new FournisseurManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
+    $reglementManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
+    $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+    
+    //Action Add Process Begin
     if( $action == "add" ) {
         if( !empty($_POST['montant']) ) {
             $idFournisseur = htmlentities($_POST['idFournisseur']);
@@ -63,28 +56,31 @@
             $actionMessage = "<strong>Erreur Ajout Réglement</strong> : Vous devez remplir le champ <strong>Montant</strong>.";
             $typeMessage = "error";
         }
-        //in this line we specify the response url basing on the source of our request
+        //in this line we specify the response url based on the source of our request
         $redirectLink = "";
         if( isset($_POST['source']) ) {
             if( $_POST['source'] == 'livraisons-group' ) {
-                $redirectLink = "Location:../livraisons-group.php?companyID=$companyID";   
+                $redirectLink = "Location:../views/livraisons-group.php?companyID=$companyID";   
             }
             else if( $_POST['source'] == 'livraisons-fournisseur-mois' ) {
                 $idFournisseur = htmlentities($_POST['idFournisseur']);
-                $redirectLink = "Location:../livraisons-fournisseur-mois.php?idFournisseur=$idFournisseur&companyID=$companyID";   
+                $redirectLink = "Location:../views/livraisons-fournisseur-mois.php?idFournisseur=$idFournisseur&companyID=$companyID";   
             }
             else if ( $_POST['source'] == "livraisons-fournisseur-mois-list" ) {
                 $idFournisseur = htmlentities($_POST['idFournisseur']);
                 $mois = htmlentities($_POST['mois']);
                 $annee = htmlentities($_POST['annee']);
-                $redirectLink = "Location:../livraisons-fournisseur-mois.php?idFournisseur=$idFournisseur&mois=$mois&annee=$annee&companyID=$companyID";
+                $redirectLink = "Location:../views/livraisons-fournisseur-mois.php?idFournisseur=$idFournisseur&mois=$mois&annee=$annee&companyID=$companyID";
             }
             else if( $_POST['source'] == 'reglements-fournisseur' ) {
                 $idFournisseur = htmlentities($_POST['idFournisseur']);
-                $redirectLink = "Location:../reglements-fournisseur.php?idFournisseur=$idFournisseur&companyID=$companyID";   
+                $redirectLink = "Location:../views/reglements-fournisseur.php?idFournisseur=$idFournisseur&companyID=$companyID";   
             }   
         }
     }
+    //Action Add Process End
+    
+    //Action Update Process Begin
     else if($action == "update"){
         $idReglement = htmlentities($_POST['idReglement']);
         $idFournisseur = htmlentities($_POST['idFournisseur']);
@@ -122,8 +118,11 @@
             $actionMessage = "<strong>Erreur Modification Réglement</strong> : Vous devez remplir les champs <strong>Montant</strong>.";
             $typeMessage = "error";
         }
-        $redirectLink = "Location:../reglements-fournisseur.php?idFournisseur=$idFournisseur&companyID=$companyID";
+        $redirectLink = "Location:../views/reglements-fournisseur.php?idFournisseur=$idFournisseur&companyID=$companyID";
     }
+    //Action Update Process Ends
+    
+    //Action Delete Process Begins
     else if($action=="delete"){
         $idReglement = $_POST['idReglement'];
         $idFournisseur = $_POST['idFournisseur'];
@@ -144,10 +143,14 @@
         $historyManager->add($history);
         $actionMessage = "<strong>Opération Valide</strong> : Réglement Supprimé avec succès.";
         $typeMessage = "success";
-        $redirectLink = "Location:../reglements-fournisseur.php?idFournisseur=$idFournisseur&companyID=$companyID";
+        $redirectLink = "Location:../views/reglements-fournisseur.php?idFournisseur=$idFournisseur&companyID=$companyID";
     }
+    //Action Delete Process Ends
     
+    //set session informations
     $_SESSION['reglement-action-message'] = $actionMessage;
     $_SESSION['reglement-type-message'] = $typeMessage;
+    
+    //set redirection link 
     header($redirectLink);
     

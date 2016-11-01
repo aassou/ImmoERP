@@ -1,16 +1,6 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
@@ -24,9 +14,10 @@
     //Redirection link
     $redirectLink = "";
     //Component Class Manager
-    $contratCasLibreManager = new ContratCasLibreManager($pdo);
+    $contratCasLibreManager = new ContratCasLibreManager(PDOFactory::getMysqlConnection());
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
+    
 	//Action Add Processing Begin
     if($action == "add"){
         if( !empty($_POST['date']) ){
@@ -56,6 +47,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action addCasLibre Processing Begin
     else if($action=="addCasLibre"){
         $codeContrat = htmlentities($_POST['codeContrat']);
@@ -90,9 +82,10 @@
         } 
         $actionMessage = "<strong>Opération Valide : </strong>Contrat Cas Libre ajouté avec succès.";
         $typeMessage = "success";
-        $redirectLink = "Location:../contrat.php?codeContrat=".$codeContrat;
+        $redirectLink = "Location:../views/contrat.php?codeContrat=".$codeContrat;
     }
     //Action addCasLibre Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idContratCasLibre = htmlentities($_POST['idContratCasLibre']);
@@ -120,9 +113,10 @@
         }
         $codeContrat = htmlentities($_POST['codeContrat']);
         $idProjet = htmlentities($_POST['idProjet']);
-        $redirectLink = "Location:../contrat.php?codeContrat=".$codeContrat.'&idProjet='.$idProjet.'#contratCasLibre';
+        $redirectLink = "Location:../views/contrat.php?codeContrat=".$codeContrat.'&idProjet='.$idProjet.'#contratCasLibre';
     }
     //Action Update Processing End
+    
     //Action UpdateStatus Processing Begin
     else if ($action == "updateStatus"){
         $idContratCasLibre = htmlentities($_POST['idContratCasLibre']);
@@ -130,9 +124,10 @@
         $contratCasLibreManager->updateStatus($idContratCasLibre, $status);
         $codeContrat = htmlentities($_POST['codeContrat']);
         $idProjet = htmlentities($_POST['idProjet']);
-        $redirectLink = "Location:../contrat.php?codeContrat=".$codeContrat.'&idProjet='.$idProjet.'#contratCasLibre';
+        $redirectLink = "Location:../views/contrat.php?codeContrat=".$codeContrat.'&idProjet='.$idProjet.'#contratCasLibre';
     }
     //Action UpdateStatus Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idContratCasLibre = htmlentities($_POST['idContratCasLibre']);
@@ -141,10 +136,14 @@
         $typeMessage = "success";
         $codeContrat = htmlentities($_POST['codeContrat']);
         $idProjet = htmlentities($_POST['idProjet']);
-        $redirectLink = "Location:../contrat.php?codeContrat=".$codeContrat.'&idProjet='.$idProjet.'#contratCasLibre';
+        $redirectLink = "Location:../views/contrat.php?codeContrat=".$codeContrat.'&idProjet='.$idProjet.'#contratCasLibre';
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['contratCasLibre-action-message'] = $actionMessage;
     $_SESSION['contratCasLibre-type-message'] = $typeMessage;
+    
+    //set redirection link
     header($redirectLink);
 

@@ -1,15 +1,6 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
@@ -25,10 +16,11 @@
     $typeMessage = "";
     $redirectLink = "";
     //process begins
-    $fournisseurManager = new FournisseurManager($pdo);
+    $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
     $idFournisseur = htmlentities($_POST['idFournisseur']);
+    
     //Action Add Processing Begin
     if( $action == "add" ) {
         if( !empty($_POST['nom']) ) {
@@ -70,12 +62,13 @@
             $typeMessage = "error";
         }
         //in this line we specify the response url basing on the source of our request
-        $redirectLink = "Location:../fournisseurs.php?companyID=".$companyID;
+        $redirectLink = "Location:../views/fournisseurs.php?companyID=".$companyID;
         if( isset($_POST['source']) and $_POST['source']=='livraisons-group' ) {
-            $redirectLink = "Location:../livraisons-group.php?companyID=".$companyID;   
+            $redirectLink = "Location:../views/livraisons-group.php?companyID=".$companyID;   
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idFournisseur = htmlentities($_POST['idFournisseur']);
@@ -112,9 +105,10 @@
             $actionMessage = "<strong>Erreur Modification Fournisseur</strong> : Vous devez remplir le champ <strong>Nom</strong>.";
             $typeMessage = "error";
         }
-        $redirectLink = "Location:../fournisseurs.php?companyID=".$companyID;
+        $redirectLink = "Location:../views/fournisseurs.php?companyID=".$companyID;
     }
     //Action Update Processing End
+    
     //Action Delete Processing Begin
     else if($action=="delete"){
         $idFournisseur = $_POST['idFournisseur'];
@@ -137,7 +131,11 @@
         $redirectLink = "Location:../fournisseurs.php?companyID=".$companyID;
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['fournisseur-action-message'] = $actionMessage;
     $_SESSION['fournisseur-type-message'] = $typeMessage;
+    
+    //set redirection link
     header($redirectLink);
     

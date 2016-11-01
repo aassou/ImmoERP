@@ -1,21 +1,13 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2'])){
         //classes managers  
-        $chargeManager = new ChargeCommunManager($pdo);
-        $typeChargeManager = new TypeChargeCommunManager($pdo);
+        $chargeManager = new ChargeCommunManager(PDOFactory::getMysqlConnection());
+        $typeChargeManager = new TypeChargeCommunManager(PDOFactory::getMysqlConnection());
+        //objs, vars and inputs
         $criteria = htmlentities($_POST['criteria']);
         $resumeDetail = ""; 
         if( $criteria=="parDate" ) {
@@ -144,6 +136,6 @@ ob_start();
     }
 }
 else{
-    header("Location:index.php");
+    header("Location:../index.php");
 }
 ?>

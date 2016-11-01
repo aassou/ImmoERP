@@ -1,27 +1,18 @@
 <?php
 
 // Include the main TCPDF library (search for installation path).
-//classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     require_once('../lib/tcpdf/tcpdf.php');
     //classes loading end
     session_start();
     
     //classes managers
-    $contratManager = new ContratManager($pdo);
-    $clientManager = new ClientManager($pdo);
-    $operationManager = new OperationManager($pdo);
-    $projetManager = new ProjetManager($pdo);
+    $contratManager = new ContratManager(PDOFactory::getMysqlConnection());
+    $clientManager = new ClientManager(PDOFactory::getMysqlConnection());
+    $operationManager = new OperationManager(PDOFactory::getMysqlConnection());
+    $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
     //classes
     $idOperation = $_GET['idOperation'];
     $operation = $operationManager->getOperationById($idOperation);
@@ -32,13 +23,13 @@
     $niveau = "";
     
     if ( $contrat->typeBien() == "appartement" ) {
-        $appartementManager = new AppartementManager($pdo);
+        $appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
         $appartement = $appartementManager->getAppartementById($contrat->idBien());
         $typeBien = "رقم الشقة : ".$appartement->nom();
         $niveau = "الطابق : ".$appartement->niveau();
     } 
     else {
-        $locauxManager = new LocauxManager($pdo);
+        $locauxManager = new LocauxManager(PDOFactory::getMysqlConnection());
         $locaux = $locauxManager->getLocauxById($contrat->idBien());
         $typeBien = "رقم المحل التجاري : ".$locaux->nom();
         

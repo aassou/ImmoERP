@@ -1,18 +1,7 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
-    include('../lib/image-processing.php');
-    //classes loading end
+    require('../app/classLoad.php'); 
+    require('../db/PDOFactory.php');;  
+    
     session_start();
     
     //post input processing
@@ -23,7 +12,8 @@
 
     //Component Class Manager
 
-    $historyManager = new HistoryManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
+    
 	//Action Add Processing Begin
     	if($action == "add"){
         if( !empty($_POST['action']) ){
@@ -51,6 +41,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idHistory = htmlentities($_POST['idHistory']);
@@ -78,6 +69,7 @@
         }
     }
     //Action Update Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idHistory = htmlentities($_POST['idHistory']);
@@ -86,7 +78,9 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['history-action-message'] = $actionMessage;
     $_SESSION['history-type-message'] = $typeMessage;
-    header('Location:../file-name-please.php');
+    //header('Location:../file-name-please.php');
 

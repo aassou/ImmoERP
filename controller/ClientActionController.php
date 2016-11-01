@@ -2,24 +2,14 @@
 /**
  * This is a Model class for the customer component
  * Created By  : AASSOU Abdelilah
- * Date        : 03/11/2015
  * Github      : @aassou
  * email       : aassou.abdelilah@gmail.com
  * Description : This controller is used to create a new customer if it doesn't exist, or get it from 
  *              the database if exists. If all goes nomrmal, this controller sends the customer 
  *              informations to the contract property url to finish the process.
  */
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
@@ -36,9 +26,9 @@
     $typeMessage = "";
     $redirectLink = "";
     //class manager
-    $clientManager = new ClientManager($pdo);
+    $clientManager = new ClientManager(PDOFactory::getMysqlConnection());
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
     //process starts
     //Case 1 : CRUD Add Action 
     if($action == "add"){
@@ -53,7 +43,7 @@
             $codeClient = $client->code();
             $actionMessage = "<strong>Opération Valide : </strong>Client Récuperé avec succès.";
             $typeMessage = "info";
-            $redirectLink = 'Location:../contrats-add.php?idProjet='.$idProjet.'&codeClient='.$codeClient;
+            $redirectLink = 'Location:../views/contrats-add.php?idProjet='.$idProjet.'&codeClient='.$codeClient;
         }
         //if we don't get any customer information from the clients-add.php page, 
         //then there is one of two cases to treat
@@ -65,7 +55,7 @@
                 if( $clientManager->existsCIN($cin) ){
                     $actionMessage = "<strong>Erreur Création Client : </strong>Un client existe déjà avec ce CIN : <strong>".$cin."</strong>.";
                     $typeMessage = "error";
-                    $redirectLink = 'Location:../clients-add.php?idProjet='.$idProjet;
+                    $redirectLink = 'Location:../views/clients-add.php?idProjet='.$idProjet;
                 }
                 //Case 2 :  The customer doesn't exist, so we add to our database, 
                 //and the send its generated code to the contrats-add.php url   
@@ -102,17 +92,20 @@
                     //result processes   
                     $actionMessage = "<strong>Opération Valide : </strong>Client Ajouté(e) avec succès.";
                     $typeMessage = "success";
-                    $redirectLink = 'Location:../contrats-add.php?idProjet='.$idProjet.'&codeClient='.$codeClient;
+                    $redirectLink = 'Location:../views/contrats-add.php?idProjet='.$idProjet.'&codeClient='.$codeClient;
                 }
             }
             //This is a simple form validation, the field Nom should not be empty
             else{
                 $actionMessage = "<strong>Erreur Création Client : </strong>Vous devez remplir au moins le champ <strong>&lt;Nom&gt;</strong>.";
                 $typeMessage = "error";
-                $redirectLink = 'Location:../clients-add.php?idProjet='.$idProjet;
+                $redirectLink = 'Location:../views/clients-add.php?idProjet='.$idProjet;
             }   
         }
     }
+    //Action Add Process Ends
+    
+    //Action Update Process Begins
     else if($action == "update"){
         if(!empty($_POST['nom'])){
             $id = htmlentities($_POST['idClient']);
@@ -151,23 +144,26 @@
             $actionMessage = "<strong>Opération Valide : </strong>Client Modifié(e) avec succès.";
             $typeMessage = "success";
             if( $source == "contrat" ){
-                $redirectLink = "Location:../contrat.php?codeContrat=".$codeContrat;
+                $redirectLink = "Location:../views/contrat.php?codeContrat=".$codeContrat;
             }
             else if( $source="clients" ){
-                $redirectLink = "Location:../clients-list.php";   
+                $redirectLink = "Location:../views/clients-list.php";   
             }
         }
         else{
             $actionMessage = "<strong>Erreur Modification Client : </strong>Vous devez remplir le champ <strong>&lt;Nom&gt;</strong>.";
             $typeMessage = "error";
             if( $source == "contrat" ){
-                $redirectLink = "Location:../contrat.php?codeContrat=".$codeClient;
+                $redirectLink = "Location:../views/contrat.php?codeContrat=".$codeClient;
             }
             else if( $source="clients" ){
-                $redirectLink = "Location:../clients.php";   
+                $redirectLink = "Location:../views/clients.php";   
             }
         }
     }
+    //Action Update Process Ends
+    
+    //Action Delete Process Begins
     else if($action=="delete"){
         //$idClient = $_POST['idClient'];
         //$clientManager->delete($idClient);
@@ -185,17 +181,21 @@
         $historyManager->add($history);*/
         $actionMessage = "<strong>Opération Valide : </strong>Client Supprimé(e) avec succès.";
         $typeMessage = "success";
-        $redirectLink = "Location:../clients-list.php";
+        $redirectLink = "Location:../views/clients-list.php";
     }
+    
+    //Action Search Process Begins
     else if($action=="search"){
         $clientName = htmlentities($_POST['clientName']);
         $_SESSION['searchClientResult'] = $clientManager->getClientBySearch($clientName, 1);
-        //$actionMessage = "<strong>Opération Valide : </strong>Client Supprimé(e) avec succès.";
-        //$typeMessage = "success";
-        $redirectLink = "Location:../clients-search.php";
+        $redirectLink = "Location:../views/clients-search.php";
     }
+    //Action Search Process Ends
     
+    //set session informations
     $_SESSION['client-action-message'] = $actionMessage;
     $_SESSION['client-type-message'] = $typeMessage;
+    
+    //set redirection link
     header($redirectLink);
     

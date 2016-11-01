@@ -1,15 +1,6 @@
 <?php
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
@@ -22,7 +13,8 @@
     $redirectLink = "";
     $companyID = htmlentities($_POST['companyID']);
     //Component Class Manager
-    $commandeManager = new CommandeManager($pdo);
+    $commandeManager = new CommandeManager(PDOFactory::getMysqlConnection());
+	
 	//Action Add Processing Begin
     if($action == "add"){
         if( !empty($_POST['numeroCommande']) ){
@@ -55,17 +47,18 @@
             $commandeManager->add($commande);
             $actionMessage = "Opération Valide : Commande Ajouté(e) avec succès.";  
             $typeMessage = "success";
-            $redirectLink = "Location:../commande-details.php?codeCommande=".$codeLivraison."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;;
+            $redirectLink = "Location:../views/commande-details.php?codeCommande=".$codeLivraison."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;;
         }
         else{
             if ( isset($_POST['source']) and $_POST['source'] == "commande-group" ) {
-                $redirectLink = "Location:../commande-group.php?companyID=".$companyID;
+                $redirectLink = "Location:../views/commande-group.php?companyID=".$companyID;
             } 
             $actionMessage = "Erreur Ajout commande : Vous devez remplir le champ 'Numéro Commande'.";
             $typeMessage = "error";
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idCommande = htmlentities($_POST['idCommande']);
@@ -100,13 +93,14 @@
             $typeMessage = "error";
         }
         if ( isset($_POST['source']) and $_POST['source'] == "commande-mois-annee" ) {
-            $redirectLink = "Location:../commande-mois-annee.php?mois=".$mois."&annee=".$annee."&companyID=".$companyID;    
+            $redirectLink = "Location:../views/commande-mois-annee.php?mois=".$mois."&annee=".$annee."&companyID=".$companyID;    
         }
         else if ( isset($_POST['source']) and $_POST['source'] == "commande-details" ) {
-            $redirectLink = "Location:../commande-details.php?codeCommande=".$codeCommande."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;;
+            $redirectLink = "Location:../views/commande-details.php?codeCommande=".$codeCommande."&mois=".$mois."&annee=".$annee."&companyID=".$companyID;;
         }
     }
     //Action Update Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idCommande = htmlentities($_POST['idCommande']);
@@ -114,16 +108,20 @@
         $mois = $_POST['mois'];
         $annee = $_POST['annee'];
         //delete commande and its details
-        $commandeDetailsManager = new CommandeDetailManager($pdo);
+        $commandeDetailsManager = new CommandeDetailManager(PDOFactory::getMysqlConnection());
         $commandeDetailsManager->deleteCommande($idCommande);
         $commandeManager->delete($idCommande);
         $actionMessage = "Opération Valide : Commande supprimé(e) avec succès.";
         $typeMessage = "success";
         if ( isset($_POST['source']) and $_POST['source'] == "commande-mois-annee" ) {
-            $redirectLink = "Location:../commande-mois-annee.php?mois=".$mois."&annee=".$annee."&companyID=".$companyID;;    
+            $redirectLink = "Location:../views/commande-mois-annee.php?mois=".$mois."&annee=".$annee."&companyID=".$companyID;;    
         }
     }
     //Action Delete Processing End
+    
+    //set session inforamtions
     $_SESSION['commande-action-message'] = $actionMessage;
     $_SESSION['commande-type-message'] = $typeMessage;
+    
+    //set redirection link
     header($redirectLink);

@@ -1,18 +1,8 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
-    //classes loading end
+    
     session_start();
     
     //post input processing
@@ -23,8 +13,9 @@
 
     //Component Class Manager
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager($pdo);
-    $employeManager = new EmployeManager($pdo);
+    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
+    $employeManager = new EmployeManager(PDOFactory::getMysqlConnection());
+	
 	//Action Add Processing Begin
     if($action == "add"){
         if( !empty($_POST['nom']) ){
@@ -68,6 +59,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idEmploye = htmlentities($_POST['idEmploye']);
@@ -111,6 +103,7 @@
         }
     }
     //Action Update Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idEmploye = htmlentities($_POST['idEmploye']);
@@ -132,13 +125,17 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['employe-action-message'] = $actionMessage;
     $_SESSION['employe-type-message'] = $typeMessage;
+    
     //Redirect according to the source
-    $redirectLink = 'Location:../employes-contrats.php';
+    $redirectLink = 'Location:../views/employes-contrats.php';
     if( isset($_POST['source']) and $_POST['source'] == "projet-contrat-employe" ) {
         $idProjet = htmlentities($_POST['idProjet']);
-        $redirectLink = 'Location:../projet-contrat-employe.php?idProjet='.$idProjet;    
+        $redirectLink = 'Location:../views/projet-contrat-employe.php?idProjet='.$idProjet;    
     }
+    
+    //set redirection link
     header($redirectLink);
-

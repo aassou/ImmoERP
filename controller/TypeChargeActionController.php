@@ -1,18 +1,8 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
-    //classes loading end
+    
     session_start();
     
     //post input processing
@@ -20,10 +10,9 @@
     //This var contains result message of CRUD action
     $actionMessage = "";
     $typeMessage = "";
-
     //Component Class Manager
-
-    $typeChargeManager = new TypeChargeManager($pdo);
+    $typeChargeManager = new TypeChargeManager(PDOFactory::getMysqlConnection());
+    
 	//Action Add Processing Begin
 	$idProjet = htmlentities($_POST['idProjet']);
     if ( $action == "add" ) {
@@ -54,6 +43,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idTypeCharge = htmlentities($_POST['idTypeCharge']);
@@ -77,6 +67,7 @@
         }
     }
     //Action Update Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idTypeCharge = htmlentities($_POST['idTypeCharge']);
@@ -85,15 +76,22 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['typeCharge-action-message'] = $actionMessage;
     $_SESSION['typeCharge-type-message'] = $typeMessage;
-    $redirectLink = "Location:../projet-charges-grouped.php?idProjet=".$idProjet;
+    //We have 3 forms that can request this resource, so we test which one of these forms requested this action
+    //and we will set the redirection link based on it.
+    //the first one and the normal case
+    $redirectLink = "Location:../views/projet-charges-grouped.php?idProjet=".$idProjet;
+    //the second one which comes from "projet-charges-type" url
     if( isset($_POST['typeCharge']) and isset($_POST['source']) and $_POST['source']=="projet-charges-type" ) {
         $typeCharge = htmlentities($_POST['typeCharge']);
-        $redirectLink = "Location:../projet-charges-type.php?idProjet=".$idProjet."&type=".$typeCharge;
+        $redirectLink = "Location:../views/projet-charges-type.php?idProjet=".$idProjet."&type=".$typeCharge;
     }
+    //the third one which comes from "type-charges" url
     else if( isset($_POST['source']) and $_POST['source'] == "type-charges" ) {
-        $redirectLink = "Location:../type-charges.php";
+        $redirectLink = "Location:../views/type-charges.php";
     }
     header($redirectLink);
     

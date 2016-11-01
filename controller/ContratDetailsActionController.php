@@ -1,16 +1,6 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    require('../app/classLoad.php');
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     //classes loading end
     session_start();
@@ -24,35 +14,37 @@
     $idProjet = htmlentities($_POST['idProjet']);
     //Component Class Manager
 
-    $contratDetailsManager = new ContratDetailsManager($pdo);
+    $contratDetailsManager = new ContratDetailsManager(PDOFactory::getMysqlConnection());
+    
 	//Action Add Processing Begin
-    	if($action == "add"){
-            if( !empty($_POST['montant']) ){
-    			$dateOperation = htmlentities($_POST['dateOperation']);
-    			$montant = htmlentities($_POST['montant']);
-    			$numeroCheque = htmlentities($_POST['numeroCheque']);
-    			$createdBy = $_SESSION['userImmoERPV2']->login();
-                $created = date('Y-m-d h:i:s');
-                //create object
-                $contratDetails = new ContratDetails(array(
-    				'dateOperation' => $dateOperation,
-    				'montant' => $montant,
-    				'numeroCheque' => $numeroCheque,
-    				'idContratEmploye' => $idContratEmploye,
-    				':created' => $created,
-    				':createdBy' => $createdBy
-    			));
-                //add it to db
-                $contratDetailsManager->add($contratDetails);
-                $actionMessage = "Opération Valide : ContratDetails Ajouté(e) avec succès.";  
-                $typeMessage = "success";
-            }
-            else{
-                $actionMessage = "Erreur Ajout contratDetails : Vous devez remplir le champ 'dateOperation'.";
-                $typeMessage = "error";
-            }
+	if($action == "add"){
+        if( !empty($_POST['montant']) ){
+			$dateOperation = htmlentities($_POST['dateOperation']);
+			$montant = htmlentities($_POST['montant']);
+			$numeroCheque = htmlentities($_POST['numeroCheque']);
+			$createdBy = $_SESSION['userImmoERPV2']->login();
+            $created = date('Y-m-d h:i:s');
+            //create object
+            $contratDetails = new ContratDetails(array(
+				'dateOperation' => $dateOperation,
+				'montant' => $montant,
+				'numeroCheque' => $numeroCheque,
+				'idContratEmploye' => $idContratEmploye,
+				':created' => $created,
+				':createdBy' => $createdBy
+			));
+            //add it to db
+            $contratDetailsManager->add($contratDetails);
+            $actionMessage = "Opération Valide : ContratDetails Ajouté(e) avec succès.";  
+            $typeMessage = "success";
         }
+        else{
+            $actionMessage = "Erreur Ajout contratDetails : Vous devez remplir le champ 'dateOperation'.";
+            $typeMessage = "error";
+        }
+    }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idContratDetails = htmlentities($_POST['idContratDetails']);
@@ -76,6 +68,7 @@
         }
     }
     //Action Update Processing End
+    
     //Action Delete Processing Begin
     else if($action == "delete"){
         $idContratDetails = htmlentities($_POST['idContratDetails']);
@@ -84,7 +77,11 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
+    //set session informations
     $_SESSION['contratDetails-action-message'] = $actionMessage;
     $_SESSION['contratDetails-type-message'] = $typeMessage;
-    header('Location:../contrat-employe-detail.php?idContratEmploye='.$idContratEmploye."&idProjet=".$idProjet);
+    
+    //set redirection link
+    header('Location:../views/contrat-employe-detail.php?idContratEmploye='.$idContratEmploye."&idProjet=".$idProjet);
 

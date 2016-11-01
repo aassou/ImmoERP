@@ -1,22 +1,19 @@
 <?php
-
-    //classes loading begin
-    function classLoad ($myClass) {
-        if(file_exists('../model/'.$myClass.'.php')){
-            include('../model/'.$myClass.'.php');
-        }
-        elseif(file_exists('../controller/'.$myClass.'.php')){
-            include('../controller/'.$myClass.'.php');
-        }
-    }
-    spl_autoload_register("classLoad"); 
-    include('../config.php');  
+    /****
+     * This is one of my best components of this project, it helps us to bank account information and 
+     * integrate it in our webapp in order to accounting tasks. It's a beta version, and it's used only 
+     * with Moroccan banks.
+     * @author Abdelilah Aassou <aassou.abdelilah@gmail.com>
+     * **/
+    
+    require('../app/classLoad.php');  
+    require('../db/PDOFactory.php');  
     include('../lib/image-processing.php');
     /****** Include the EXCEL Reader Factory ***********/
     //error_reporting(0);
     set_include_path(get_include_path() . PATH_SEPARATOR . 'Classes/');
     include ('Classes/PHPExcel/IOFactory.php');
-    //classes loading end
+    
     session_start();
     //post input processing
     $action = htmlentities($_POST['action']);
@@ -24,7 +21,7 @@
     $actionMessage = "";
     $typeMessage = "";
     //Component Class Manager
-    $releveBancaireManager = new ReleveBancaireManager($pdo);
+    $releveBancaireManager = new ReleveBancaireManager(PDOFactory::getMysqlConnection());
     $redirectLink = "";
 	//Action Add Processing Begin
     if($action == "add"){
@@ -56,19 +53,6 @@
                     $string = "INSERT INTO t_relevebancaire (dateOpe, dateVal, libelle, reference, debit, credit, projet, idCompteBancaire) VALUES ";
                     $compteBancaire = htmlentities($_POST['idCompteBancaire']);
                     for ( $i=1; $i<=$arrayCount; $i++ ) {
-                        //$dateOpe= date('Y-m-d', strtotime(trim($allDataInSheet[$i]["B"])));
-                        //$dateOpe = DateTime::createFromFormat('d/m/Y', trim($allDataInSheet[$i]["B"]));
-                        //$dateOpe = $dateOpe->format('Y-m-d'); 
-                        //$dateVal= date('Y-m-d', strtotime(trim($allDataInSheet[$i]["C"])));
-                        //$dateVal = DateTime::createFromFormat('d/m/Y', trim($allDataInSheet[$i]["C"]));
-                        //$dateVal = $dateVal->format('Y-m-d');
-                        //echo $dateOpe.'&nbsp;&nbsp;';
-                        //echo $dateVal.'<br>';
-                        //echo $allDataInSheet[$i]["B"].'   ';
-                        //echo $allDataInSheet[$i]["C"].'<br>';
-                        //$date = DateTime::createFromFormat('d/m/Y', $allDataInSheet[$i]["B"]);
-                        //echo $date->format('Y-m-d').'<br>';
-                        //echo $date;
                         $dateOpe = trim($allDataInSheet[$i]["B"]);
                         $dateVal = trim($allDataInSheet[$i]["C"]);
                         $libelle = addslashes(trim($allDataInSheet[$i]["D"]));
@@ -88,10 +72,7 @@
                         $string .= "( '".$dateOpe."' , '".$dateVal."' , '".$libelle."' , '".$reference."' , ".$debit." , ".$credit." , '".$projet."' , '".$compteBancaire."'),";
                     }
                     $string = substr($string,0,-1);
-                    //print_r(utf8_decode($string));
-                    //echo $string;
-                    //mysql_query($string); // Insert all the data into one query
-                    $pdo->query($string);
+                    PDOFactory::getMysqlConnection()->query($string);
                     $actionMessage = "<strong>Opération Valide</strong> : Releve Bancaire Ajouté(e) avec succès.";  
                     $typeMessage = "success";
                 }
@@ -103,6 +84,7 @@
         }
     }
     //Action Add Processing End
+    
     //Action Update Processing Begin
     else if($action == "update"){
         $idReleveBancaire = htmlentities($_POST['idReleveBancaire']);
@@ -140,6 +122,7 @@
         }
     }
     //Action Update Processing End
+    
     //Action ProcessFournisseur Begin
     else if ( $action == "process-fournisseur" ) {
         $idReleveBancaire = $_POST['idReleveBancaire'];
@@ -151,7 +134,7 @@
         $dateOperation = $dateOperation->format('Y-m-d'); 
         $designation = htmlentities($_POST['designation']);
         if ( $destinations == "ChargesCommuns" ) {
-            $chargeCommunManager = new ChargeCommunManager($pdo);
+            $chargeCommunManager = new ChargeCommunManager(PDOFactory::getMysqlConnection());
             $societe = htmlentities($_POST['societe']);
             $type = htmlentities($_POST['typeChargesCommuns']);
             $createdBy = $_SESSION['userImmoERPV2']->login();
@@ -171,7 +154,7 @@
             $releveBancaireManager->hide($idReleveBancaire);
         }
         else if ( $destinations == "ChargesProjets" ) {
-            $chargeManager = new ChargeManager($pdo);
+            $chargeManager = new ChargeManager(PDOFactory::getMysqlConnection());
             $societe = htmlentities($_POST['societe2']);
             $type = htmlentities($_POST['typeChargesProjet']);
             $projet = htmlentities($_POST['projet']);
@@ -199,6 +182,7 @@
         $typeMessage = "success";
     }
     //Action ProcessFournisseur End
+    
     //Action ProcessClient Begin
     else if ( $action == "process-client" ) {
         $idReleveBancaire = $_POST['idReleveBancaire'];
@@ -216,7 +200,7 @@
             $releveBancaireManager->delete($idReleveBancaire);
         }
         else{
-            $operationManager = new OperationManager($pdo);
+            $operationManager = new OperationManager(PDOFactory::getMysqlConnection());
             //$reference = 'Q'.date('Ymd-his');
             $reference = htmlentities($_POST['reference']);
             $modePaiement = htmlentities($_POST['mode-paiement']);
@@ -240,6 +224,7 @@
         $typeMessage = "success";
     }
     //Action ProcessClient End
+    
     //Action SearchArchive Processing Begin 
     else if($action == "search-archive"){
         $idCompteBancaire = htmlentities($_POST['idCompteBancaire']);
@@ -250,6 +235,7 @@
         $typeMessage = "success";
     }
     //Action SearchArchive Processing End
+    
     //Action Delete Processing Begin 
     else if($action == "delete"){
         $idReleveBancaire = htmlentities($_POST['idReleveBancaire']);
@@ -258,6 +244,7 @@
         $typeMessage = "success";
     }
     //Action Delete Processing End
+    
     //Action DeleteReleveActuel Processing Begin 
     else if($action == "deleteReleveActuel"){
         $releveBancaireManager->deleteReleveActuel();
@@ -265,11 +252,18 @@
         $typeMessage = "success";
     }
     //Action DeleteReleveActuel Processing End
+    
+    //set session informations
     $_SESSION['releveBancaire-action-message'] = $actionMessage;
     $_SESSION['releveBancaire-type-message'] = $typeMessage;
-    $redirectLink = "Location:../releve-bancaire.php";
+    
+    //we can get a request from two resources, so we test which one demands this action in order to set
+    //the right response
+    //first form request
+    $redirectLink = "Location:../views/releve-bancaire.php";
+    //second form request should fill some conditions
     if ( isset($_POST['source']) and $_POST['source'] == "releve-bancaire-archive" ) {
-        $redirectLink = "Location:../releve-bancaire-archive.php";
+        $redirectLink = "Location:../views/releve-bancaire-archive.php";
     }
+    //set redirection link
     header($redirectLink);
-
