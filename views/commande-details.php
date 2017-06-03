@@ -6,38 +6,38 @@
     if( isset($_SESSION['userImmoERPV2']) ){
         //post preocessing
         $companyID = htmlentities($_GET['companyID']);
-        $mois = htmlentities($_GET['mois']);
-        $annee = htmlentities($_GET['annee']);
+        $mois      = htmlentities($_GET['mois']);
+        $annee     = htmlentities($_GET['annee']);
         //classManagers
-        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
-        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
-        $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
-        $commandeManager = new CommandeManager(PDOFactory::getMysqlConnection());
+        $companyManager        = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager         = new ProjetManager(PDOFactory::getMysqlConnection());
+        $fournisseurManager    = new FournisseurManager(PDOFactory::getMysqlConnection());
+        $commandeManager       = new CommandeManager(PDOFactory::getMysqlConnection());
         $commandeDetailManager = new CommandeDetailManager(PDOFactory::getMysqlConnection());
         //objs and vars
-        $company = $companyManager->getCompanyById($companyID);
+        $company              = $companyManager->getCompanyById($companyID);
         $commandeDetailNumber = 0;
-        $titreLivraison ="Détail de la commande";
-        $commande = "Vide";
-        $fournisseur = "Vide";
-        $nomProjet = "Non mentionné";
-        $idProjet = "";
-        $fournisseurs = $fournisseurManager->getFournisseurs();
-        $projets = $projetManager->getProjetsByCompanyID($companyID);
+        $titreLivraison       = "Détail de la commande";
+        $commande             = "Vide";
+        $fournisseur          = "Vide";
+        $nomProjet            = "Non mentionné";
+        $idProjet             = "";
+        $fournisseurs         = $fournisseurManager->getFournisseurs();
+        $projets              = $projetManager->getProjetsByCompanyID($companyID);
         if( isset($_GET['codeCommande']) ){
-            $commande = $commandeManager->getCommandeByCode($_GET['codeCommande']);
+            $commande    = $commandeManager->getCommandeByCode($_GET['codeCommande']);
             $fournisseur = $fournisseurManager->getFournisseurById($commande->idFournisseur());
             if ( $commande->idProjet() != 0 ) {
                 $nomProjet = $projetManager->getProjetById($commande->idProjet())->nom();
-                $idProjet = $projetManager->getProjetById($commande->idProjet())->id();    
+                $idProjet  = $projetManager->getProjetById($commande->idProjet())->id();    
             } 
             else {
                 $nomProjet = "Non mentionné";
-                $idProjet = "";    
+                $idProjet  = "";    
             }
             
             $commandeDetail = $commandeDetailManager->getCommandesDetailByIdCommande($commande->id());
-            $nombreArticle = $commandeDetailManager->getNombreArticleCommandeByIdCommande($commande->id());
+            $nombreArticle  = $commandeDetailManager->getNombreArticleCommandeByIdCommande($commande->id());
         }
 ?>
 <!DOCTYPE html>
@@ -109,10 +109,10 @@
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
-                                <a href="commande-mois-annee.php?mois=<?= $mois ?>&annee=<?= $annee ?>&companyID=<?= $companyID ?>"><strong><?= $mois ?>/<?= $annee ?></strong></a>
+                                <a href="commande-mois-annee.php?mois=<?= $mois ?>&annee=<?= $annee ?>&companyID=<?= $companyID ?>"><?= $mois ?>/<?= $annee ?></a>
                                 <i class="icon-angle-right"></i>
                             </li>
-                            <li><a>Détails de Commande</a></li>
+                            <li><a><strong>Détails de Commande</strong></a></li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->
                     </div>

@@ -3,10 +3,14 @@
     require('../db/PDOFactory.php');;
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ) {
-        //les sources
-        $idProjet = $_GET['idProjet'];
+        //class managers
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
         $projetsManager = new ProjetManager(PDOFactory::getMysqlConnection());
-        $projet = $projetsManager->getProjetById($idProjet);
+        //obj and vars
+        $companyID = $_GET['companyID'];
+        $idProjet  = $_GET['idProjet'];
+        $company   = $companyManager->getCompanyById($companyID);
+        $projet    = $projetsManager->getProjetById($idProjet);
 ?>
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
@@ -62,15 +66,20 @@
                         <ul class="breadcrumb">
                             <li>
                                 <i class="icon-home"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <a href="company-choice.php">Accueil</a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $companyID ?>">Société <?= $company->nom() ?></a>
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
                                 <i class="icon-briefcase"></i>
-                                <a href="projets.php">Gestion des projets</a>
+                                <a href="projets.php?companyID=<?= $companyID ?>">Gestion des projets</a>
                                 <i class="icon-angle-right"></i>
                             </li>
-                            <li><a>Projet <strong><?= $projet->nom() ?></strong></a></li>
+                            <li><a><strong>Projet <?= $projet->nom() ?></strong></a></li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->
                     </div>
@@ -97,9 +106,9 @@
                                 </div>
                                 <div class="span10" style="overflow:hidden;">
                                     <div class="portfolio-info">
-                                        <a href="terrain.php?idProjet=<?= $projet->id() ?>" class="btn btn-fixed-width black">Terrain</a>
-                                        <a href="appartements.php?idProjet=<?= $projet->id() ?>" class="btn btn-fixed-width brown">Appartements</a>
-                                        <a href="locaux.php?idProjet=<?= $projet->id() ?>" class="btn btn-fixed-width purple">Les locaux commerciaux</a>
+                                        <a href="terrain.php?idProjet=<?= $projet->id() ?>&companyID=<?= $companyID ?>" class="btn btn-fixed-width black">Terrain</a>
+                                        <a href="appartements.php?idProjet=<?= $projet->id() ?>&companyID=<?= $companyID ?>" class="btn btn-fixed-width brown">Appartements</a>
+                                        <a href="locaux.php?idProjet=<?= $projet->id() ?>&companyID=<?= $companyID ?>" class="btn btn-fixed-width purple">Les locaux commerciaux</a>
                                     </div>
                                     <div class="portfolio-info">
                                         <?php
@@ -108,7 +117,7 @@
                                             || $_SESSION['userImmoERPV2']->profil()=="consultant" 
                                         ) {
                                         ?>
-                                        <a href="projet-charges-grouped.php?idProjet=<?= $projet->id() ?>" class="btn btn-fixed-width dark-red">Charges du Projet</a>
+                                        <a href="projet-charges-grouped.php?idProjet=<?= $projet->id() ?>&companyID=<?= $companyID ?>" class="btn btn-fixed-width dark-red">Charges du Projet</a>
                                         <?php
                                         }
                                         ?>
@@ -118,16 +127,16 @@
                                             $_SESSION['userImmoERPV2']->profil()=="manager"
                                             ) {
                                         ?>
-                                        <a href="clients-add.php?idProjet=<?= $projet->id() ?>" class="btn btn-fixed-width red">Créer Clients et Contrats</a>
+                                        <a href="clients-add.php?idProjet=<?= $projet->id() ?>&companyID=<?= $companyID ?>" class="btn btn-fixed-width red">Créer Clients et Contrats</a>
                                         <?php
                                         }
                                         ?>
-                                        <a href="contrats-list.php?idProjet=<?= $projet->id() ?>" class="btn btn-fixed-width green">Listes Clients et Contrats</a>
+                                        <a href="contrats-list.php?idProjet=<?= $projet->id() ?>&companyID=<?= $companyID ?>" class="btn btn-fixed-width green">Listes Clients et Contrats</a>
                                     </div>
                                     <div class="portfolio-info">
-                                        <a href="contrats-desistes-list.php?idProjet=<?= $projet->id() ?>" class="btn btn-fixed-width yellow">Contrats Désistés</a>
-                                        <a href="projet-contrat-employe.php?idProjet=<?= $projet->id() ?>" class="btn btn-fixed-width">Contrats employés</a>
-                                        <a href="suivi-projets.php?idProjet=<?= $projet->id() ?>" class="btn btn-fixed-width dark-cyan">Statistiques</a>
+                                        <a href="contrats-desistes-list.php?idProjet=<?= $projet->id() ?>&companyID=<?= $companyID ?>" class="btn btn-fixed-width yellow">Contrats Désistés</a>
+                                        <a href="projet-contrat-employe.php?idProjet=<?= $projet->id() ?>&companyID=<?= $companyID ?>" class="btn btn-fixed-width">Contrats employés</a>
+                                        <a href="suivi-projets.php?idProjet=<?= $projet->id() ?>&companyID=<?= $companyID ?>" class="btn btn-fixed-width dark-cyan">Statistiques</a>
                                     </div>
                                     <!--div class="portfolio-info">
                                         <a class="btn brown arabic" href="contrats-travail.php?idProjet=<?= $projet->id() ?>" class="btn">تنظيم عقود العمل</a>

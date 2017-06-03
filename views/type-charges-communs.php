@@ -63,7 +63,7 @@
                         <ul class="breadcrumb">
                             <li>
                                 <i class="icon-home"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <a href="company-choice.php">Accueil</a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
@@ -152,12 +152,12 @@
                                         ?>
                                         <tr>
                                             <td>
-                                                <a href="#" class="btn mini red"><i class="icon-remove"></i></a>
+                                                <a href="#deleteCharge<?= $type->id() ?>" data-toggle="modal" data-id="<?= $type->id() ?>" class="btn mini red"><i class="icon-remove"></i></a>
                                                 <a href="#updateCharge<?= $type->id() ?>" data-toggle="modal" data-id="<?= $type->id() ?>" class="btn mini green"><i class="icon-refresh"></i></a>
                                             </td>
                                             <td><?= $type->nom() ?></td>
                                         </tr>
-                                        <!-- updateCompte box begin-->
+                                        <!-- updateCharge box begin-->
                                         <div id="updateCharge<?= $type->id() ?>" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
@@ -183,7 +183,29 @@
                                                 </form>
                                             </div>
                                         </div>
-                                        <!-- updateCompte box end -->   
+                                        <!-- updateCharge box end -->
+                                        <!-- deleteCharge box begin-->
+                                        <div id="deleteCharge<?= $type->id() ?>" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                                <h3>Supprimer Type Charge Communs</h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form class="form-horizontal" action="../controller/TypeChargeCommunActionController.php" method="post">
+                                                    <h4 class="dangerous-action">Etes-vous sur de vouloir supprimer ce Type Charge Commun ?</h4>
+                                                    <div class="control-group">
+                                                        <div class="controls">
+                                                            <input type="hidden" name="idTypeCharge" value="<?= $type->id() ?>">
+                                                            <input type="hidden" name="action" value="delete" />
+                                                            <input type="hidden" name="source" value="type-charges-communs" />
+                                                            <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
+                                                            <button type="submit" class="btn red" aria-hidden="true">Oui</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <!-- deleteCharge box end -->   
                                         <?php
                                         }
                                         ?>

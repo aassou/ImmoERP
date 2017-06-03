@@ -7,15 +7,15 @@
         //post processing
         $companyID = htmlentities($_GET['companyID']);
         //Class Managers
-        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
-        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        $companyManager     = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager      = new ProjetManager(PDOFactory::getMysqlConnection());
         $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
-        $commandeManager = new CommandeManager(PDOFactory::getMysqlConnection());
+        $commandeManager    = new CommandeManager(PDOFactory::getMysqlConnection());
         //objs and vars
-        $company = $companyManager->getCompanyById($companyID);
-        $projets = $projetManager->getProjetsByCompanyID($companyID);
+        $company      = $companyManager->getCompanyById($companyID);
+        $projets      = $projetManager->getProjetsByCompanyID($companyID);
         $fournisseurs = $fournisseurManager->getFournisseurs();    
-        $commandes = $commandeManager->getCommandesGroupByMonth($companyID);
+        $commandes    = $commandeManager->getCommandesGroupByMonth($companyID);
 ?>
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
@@ -82,7 +82,7 @@
                             </li>
                             <li>
                                 <i class="icon-shopping-cart"></i>
-                                <a>Gestion des commandes</a>
+                                <a><strong>Gestion des commandes</strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->

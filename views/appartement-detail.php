@@ -2,17 +2,21 @@
     require('../app/classLoad.php');
     require('../db/PDOFactory.php');;  
 	
-    require('lib/image-processing.php');
+    require('../lib/image-processing.php');
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
-    	//les sources
-    	$projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+    	//class managers
+    	$companyManager     = new CompanyManager(PDOFactory::getMysqlConnection());
+    	$projetManager      = new ProjetManager(PDOFactory::getMysqlConnection());
 		$appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
-		$appartement = "";
+        //obj and vars
+        $companyID     = $_GET['companyID'];
+        $company       = $companyManager->getCompanyById($companyID);
+		$appartement   = "";
 		$idAppartement = 0;
-		$idProjet = $_GET['idProjet'];
-        $projet = $projetManager->getProjetById($idProjet);
+		$idProjet      = $_GET['idProjet'];
+        $projet        = $projetManager->getProjetById($idProjet);
 		if( isset($_GET['idAppartement']) and 
 		( $_GET['idAppartement']>0 and $_GET['idAppartement']<=$appartementManager->getLastId() ) ){
 			$idAppartement = htmlentities($_GET['idAppartement']);
@@ -105,23 +109,28 @@
 						<ul class="breadcrumb">
 							<li>
                                 <i class="icon-home"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <a href="company-choice.php">Accueil</a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $companyID ?>">Société <?= $company->nom() ?></a>
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
                                 <i class="icon-briefcase"></i>
-                                <a href="projets.php">Gestion des projets</a>
+                                <a href="projets.php?companyID=<?= $companyID ?>">Gestion des projets</a>
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
-                                <a href="projet-details.php?idProjet=<?= $projet->id() ?>">Projet <strong><?= $projet->nom() ?></strong></a>
+                                <a href="projet-details.php?idProjet=<?= $projet->id() ?>&companyID=<?= $companyID ?>">Projet <?= $projet->nom() ?></a>
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
-                                <a href="appartements.php?idProjet=<?= $projet->id() ?>">Gestion des appartements</a>
+                                <a href="appartements.php?idProjet=<?= $projet->id() ?>&companyID=<?= $companyID ?>">Gestion des appartements</a>
                                 <i class="icon-angle-right"></i>
                             </li>
-							<li><a>Fiche de l'appartement</a></li>
+							<li><a><strong>Fiche de l'appartement</strong></a></li>
 						</ul>
 						<!-- END PAGE TITLE & BREADCRUMB-->
 					</div>

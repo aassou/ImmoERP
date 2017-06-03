@@ -4,6 +4,12 @@
     //classes loading end
     session_start();
     if(isset($_SESSION['userImmoERPV2'])){
+        //classes managers
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
+        //obj and vars
+        $companyID = $_GET['companyID'];
+        $company   = $companyManager->getCompanyById($companyID);
+        
 ?>
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
@@ -57,12 +63,17 @@
                         <ul class="breadcrumb">
                             <li>
                                 <i class="icon-home"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <a href="company-choice.php">Accueil</a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $companyID ?>">Société <?= $company->nom() ?></a>
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
                                 <i class="icon-wrench"></i>
-                                <a>Paramètrages</a>
+                                <a><strong>Paramètrages</strong></a>
                             </li>
                         </ul>
                     </div>

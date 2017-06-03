@@ -5,24 +5,24 @@
     session_start();
     if(isset($_SESSION['userImmoERPV2']) ){
         //classes managers
-        $appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
-        $locauxManager = new LocauxManager(PDOFactory::getMysqlConnection());
-        $usersManager = new UserManager(PDOFactory::getMysqlConnection());
-        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
-        $contratManager = new ContratManager(PDOFactory::getMysqlConnection());
-        $clientManager = new ClientManager(PDOFactory::getMysqlConnection());
-        $chargeManager = new ChargeManager(PDOFactory::getMysqlConnection());
-        $chargeCommunManager = new ChargeCommunManager(PDOFactory::getMysqlConnection());
-        $livraisonsManager = new LivraisonManager(PDOFactory::getMysqlConnection());
-        $livraisonDetailManager = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
-        $fournisseursManager = new FournisseurManager(PDOFactory::getMysqlConnection());
+        $companyManager               = new CompanyManager(PDOFactory::getMysqlConnection()); 
+        $appartementManager           = new AppartementManager(PDOFactory::getMysqlConnection());
+        $locauxManager                = new LocauxManager(PDOFactory::getMysqlConnection());
+        $usersManager                 = new UserManager(PDOFactory::getMysqlConnection());
+        $projetManager                = new ProjetManager(PDOFactory::getMysqlConnection());
+        $contratManager               = new ContratManager(PDOFactory::getMysqlConnection());
+        $clientManager                = new ClientManager(PDOFactory::getMysqlConnection());
+        $chargeManager                = new ChargeManager(PDOFactory::getMysqlConnection());
+        $chargeCommunManager          = new ChargeCommunManager(PDOFactory::getMysqlConnection());
+        $livraisonsManager            = new LivraisonManager(PDOFactory::getMysqlConnection());
+        $livraisonDetailManager       = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
+        $fournisseursManager          = new FournisseurManager(PDOFactory::getMysqlConnection());
         $reglementsFournisseurManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
-        $caisseEntreesManager = new CaisseEntreesManager(PDOFactory::getMysqlConnection());
-        $caisseSortiesManager = new CaisseSortiesManager(PDOFactory::getMysqlConnection());
-        $operationsManager = new OperationManager(PDOFactory::getMysqlConnection());
+        $caisseManager                = new CaisseManager(PDOFactory::getMysqlConnection());
+        $operationsManager            = new OperationManager(PDOFactory::getMysqlConnection());
         //classes and vars
-        //$idProjet = $_GET['idProjet'];
-        //$projet = $projetManager->getProjetById($idProjet);
+        $companyID = $_GET['companyID'];
+        $company   = $companyManager->getCompanyById($companyID);
         //Container 1 : Statistiques
         $chiffreAffaireTheorique = 
         ceil($appartementManager->getTotalPrixAppartements() + $locauxManager->getTotalPrixLocaux());
@@ -48,7 +48,7 @@
             $sommeLivraisons += $livraisonDetailManager->getTotalLivraisonByIdLivraison($id);
         }
         $sommeReglements = ceil($reglementsFournisseurManager->sommeReglementFournisseur());
-        $sommeLivraison = ceil($livraisonsManager->getTotalLivraisons());
+        $sommeLivraison = ceil($livraisonsManager->getTotalLivraisons($companyID));
 ?>
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
@@ -102,13 +102,18 @@
                         </h3>
                         <ul class="breadcrumb">
                             <li>
-                                <i class="icon-dashboard"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <i class="icon-home"></i>
+                                <a href="company-choice.php">Accueil</a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $companyID ?>">Société <?= $company->nom() ?></a>
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
                                 <i class="icon-bar-chart"></i>
-                                <a>Statistiques Globales - <strong>Société Annahda</strong></a>
+                                <a><strong>Statistiques Globales</strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->

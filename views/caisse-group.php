@@ -7,13 +7,13 @@
         $companyID = htmlentities($_GET['companyID']);
         //class managers
         $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
-        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
-        $caisseManager = new CaisseManager(PDOFactory::getMysqlConnection());
+        $projetManager  = new ProjetManager(PDOFactory::getMysqlConnection());
+        $caisseManager  = new CaisseManager(PDOFactory::getMysqlConnection());
         //objs and vars
         $company = $companyManager->getCompanyById($companyID);
         $projets = $projetManager->getProjets();    
-        $caisses =$caisseManager->getCaissesGroupByMonth($companyID);
-        $totalCaisse = 
+        $caisses = $caisseManager->getCaissesGroupByMonth($companyID);
+        $totalCaisse  = 
         $caisseManager->getTotalCaisseByType('Entree', $companyID) - $caisseManager->getTotalCaisseByType('Sortie', $companyID);
         $totalEntrees = $caisseManager->getTotalCaisseByType('Entree', $companyID);
         $totalSorties = $caisseManager->getTotalCaisseByType('Sortie', $companyID);
@@ -83,7 +83,7 @@
                             </li>
                             <li>
                                 <i class="icon-money"></i>
-                                <a>Gestion de la caisse</a>
+                                <a><strong>Gestion de la caisse</strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->

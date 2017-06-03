@@ -4,10 +4,14 @@
     //classes loading end
     session_start();
     if ( isset($_SESSION['userImmoERPV2']) ) {
-        //les sources
+        //class managers
+        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
         $projetsManager = new ProjetManager(PDOFactory::getMysqlConnection());
+        //obj and vars
+        $companyID    = $_GET['companyID'] ;
+        $company      = $companyManager->getCompanyById($companyID);
         $projetNumber = $projetsManager->getProjetsNumber();
-        $projets = $projetsManager->getProjets();
+        $projets      = $projetsManager->getProjets();
 ?>
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
@@ -63,12 +67,17 @@
                         <ul class="breadcrumb">
                             <li>
                                 <i class="icon-home"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <a href="company-choice.php">Accueil</a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $companyID ?>">Société <?= $company->nom() ?></a>
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
                                 <i class="icon-briefcase"></i>
-                                <a>Gestion des projets</a>
+                                <a><strong>Gestion des projets</strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->
@@ -185,7 +194,7 @@
                                     <strong><?= $projet->nom() ?></strong> <i class="icon-angle-down"></i>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li><a href="projet-details.php?idProjet=<?= $projet->id() ?>">Gestion du projet</a></li>
+                                        <li><a href="projet-details.php?idProjet=<?= $projet->id() ?>&companyID=<?= $companyID ?>">Gestion du projet</a></li>
                                         <?php
                                         if ( $_SESSION['userImmoERPV2']->profil() == "admin" ) {
                                         ?>

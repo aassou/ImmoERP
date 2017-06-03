@@ -149,7 +149,7 @@
                                 </div>
                             </div>
                             </a>
-                            <a href="projets.php">
+                            <a href="projets.php?companyID=<?= $companyID ?>">
                             <div class="tile bg-green">
                                 <div class="tile-body">
                                     <i class="icon-briefcase"></i>
@@ -163,7 +163,7 @@
                                 </div>
                             </div>
                             </a>
-                            <a href="status.php">
+                            <a href="status.php?companyID=<?= $companyID ?>">
                             <div class="tile bg-orange">
                                 <div class="corner"></div>
                                 <div class="tile-body">
@@ -181,7 +181,7 @@
                                 $_SESSION['userImmoERPV2']->profil() == "admin" 
                             ) {
                             ?>
-                            <a href="charges-communs-grouped.php">
+                            <a href="charges-communs-grouped.php?companyID=<?= $companyID ?>">
                             <div class="tile bg-grey">
                                 <div class="tile-body">
                                     <i class="icon-signal"></i>
@@ -195,7 +195,7 @@
                                 </div>
                             </div>
                             </a>
-                            <a href="releve-bancaire.php">
+                            <a href="releve-bancaire.php?companyID=<?= $companyID ?>">
                             <div class="tile bg-blue">
                                 <div class="tile-body">
                                     <i class="icon-envelope-alt"></i>
@@ -209,7 +209,7 @@
                                 </div>
                             </div>
                             </a>
-                            <a href="suivi-company.php">
+                            <a href="suivi-company.php?companyID=<?= $companyID ?>">
                             <div class="tile bg-brown">
                                 <div class="corner"></div>
                                 <div class="tile-body">
@@ -222,7 +222,7 @@
                                 </div>
                             </div>
                             </a>
-                            <a href="configuration.php">
+                            <a href="configuration.php?companyID=<?= $companyID ?>">
                             <div class="tile bg-dark-red">
                                 <div class="corner"></div>
                                 <div class="tile-body">

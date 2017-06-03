@@ -5,21 +5,24 @@
     session_start();
     if(isset($_SESSION['userImmoERPV2'])){
         //classes managers
-        $releveBancaireManager = new ReleveBancaireManager(PDOFactory::getMysqlConnection());
-        $chargesCommunsManager = new ChargeCommunManager(PDOFactory::getMysqlConnection());
+        $companyManager          = new CompanyManager(PDOFactory::getMysqlConnection());
+        $releveBancaireManager   = new ReleveBancaireManager(PDOFactory::getMysqlConnection());
+        $chargesCommunsManager   = new ChargeCommunManager(PDOFactory::getMysqlConnection());
         $typeChargeCommunManager = new TypeChargeCommunManager(PDOFactory::getMysqlConnection());
         $typeChargeProjetManager = new TypeChargeManager(PDOFactory::getMysqlConnection());
-        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
-        $compteBancaireManager = new CompteBancaireManager(PDOFactory::getMysqlConnection());
+        $projetManager           = new ProjetManager(PDOFactory::getMysqlConnection());
+        $compteBancaireManager   = new CompteBancaireManager(PDOFactory::getMysqlConnection());
         //obj and vars
+        $companyID          = $_GET['companyID'];
+        $company            = $companyManager->getCompanyById($companyID);
         $typeChargesCommuns = $typeChargeCommunManager->getTypeCharges();
         $typeChargesProjets = $typeChargeProjetManager->getTypeCharges();
-        $projets = $projetManager->getProjets();
-        $releveBancaires = $releveBancaireManager->getReleveBancaires();
-        $comptesBancaires = $compteBancaireManager->getCompteBancaires();
-        $debit = $releveBancaireManager->getTotalDebit();
-        $credit = $releveBancaireManager->getTotalCredit();
-        $solde = $credit - $debit;
+        $projets            = $projetManager->getProjets();
+        $releveBancaires    = $releveBancaireManager->getReleveBancaires();
+        $comptesBancaires   = $compteBancaireManager->getCompteBancaires();
+        $debit              = $releveBancaireManager->getTotalDebit();
+        $credit             = $releveBancaireManager->getTotalCredit();
+        $solde              = $credit - $debit;
         
 ?>
 <!DOCTYPE html>
@@ -78,13 +81,18 @@
                         </h3>
                         <ul class="breadcrumb">
                             <li>
-                                <i class="icon-dashboard"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <i class="icon-home"></i>
+                                <a href="company-choice.php">Accueil</a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+                            <li>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $companyID ?>">Société <?= $company->nom() ?></a>
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
                                 <i class="icon-envelope"></i>
-                                <a>Gestion des Relevés Bancaires <?php //date('h:i'); ?></a>
+                                <a><strong>Gestion des Relevés Bancaires</strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->

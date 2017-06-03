@@ -4,14 +4,18 @@
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
-    	//les sources
-    	$idProjet = 0;
-    	$projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+    	//class managers
+    	$companyManager       = new CompanyManager(PDOFactory::getMysqlConnection());
+    	$projetManager        = new ProjetManager(PDOFactory::getMysqlConnection());
+        $terrainManager       = new TerrainManager(PDOFactory::getMysqlConnection());
+        $piecesTerrainManager = new PiecesTerrainManager(PDOFactory::getMysqlConnection());
+        //obj and vars
+        $companyID = $_GET['companyID'];
+        $company   = $companyManager->getCompanyById($companyID);
+    	$idProjet  = 0;
 		if(isset($_GET['idProjet']) and ($_GET['idProjet'])>0 and $_GET['idProjet']<=$projetManager->getLastId()){
 			$idProjet = $_GET['idProjet'];
-			$projet = $projetManager->getProjetById($idProjet);
-			$terrainManager = new TerrainManager(PDOFactory::getMysqlConnection());
-			$piecesTerrainManager = new PiecesTerrainManager(PDOFactory::getMysqlConnection());
+			$projet   = $projetManager->getProjetById($idProjet);
 			$terrains = "";
 			//test the terrain object number: if exists get terrain else do nothing
 			$terrainNumber = $terrainManager->getTerrainNumberByIdProjet($idProjet);
@@ -73,20 +77,25 @@
 						</h3>
 						<ul class="breadcrumb">
 							<li>
-								<i class="icon-home"></i>
-								<a href="dashboard.php">Accueil</a> 
-								<i class="icon-angle-right"></i>
-							</li>
-							<li>
-								<i class="icon-briefcase"></i>
-								<a href="projets.php">Gestion des projets</a>
-								<i class="icon-angle-right"></i>
-							</li>
-							<li>
-                                <a href="projet-details.php?idProjet=<?= $projet->id() ?>">Projet <strong><?= $projet->nom() ?></strong></a>
+                                <i class="icon-home"></i>
+                                <a href="company-choice.php">Accueil</a>
                                 <i class="icon-angle-right"></i>
                             </li>
-							<li><a>Gestion des terrains</a></li>
+                            <li>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $companyID ?>">Société <?= $company->nom() ?></a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+							<li>
+								<i class="icon-briefcase"></i>
+								<a href="projets.php?companyID=<?= $companyID ?>">Gestion des projets</a>
+								<i class="icon-angle-right"></i>
+							</li>
+							<li>
+                                <a href="projet-details.php?idProjet=<?= $projet->id() ?>&companyID=<?= $companyID ?>">Projet <?= $projet->nom() ?></a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+							<li><a><strong>Gestion des terrains</strong></a></li>
 						</ul>
 						<!-- END PAGE TITLE & BREADCRUMB-->
 					</div>

@@ -5,15 +5,19 @@
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
-    	//les sources
-    	$idProjet = 0;
-    	$projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+    	//class managers
+    	$companyManager     = new CompanyManager(PDOFactory::getMysqlConnection());
+    	$projetManager      = new ProjetManager(PDOFactory::getMysqlConnection());
+        $appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
+        $contratManager     = new ContratManager(PDOFactory::getMysqlConnection());
+        $clientManager      = new ClientManager(PDOFactory::getMysqlConnection());
+        //obj and vars
+        $companyID = $_GET['companyID'];
+        $company   = $companyManager->getCompanyById($companyID);
+    	$idProjet  = 0;
 		if(isset($_GET['idProjet']) and ($_GET['idProjet'])>0 and $_GET['idProjet']<=$projetManager->getLastId()){
-			$idProjet = $_GET['idProjet'];
-			$projet = $projetManager->getProjetById($idProjet);
-			$appartementManager = new AppartementManager(PDOFactory::getMysqlConnection());
-            $contratManager = new ContratManager(PDOFactory::getMysqlConnection());
-            $clientManager = new ClientManager(PDOFactory::getMysqlConnection());
+			$idProjet     = $_GET['idProjet'];
+			$projet       = $projetManager->getProjetById($idProjet);
 			$appartements = "";
 			//test the appartement object number: if exists get appartement else do nothing
 			$appartementNumber = $appartementManager->getAppartementNumberByIdProjet($idProjet);
@@ -86,20 +90,25 @@
 						</h3>
 						<ul class="breadcrumb">
 							<li>
-								<i class="icon-home"></i>
-								<a href="dashboard.php">Accueil</a> 
-								<i class="icon-angle-right"></i>
-							</li>
-							<li>
-								<i class="icon-briefcase"></i>
-								<a href="projets.php">Gestion des projets</a>
-								<i class="icon-angle-right"></i>
-							</li>
-							<li>
-                                <a href="projet-details.php?idProjet=<?= $projet->id() ?>">Projet <strong><?= $projet->nom() ?></strong></a>
+                                <i class="icon-home"></i>
+                                <a href="company-choice.php">Accueil</a>
                                 <i class="icon-angle-right"></i>
                             </li>
-							<li><a>Gestion des appartements</a></li>
+                            <li>
+                                <i class="icon-sitemap"></i>
+                                <a href="company-dashboard.php?companyID=<?= $companyID ?>">Société <?= $company->nom() ?></a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+							<li>
+								<i class="icon-briefcase"></i>
+								<a href="projets.php?companyID=<?= $companyID ?>">Gestion des projets</a>
+								<i class="icon-angle-right"></i>
+							</li>
+							<li>
+                                <a href="projet-details.php?idProjet=<?= $projet->id() ?>&companyID=<?= $companyID ?>">Projet <?= $projet->nom() ?></a>
+                                <i class="icon-angle-right"></i>
+                            </li>
+							<li><a><strong>Gestion des appartements</strong></a></li>
 						</ul>
 						<!-- END PAGE TITLE & BREADCRUMB-->
 					</div>
@@ -266,7 +275,7 @@
                                                     ?>
 												    <ul class="dropdown-menu">
 												        <li>
-												        	<a href="appartement-detail.php?idAppartement=<?= $appartement->id() ?>&idProjet=<?= $appartement->idProjet() ?>">
+												        	<a href="appartement-detail.php?idAppartement=<?= $appartement->id() ?>&idProjet=<?= $appartement->idProjet() ?>&companyID=<?= $companyID ?>">
 																Fiche descriptif
 															</a>
 												        	<a href="#addPieces<?= $appartement->id() ?>" data-toggle="modal" data-id="<?= $appartement->id() ?>">

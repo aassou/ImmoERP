@@ -1,5 +1,5 @@
 <?php
-    require('../app/loadClass.php');  
+    require('../app/classLoad.php');
     require('../db/PDOFactory.php');;
     //classes loading end
     session_start();
