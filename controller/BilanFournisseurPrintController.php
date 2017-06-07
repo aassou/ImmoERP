@@ -6,27 +6,27 @@
     if( isset($_SESSION['userImmoERPV2']) ){
         $companyID = htmlentities($_POST['companyID']);
         //class manager
-        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
-        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
-        $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
-        $livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
-        $livraisonDetailManager = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
+        $companyManager               = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager                = new ProjetManager(PDOFactory::getMysqlConnection());
+        $fournisseurManager           = new FournisseurManager(PDOFactory::getMysqlConnection());
+        $livraisonManager             = new LivraisonManager(PDOFactory::getMysqlConnection());
+        $livraisonDetailManager       = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
         $reglementsFournisseurManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
         //obj and vars
-        $company = $companyManager->getCompanyById($companyID);
-        $idFournisseur = $_POST['idFournisseur'];
-        $fournisseur = $fournisseurManager->getFournisseurById($idFournisseur);
-        $reglements = "";
+        $company          = $companyManager->getCompanyById($companyID);
+        $idFournisseur    = $_POST['idFournisseur'];
+        $fournisseur      = $fournisseurManager->getFournisseurById($idFournisseur);
+        $reglements       = "";
         $reglementsNumber = 0;
-        $livraisons = "";
-        $livraisonNumber = 0;
-        $totalReglement = 0;
-        $totalLivraison = 0;
-        $titreLivraison = "";
+        $livraisons       = "";
+        $livraisonNumber  = 0;
+        $totalReglement   = 0;
+        $totalLivraison   = 0;
+        $titreLivraison   = "";
         if ( isset($_POST['criteria']) and $_POST['criteria'] == "toutesLivraison" ) {
             $livraisonNumber = $livraisonManager->getLivraisonsNumberByIdFournisseur($idFournisseur);
             if( $livraisonNumber != 0 ) {
-                $livraisons = $livraisonManager->getLivraisonsByIdFournisseur($idFournisseur);
+                $livraisons = $livraisonManager->getLivraisonsByIdFournisseur($idFournisseur, $companyID);
                 $titreLivraison ="Bilan complet du fournisseur <strong>".$fournisseurManager->getFournisseurById($idFournisseur)->nom()."</strong>";
                 //get the sum of livraisons details using livraisons ids (idFournisseur)
                 //$livraisonsIds = $livraisonManager->getLivraisonIdsByIdFournisseur($idFournisseur);
@@ -135,7 +135,7 @@ ob_start();
         foreach( $livraisons as $livraison ) {
             $nomProjet = "";
             if ( $livraison->idProjet() == 0 ) {
-                $nomProjet = "Non mentionné";
+                $nomProjet = "Plusieurs Projets";
             }
             else {
                 $nomProjet = $projetManager->getProjetById($livraison->idProjet())->nom();

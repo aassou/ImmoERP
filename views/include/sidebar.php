@@ -62,202 +62,11 @@
 					</a>
 				</li>
 				<!---------------------------- Dashboard End    -------------------------------------------->
-				<!---------------------------- Gestion des projets Begin ----------------------------------->
-				<?php 
-				if ( 
-				    $_SESSION["userImmoERPV2"]->profil() == "admin" ||
-				    $_SESSION['userImmoERPV2']->profil() == "manager" ||
-				    $_SESSION['userImmoERPV2']->profil() == "consultant" 
-                    ) { 
-					$gestionProjetClass="";
-					if($currentPage=="projet-list.php"
-					or $currentPage=="projets.php"
-					or $currentPage=="projet-details.php"
-					or $currentPage=="projet-charges.php"
-					or $currentPage=="projet-add.php"
-					or $currentPage=="suivi-projets.php"  
-					or $currentPage=="projet-update.php"
-					or $currentPage=="projet-search.php"
-					or $currentPage=="terrain.php"
-					or $currentPage=="locaux.php"
-					or $currentPage=="pieces-locaux.php"
-					or $currentPage=="appartements.php"
-					or $currentPage=="pieces-appartement.php"
-					or $currentPage=="clients-add.php"
-					or $currentPage=="contrats-add.php"
-					or $currentPage=="contrat.php"
-					or $currentPage=="contrats-list.php"
-					or $currentPage=="contrats-desistes-list.php"
-					or $currentPage=="contrat-details.php"
-					or $currentPage=="operations.php"
-					or $currentPage=="fournisseur-add.php"
-					or $currentPage=="fournisseur-reglement.php"
-					or $currentPage=="employes-projet.php"
-					or $currentPage=="employe-projet-profile.php"
-					or $currentPage=="fournisseurs-reglements.php"
-					or $currentPage=="appartement-detail.php"
-					or $currentPage=="locaux-detail.php"
-					or $currentPage=="projet-charges-grouped.php"
-					or $currentPage=="projet-charges-type.php"
-					or $currentPage=="projet-contrat-employe.php"
-					or $currentPage=="contrat-employe-detail.php"
-					){
-						$gestionProjetClass = "active ";
-					}
-				?> 
-				<li class="<?= $gestionProjetClass; ?>" >
-					<a href="projets.php">
-					<i class="icon-briefcase"></i> 
-					<span class="title">Gestion des projets</span>
-					<span class="arrow "></span>
-					</a>
-				</li>
-				<?php
-				}
-				?> 
-				<!---------------------------- Gestion des Projets End -------------------------------------->
-				<!---------------------------- Livraisons Begin  -------------------------------------------->
-				<?php 
-                    $gestionLivraisonClass="";
-                    if(
-                    $currentPage=="livraisons-group.php"
-                    or $currentPage=="livraisons-fournisseur.php"
-                    or $currentPage=="livraisons-details.php"
-                    or $currentPage=="livraisons-group-iaaza.php"
-                    or $currentPage=="livraisons-fournisseur-iaaza.php"
-                    or $currentPage=="livraisons-details-iaaza.php"
-                    or $currentPage=="reglements-fournisseur.php"
-                    or $currentPage=="reglements-fournisseur-iaaza.php"
-                    or $currentPage=="livraisons-fournisseur-mois-list.php"
-                    or $currentPage=="livraisons-fournisseur-mois.php"
-                    or $currentPage=="livraisons-fournisseur-mois-iaaza.php"
-                    or $currentPage=="livraisons-fournisseur-mois-list-iaaza.php"
-                    ){
-                        $gestionLivraisonClass = "active ";
-                    } 
-                ?> 
-                <li class="<?= $gestionLivraisonClass; ?> has-sub ">
-                    <a href="javascript:;">
-                    <i class="icon-truck"></i> 
-                    <span class="title">Gestion des livraisons</span>
-                    <span class="arrow "></span>
-                    </a>
-                    <ul class="sub">
-                        <?php
-                        if ( 
-                            $_SESSION["userImmoERPV2"]->profil() == "admin" ||
-                            $_SESSION['userImmoERPV2']->profil() == "manager" ||
-                            $_SESSION['userImmoERPV2']->profil() == "consultant" 
-                            ) {
-                        ?>
-                        <li <?php if($currentPage=="livraisons-group.php"
-                                    or $currentPage=="livraisons-fournisseur.php"
-                                    or $currentPage=="livraisons-details.php"
-                                    or $currentPage=="reglements-fournisseur.php"
-                                    or $currentPage=="livraisons-fournisseur-mois.php"
-                                    or $currentPage=="livraisons-fournisseur-mois-list.php"
-                                    ){
-                            ?> class="active" <?php } ?> >
-                            <a href="livraisons-group.php">Société Annahda</a>
-                        </li>
-                        <?php
-                        }
-                        ?>
-                        <?php
-                        if ( 
-                            $_SESSION["userImmoERPV2"]->profil() == "admin" ||
-                            $_SESSION["userImmoERPV2"]->profil() == "user" ||
-                            $_SESSION['userImmoERPV2']->profil() == "consultant" 
-                            ) {
-                        ?>
-                        <li <?php if($currentPage=="livraisons-group-iaaza.php"
-                                    or $currentPage=="livraisons-fournisseur-iaaza.php"
-                                    or $currentPage=="livraisons-details-iaaza.php"
-                                    or $currentPage=="reglements-fournisseur-iaaza.php"
-                                    ){?> class="active" <?php } ?> >
-                            <a href="livraisons-group-iaaza.php">Société Iaaza</a>
-                        </li>
-                        <?php
-                        }
-                        ?>
-                    </ul>
-                </li>
-                <!---------------------------- Livraisons End    -------------------------------------------->
-                <!---------------------------- Commandes Begin  -------------------------------------------->
-                <?php 
-                    $gestionCommandeClass="";
-                    if(
-                    $currentPage=="commande-group.php"
-                    or $currentPage=="commande-details.php"
-                    or $currentPage=="commande-mois-annee.php"
-                    ){
-                        $gestionCommandeClass = "active ";
-                    } 
-                ?> 
-                <li class="<?= $gestionCommandeClass; ?> has-sub ">
-                    <a>
-                    <i class="icon-shopping-cart"></i> 
-                    <span class="title">Gestion des commandes</span>
-                    <span class="arrow "></span>
-                    </a>
-                </li>
-                <!---------------------------- Commandes End    -------------------------------------------->
-                <!---------------------------- Caisse Begin  -------------------------------------------->
-                <?php 
-                    $gestionCaisseClass="";
-                    if(
-                    $currentPage=="caisse.php" or 
-                    $currentPage=="caisse-iaaza.php" or
-                    $currentPage=="caisse-group.php" or
-                    $currentPage=="caisse-mois-annee.php" or
-                    $currentPage=="caisse-group-iaaza.php" or
-                    $currentPage=="caisse-mois-annee-iaaza.php"
-                    ){
-                        $gestionCaisseClass = "active ";
-                    } 
-                ?> 
-                <li class="<?= $gestionCaisseClass; ?> has-sub ">
-                    <a href="javascript:;">
-                    <i class="icon-money"></i> 
-                    <span class="title">Gestion des caisses</span>
-                    <span class="arrow "></span>
-                    </a>
-                    <ul class="sub">
-                        <?php
-                        if ( 
-                            $_SESSION["userImmoERPV2"]->profil() == "admin" ||
-                            $_SESSION['userImmoERPV2']->profil() == "manager" ||
-                            $_SESSION['userImmoERPV2']->profil() == "consultant" 
-                            ) {
-                        ?>
-                        <li <?php if($currentPage=="caisse-group.php"){
-                            ?> class="active" <?php } ?> >
-                            <a href="caisse-group.php">Caisse Société Annahda</a>
-                        </li>
-                        <?php
-                        }
-                        ?>
-                        <?php
-                        if ( 
-                            $_SESSION["userImmoERPV2"]->profil() == "admin" ||
-                            $_SESSION["userImmoERPV2"]->profil() == "user" ||
-                            $_SESSION['userImmoERPV2']->profil() == "consultant" 
-                            ) {
-                        ?>
-                        <li <?php if($currentPage=="caisse-group-iaaza.php"){?> class="active" <?php } ?> >
-                            <a href="caisse-group-iaaza.php">Caisse Société Iaaza</a>
-                        </li>
-                        <?php
-                        }
-                        ?>
-                    </ul>
-                </li>
-                <!---------------------------- Caisse End    -------------------------------------------->
 				<!---------------------------- Parametrage Begin  -------------------------------------------->
 				<?php
                 if ( $_SESSION["userImmoERPV2"]->profil() == "admin" ) {
                 ?>
-                <li class="start <?php if($currentPage=="configuration.php" 
+                <li class="start <?php if($currentPage=="configuration-global.php" 
                 or $currentPage=="history-group.php"
                 or $currentPage=="history.php"
                 or $currentPage=="clients-list.php"
@@ -271,9 +80,9 @@
                 or $currentPage=="operations-status-archive.php"
                 or $currentPage=="releve-bancaire-archive.php"
                 ){echo "active ";} ?>">
-                    <a href="configuration.php">
+                    <a href="configuration-global.php">
                     <i class="icon-wrench"></i> 
-                    <span class="title">Paramètrages</span>
+                    <span class="title">Paramètrages Globales</span>
                     </a>
                 </li>
                 <?php

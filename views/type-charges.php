@@ -68,11 +68,11 @@
                             </li>
                             <li>
                                 <i class="icon-wrench"></i>
-                                <a href="configuration.php">Paramètrages</a> 
+                                <a href="configuration-global.php">Paramètrages Globales</a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
-                                <a>Types des charges</a>
+                                <a><strong>Types des charges</strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->

@@ -69,12 +69,12 @@
                             </li>
                             <li>
                                 <i class="icon-wrench"></i>
-                                <a href="configuration.php">Paramètrages</a> 
+                                <a href="configuration-global.php">Paramètrages Globales</a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
                                 <i class="icon-sitemap"></i>
-                                <a>Gestion des sociétés</a>
+                                <a><strong>Gestion des sociétés</strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->

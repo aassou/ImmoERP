@@ -128,7 +128,7 @@
                                         <label class="control-label">Projet</label>
                                         <div class="controls">
                                             <select name="idProjet">
-                                                <option value="0">Non mentionné</option>
+                                                <option value="0">Plusieurs Projets</option>
                                                 <?php foreach($projets as $projet){ ?>
                                                 <option value="<?= $projet->id() ?>"><?= $projet->nom() ?></option>
                                                 <?php } ?>

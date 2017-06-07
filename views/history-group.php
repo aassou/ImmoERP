@@ -68,11 +68,12 @@
                             </li>
                             <li>
                                 <i class="icon-wrench"></i>
-                                <a href="configuration.php">Paramètrages</a> 
+                                <a href="configuration-global.php">Paramètrages Globales</a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
-                                <a>Historique des actions</a>
+                                <i class="icon-calendar"></i>
+                                <a><strong>Historique des actions</strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->

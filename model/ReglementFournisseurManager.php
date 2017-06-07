@@ -11,13 +11,14 @@ class ReglementFournisseurManager{
     //CRUD ReglementFournisseurs
     public function add(ReglementFournisseur $reglementFournisseur){
         $query = $this->_db->prepare('INSERT INTO t_reglement_fournisseur 
-        (dateReglement, montant, idProjet, idFournisseur, modePaiement, numeroCheque, created, createdBy)
-        VALUES (:dateReglement, :montant, :idProjet, :idFournisseur, :modePaiement, :numeroCheque, :created, :createdBy)') 
+        (dateReglement, montant, idProjet, idFournisseur, companyID, modePaiement, numeroCheque, created, createdBy)
+        VALUES (:dateReglement, :montant, :idProjet, :idFournisseur, :companyID, :modePaiement, :numeroCheque, :created, :createdBy)') 
         or die(print_r($this->_db->errorInfo()));
         $query->bindValue(':dateReglement', $reglementFournisseur->dateReglement());
         $query->bindValue(':montant', $reglementFournisseur->montant());
         $query->bindValue(':idProjet', $reglementFournisseur->idProjet());
 		$query->bindValue(':idFournisseur', $reglementFournisseur->idFournisseur());
+        $query->bindValue(':companyID', $reglementFournisseur->companyID());
 		$query->bindValue(':modePaiement', $reglementFournisseur->modePaiement());
 		$query->bindValue(':numeroCheque', $reglementFournisseur->numeroCheque());
         $query->bindValue(':created', $reglementFournisseur->created());
@@ -29,8 +30,8 @@ class ReglementFournisseurManager{
     public function update(ReglementFournisseur $reglementFournisseur){
         $query = $this->_db->prepare(
         'UPDATE t_reglement_fournisseur SET dateReglement=:dateReglement, idFournisseur=:idFournisseur,
-        idProjet=:idProjet, montant=:montant, modePaiement=:modePaiement, numeroCheque=:numeroCheque, updated=:updated, 
-        updatedBy=:updatedBy WHERE id=:id') 
+        idProjet=:idProjet, companyID=:companyID, montant=:montant, modePaiement=:modePaiement, 
+        numeroCheque=:numeroCheque, updated=:updated, updatedBy=:updatedBy WHERE id=:id') 
         or die(print_r($this->_db->errorInfo()));
         $query->bindValue(':id', $reglementFournisseur->id());
         $query->bindValue(':dateReglement', $reglementFournisseur->dateReglement());
@@ -39,6 +40,7 @@ class ReglementFournisseurManager{
         $query->bindValue(':numeroCheque', $reglementFournisseur->numeroCheque());
 		$query->bindValue(':idProjet', $reglementFournisseur->idProjet());
         $query->bindValue(':idFournisseur', $reglementFournisseur->idFournisseur());
+        $query->bindValue(':companyID', $reglementFournisseur->companyID());
         $query->bindValue(':updated', $reglementFournisseur->updated());
         $query->bindValue(':updatedBy', $reglementFournisseur->updatedBy());
         $query->execute();
@@ -116,10 +118,14 @@ class ReglementFournisseurManager{
         return $data['total'];
     }
     
-    public function sommeReglementFournisseursByIdFournisseur($idFournisseur){
-        $query = $this->_db->prepare('SELECT sum(montant) AS somme 
-        FROM t_reglement_fournisseur WHERE idFournisseur =:idFournisseur');
+    public function sommeReglementFournisseursByIdFournisseur($idFournisseur, $companyID){
+        $query = $this->_db->prepare(
+        'SELECT sum(montant) AS somme 
+        FROM t_reglement_fournisseur 
+        WHERE idFournisseur =:idFournisseur
+        AND companyID=:companyID');
         $query->bindValue(':idFournisseur', $idFournisseur);
+        $query->bindValue(':companyID', $companyID);
         $query->execute();
         $data = $query->fetch(PDO::FETCH_ASSOC);
         $query->closeCursor();
@@ -308,16 +314,20 @@ class ReglementFournisseurManager{
         $query->closeCursor();
         return $data['nombreReglements'];
     }
-	public function getTotalReglement(){
-        $query = $this->_db->query('SELECT SUM(montant) AS total FROM t_reglement_fournisseur');
+    
+	public function getTotalReglement($companyID){
+        $query = $this->_db->prepare(
+        'SELECT SUM(montant) AS total FROM t_reglement_fournisseur 
+        WHERE companyID=:companyID');
+        $query->bindValue(':companyID', $companyID);
+        $query->execute();
         $data = $query->fetch(PDO::FETCH_ASSOC);
         $query->closeCursor();
         return $data['total'];
 	}
 	
 	//new functions
-	//add to ReglementFournisseurManager class on 
-	//http://merlatrav.esy.es
+	//add to ReglementFournisseurManager class
 	public function sommeReglementFournisseursByIdFournisseurByProjet($idFournisseur, $idProjet){
         $query = $this->_db->prepare('SELECT SUM(montant) AS total 
         FROM t_reglement_fournisseur WHERE idFournisseur =:idFournisseur AND idProjet=:idProjet');

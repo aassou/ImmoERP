@@ -5,18 +5,30 @@
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
         //class managers
-        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
-		$fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
-		$livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
+        $companyManager               = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager                = new ProjetManager(PDOFactory::getMysqlConnection());
+		$fournisseurManager           = new FournisseurManager(PDOFactory::getMysqlConnection());
+		$livraisonManager             = new LivraisonManager(PDOFactory::getMysqlConnection());
+        $livraisonDetailManager       = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
 		$reglementsFournisseurManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
         //obj vars and tests
-		if( isset($_GET['idFournisseur']) and isset($_GET['idProjet']) and 
-		$fournisseurManager->getOneFournisseurBySearch($_GET['idFournisseur']>=1)){
-			$fournisseur = $fournisseurManager->getOneFournisseurBySearch(htmlentities($_GET['idFournisseur']));
-			$idProjet = $_GET['idProjet'];
-			$livraisonNumber = $livraisonManager->getLivraisonsNumberByIdFournisseurByProjet($fournisseur, $idProjet);
-			if($livraisonNumber != 0){
-				$livraisons = $livraisonManager->getLivraisonsByIdFournisseurByProjet($fournisseur, $idProjet);
+        $companyID            = $_GET['companyID'];
+        $company              = $companyManager->getCompanyById($companyID);
+        $totalReglements = 0;
+        //start processing
+		if ( 
+		  isset($_GET['idFournisseur']) 
+		  and isset($_GET['idProjet']) 
+		  and $fournisseurManager->getOneFournisseurBySearch($_GET['idFournisseur']) >= 1 
+          ) 
+		  {
+		    $idProjet        = $_GET['idProjet'];
+			$fournisseur     = $fournisseurManager->getOneFournisseurBySearch(htmlentities($_GET['idFournisseur']));
+            $livraisonNumber = $livraisonManager->getLivraisonsNumberByIdFournisseurByProjet($fournisseur, $idProjet);
+            
+			if ( $livraisonNumber != 0 )
+			{
+				$livraisons     = $livraisonManager->getLivraisonsByIdFournisseurByProjet($fournisseur, $idProjet);
 				$titreLivraison = "Bilan des livraisons du fournisseur <strong>"
 				.$fournisseurManager->getFournisseurById($fournisseur)->nom()."</strong> / Projet: <strong>"
 				.$projetManager->getProjetById($idProjet)->nom()."</strong>";	
@@ -24,24 +36,33 @@
 				$totalReglement = $reglementsFournisseurManager->sommeReglementFournisseursByIdFournisseurByProjet($fournisseur, $idProjet);
 			}
 		}
-		else if( isset($_GET['idFournisseur']) and
-		$fournisseurManager->getOneFournisseurBySearch($_GET['idFournisseur']>=1)){
-			$fournisseur = $fournisseurManager->getOneFournisseurBySearch(htmlentities($_GET['idFournisseur']));
-			$livraisonNumber = $livraisonManager->getLivraisonsNumberByIdFournisseur($fournisseur);
-			if($livraisonNumber != 0){
-				$livraisons = $livraisonManager->getLivraisonsByIdFournisseur($fournisseur);
-				$titreLivraison ="Bilan des livraisons du fournisseur <strong>".$fournisseurManager->getFournisseurById($fournisseur)->nom()."</strong>";
-				$totalLivraison = $livraisonManager->getTotalLivraisonsIdFournisseur($fournisseur);
-				$totalReglement = $reglementsFournisseurManager->sommeReglementFournisseursByIdFournisseur($fournisseur);
+		else if ( 
+		  isset($_GET['idFournisseur']) 
+		  and $fournisseurManager->getOneFournisseurBySearch($_GET['idFournisseur']) >= 1 
+          )
+		  {
+		    $idFournisseur        = htmlentities($_GET['idFournisseur']);  
+			$fournisseur          = $fournisseurManager->getOneFournisseurBySearch($idFournisseur);
+			$livraisonNumber      = $livraisonManager->getLivraisonsNumberByIdFournisseur($idFournisseur);
+            
+			if ( $livraisonNumber != 0 ) 
+			{
+			    $titreLivraison = "Bilan des livraisons du fournisseur <strong>".$fournisseurManager->getFournisseurById($idFournisseur)->nom()."</strong>";
+				$livraisons     = $livraisonManager->getLivraisonsByIdFournisseur($idFournisseur, $companyID);
+				$totalLivraison = $livraisonManager->getTotalLivraisonsIdFournisseur($idFournisseur);
+				$totalReglement = $reglementsFournisseurManager->sommeReglementFournisseursByIdFournisseur($idFournisseur, $companyID);
 			}
 		}
-		else {
-			$livraisonNumber = $livraisonManager->getLivraisonNumber();
-			if($livraisonNumber != 0){
-				$livraisons = $livraisonManager->getLivraisons();
-				$titreLivraison ="Bilan de toutes les livraisons";
-				$totalLivraison = $livraisonManager->getTotalLivraisons();
-				$totalReglement = $reglementsFournisseurManager->getTotalReglement();	
+		else 
+		{
+			$livraisonNumber = $livraisonManager->getLivraisonNumber($companyID);
+            
+			if ( $livraisonNumber != 0 ) 
+			{
+			    $titreLivraison = "Bilan de toutes les livraisons";
+				$livraisons     = $livraisonManager->getLivraisonsByCompany($companyID);
+				$totalLivraison = $livraisonManager->getTotalLivraisons($companyID);
+				$totalReglement = $reglementsFournisseurManager->getTotalReglement($companyID);	
 			}	
 		}		
 
@@ -70,65 +91,52 @@ ob_start();
 </style>
 <page backtop="15mm" backbottom="20mm" backleft="10mm" backright="10mm">
     <!--img src="../assets/img/logo_company.png" style="width: 110px" /-->
+    <h3>Société <?= $company->nom() ?></h3>
     <h3><?= $titreLivraison ?></h3>
     <p>Imprimé le <?= date('d/m/Y') ?> | <?= date('h:i') ?> </p>
     <table>
 		<tr>
-			<th style="width: 20%">Date livraison</th>
-			<th style="width: 15%">Libelle</th>
-			<th style="width: 35%">Désignation</th>
-			<th style="width: 10%">Quantité</th>
-			<th style="width: 10%">Prix.Uni</th>
-			<th style="width: 10%">Total</th>
+			<th style="width: 25%">Date livraison</th>
+			<th style="width: 25%">Libelle</th>
+			<!--th style="width: 35%">Désignation</th-->
+			<th style="width: 25%">Quantité</th>
+			<!--th style="width: 10%">Prix.Uni</th-->
+			<th style="width: 25%">Total</th>
 		</tr>
 		<?php
+		$totalDetailsLivraisons = 0;
+		$grandTotalLivraisons   = 0;
 		foreach($livraisons as $livraison){
+            $totalDetailsLivraisons += $livraisonDetailManager->getTotalLivraisonByIdLivraison($livraison->id());
+            //$grandTotalLivraisons += $totalDetailsLivraisons;
 		?>		
 		<tr>
 			<td><?= date('d/m/Y', strtotime($livraison->dateLivraison())) ?></td>
 			<td><?= $livraison->libelle() ?></td>
-			<td><?= $livraison->designation() ?></td>
-			<td><?= $livraison->quantite() ?></td>
-			<td><?= number_format($livraison->prixUnitaire(), 2, ',', ' ') ?></td>
-			<td><?= number_format($livraison->prixUnitaire()*$livraison->quantite(), 2, ',', ' ') ?></td>
+			<!--td><?= $livraison->designation() ?></td-->
+			<td><?= $livraisonDetailManager->getNombreArticleLivraisonByIdLivraison($livraison->id()); ?></td>
+			<!--td><?= number_format($livraison->prixUnitaire(), 2, ',', ' ') ?></td-->
+			<td><?= number_format($livraisonDetailManager->getTotalLivraisonByIdLivraison($livraison->id()), 2, ',', ' '); ?></td>
 		</tr>	
 		<?php
 		}//end of loop
+		$grandTotalLivraisons = $totalDetailsLivraisons;
 		?>
 	</table>
 	<br />
 	<table>
 		<tr>
-			<th style="width: 60%"><strong>Total Livraisons</strong></th>
-			<td style="width: 40%">
-				<strong>
-					<a>
-						<?= number_format($totalLivraison, 2, ',', ' ') ?> 
-					</a>
-					&nbsp;DH
-				</strong>
+			<th style="width: 15%"><strong>Livraisons</strong></th>
+			<td style="width: 20%">
+				<strong><?= number_format($grandTotalLivraisons, 2, ',', ' ') ?>DH</strong>
 			</td>
-		</tr>
-		<tr>
-			<th style="width: 60%"><strong>Total Réglements</strong></th>
-			<td style="width: 40%">
-				<strong>
-					<a>
-						<?= number_format($totalReglement, 2, ',', ' ') ?> 
-					</a>
-					&nbsp;DH
-				</strong>
+			<th style="width: 15%"><strong>Réglements</strong></th>
+			<td style="width: 20%">
+				<strong><?= number_format($totalReglement, 2, ',', ' ') ?>DH</strong>
 			</td>
-		</tr>
-		<tr>
-			<th style="width: 60%"><strong>Solde</strong></th>
-			<td style="width: 40%">
-				<strong>
-					<a>
-						<?= number_format($totalLivraison-$totalReglement, 2, ',', ' ') ?> 
-					</a>
-					&nbsp;DH
-				</strong>
+			<th style="width: 10%"><strong>Solde</strong></th>
+			<td style="width: 20%">
+				<strong><?= number_format($grandTotalLivraisons-$totalReglement, 2, ',', ' ') ?>DH</strong>
 			</td>
 		</tr>
 	</table> 

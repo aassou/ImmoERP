@@ -1,12 +1,12 @@
 <?php
+    require('../app/classLoad.php');
     require('../db/PDOFactory.php'); 
-    require('../db/PDOFactory.php');;  
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
         //classes managers  
-        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
-        $caisseManager = new CaisseManager(PDOFactory::getMysqlConnection());
+        $projetManager  = new ProjetManager(PDOFactory::getMysqlConnection());
+        $caisseManager  = new CaisseManager(PDOFactory::getMysqlConnection());
         $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
         //objs and vars
         $companyID = htmlentities($_POST['companyID']);

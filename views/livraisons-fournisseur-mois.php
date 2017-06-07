@@ -4,7 +4,6 @@
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
-        $companyID = $_GET['companyID'];
         //classManagers
         $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
         $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
@@ -13,14 +12,15 @@
         $livraisonDetailManager = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
         $reglementsFournisseurManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
         //classes and vars
-        $company = $companyManager->getCompanyById($companyID);
-        $projets = $projetManager->getProjetsByCompanyID($companyID);
-        $fournisseurs = $fournisseurManager->getFournisseurs();
+        $companyID = $_GET['companyID'];
+        $company   = $companyManager->getCompanyById($companyID);
+        $projets   = $projetManager->getProjetsByCompanyID($companyID);
+        $fournisseurs    = $fournisseurManager->getFournisseurs();
         $livraisonNumber = 0;
-        $totalReglement = 0;
-        $totalLivraison = 0;
-        $titreLivraison ="Liste de toutes les livraisons";
-        $hrefLivraisonBilanPrintController = "controller/LivraisonBilanPrintController.php";
+        $totalReglement  = 0;
+        $totalLivraison  = 0;
+        $titreLivraison  = "Liste de toutes les livraisons";
+        $hrefLivraisonBilanPrintController = "../controller/LivraisonBilanPrintController.php?companyID=$companyID";
         $livraisonListDeleteLink = "";
         $titreLivraison = $company->nom();
         $livraisonNumber = $livraisonManager->getLivraisonNumber($companyID);
@@ -28,9 +28,9 @@
         $idFournisseur = $_GET['idFournisseur'];
         $livraisons = $livraisonManager->getLivraisonsByFournisseurGroupByMonth($idFournisseur);
         
-        $totalReglement = $reglementsFournisseurManager->getTotalReglement();
+        $totalReglement = $reglementsFournisseurManager->getTotalReglement($companyID);
         $totalLivraison = $livraisonDetailManager->getTotalLivraison(); 
-        $hrefLivraisonBilanPrintController = "controller/LivraisonBilanPrintController.php?companyID=$companyID";
+        $hrefLivraisonBilanPrintController = "../controller/LivraisonBilanPrintController.php?companyID=$companyID&idFournisseur=$idFournisseur";
         //}
 ?>
 <!DOCTYPE html>
@@ -118,7 +118,7 @@
                             $_SESSION['userImmoERPV2']->profil() == "user"
                             ) {
                         ?>
-                        <div class="row-fluid add-portfolio">
+                        <div class="get-down">
                             <div class="pull-left">
                                 <?php
                                 if ( 
@@ -129,16 +129,18 @@
                                 <a href="#addReglement" data-toggle="modal" class="btn black">
                                     Ajouter Nouveau Réglement <i class="icon-plus-sign "></i>
                                 </a>
+                                <a href="#addLivraison" data-toggle="modal" class="btn green">
+                                    Ajouter Nouvelle Livraison <i class="icon-plus-sign "></i>
+                                </a>
                                 <?php
                                 }
                                 ?>
                             </div>
                             <div class="pull-right">
-                                <a href="#addLivraison" data-toggle="modal" class="btn green">
-                                    Ajouter Nouvelle Livraison <i class="icon-plus-sign "></i>
-                                </a>
+                                <a target="_blank" href="<?= $hrefLivraisonBilanPrintController ?>" class="btn blue pull-right"><i class="icon-print"></i>&nbsp;Imprimer Bilan</a>
                             </div>
                         </div>
+                        <br><br>
                         <?php
                         }
                         ?>
@@ -193,6 +195,7 @@
                                             <input type="hidden" name="action" value="add" />    
                                             <input type="hidden" name="source" value="livraisons-fournisseur-mois" />
                                             <input type="hidden" name="idFournisseur" value="<?= $idFournisseur ?>" />
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
@@ -268,7 +271,8 @@
                                         <div class="controls">
                                             <input type="hidden" name="action" value="add" />
                                             <input type="hidden" name="source" value="livraisons-fournisseur-mois" />
-                                            <input type="hidden" name="idFournisseur" value="<?= $idFournisseur ?>" />  
+                                            <input type="hidden" name="idFournisseur" value="<?= $idFournisseur ?>" />
+                                            <input type="hidden" name="companyID" value="<?= $companyID ?>" />  
                                             <button class="btn" data-dismiss="modal"aria-hidden="true">Non</button>
                                             <button type="submit" class="btn red" aria-hidden="true">Oui</button>
                                         </div>
@@ -277,13 +281,6 @@
                             </div>
                         </div>
                         <!-- addReglement box end -->
-                        <div class="row-fluid">
-                            <div class="input-box">
-                                <input class="m-wrap" name="provider" id="provider" type="text" placeholder="Fournisseur...">
-                                </input>
-                                <a target="_blank" href="<?= $hrefLivraisonBilanPrintController ?>" class="btn blue pull-right"><i class="icon-print"></i>&nbsp;Imprimer Bilan</a>
-                            </div>
-                        </div>
                         <!-- BEGIN Terrain TABLE PORTLET-->
                          <?php
                          if( isset($_SESSION['livraison-action-message'])
@@ -313,18 +310,6 @@
                             unset($_SESSION['reglement-action-message']);
                             unset($_SESSION['reglement-type-message']);
                          ?>
-                        <!--table class="table table-striped table-bordered table-advance table-hover">
-                            <tbody>
-                                <tr>
-                                    <th style="width: 15%"><strong>Σ Total Livraisons</strong></th>
-                                    <th style="width: 15%"><strong><a><?php //number_format($totalLivraison, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
-                                    <th style="width: 15%"><strong>Σ Total Réglements</strong></th>
-                                    <th style="width: 15%"><strong><a><?php //number_format($totalReglement, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
-                                    <th style="width: 15%"><strong>Σ Solde</strong></th>
-                                    <th style="width: 15%"><strong><a><?php //number_format($totalLivraison-$totalReglement, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
-                                </tr>
-                            </tbody>
-                        </table-->    
                         <div class="portlet livraisons">
                             <div class="portlet-body">
                                 <div class="scroller" data-height="500px" data-always-visible="1"><!-- BEGIN DIV SCROLLER -->
@@ -345,7 +330,7 @@
                                         //if($livraisonNumber != 0){
                                         //echo print_r($query);
                                         $grandTotalLivraisons = 0;
-                                        $grandTotalReglements = $reglementsFournisseurManager->sommeReglementFournisseursByIdFournisseur($idFournisseur);
+                                        $grandTotalReglements = $reglementsFournisseurManager->sommeReglementFournisseursByIdFournisseur($idFournisseur, $companyID);
                                         foreach($livraisons as $livraison){
                                             $livraisonsIds = 
                                             $livraisonManager->getLivraisonsByIdFournisseurByMonthYear($livraison->idFournisseur(), $livraison->dateLivraison());
@@ -391,7 +376,7 @@
                                         <th></th>
                                         <th><strong><a><?= number_format($grandTotalLivraisons, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
                                         <th><strong><a><?= number_format($grandTotalReglements, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
-                                        <th><strong><a><?= number_format($totalLivraison - $grandTotalReglements, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
+                                        <th><strong><a><?= number_format($grandTotalLivraisons - $grandTotalReglements, 2, ',', ' ') ?>&nbsp;DH</a></strong></th>
                                     </tr>
                                 </table>
                                 </div><!-- END DIV SCROLLER -->

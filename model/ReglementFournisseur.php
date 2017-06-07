@@ -6,6 +6,7 @@ class ReglementFournisseur{
     private $_montant;
     private $_idFournisseur;
 	private $_idProjet;
+    private $_companyID;
 	private $_modePaiement;
 	private $_numeroCheque;
     private $_created;
@@ -49,6 +50,10 @@ class ReglementFournisseur{
 	
 	public function setIdProjet($idProjet){
         $this->_idProjet = $idProjet;
+    }
+    
+    public function setCompanyID($companyID){
+        $this->_companyID = $companyID;
     }
 	
 	public function setModePaiement($modePaiement){
@@ -95,6 +100,10 @@ class ReglementFournisseur{
 	
 	public function idProjet(){
         return $this->_idProjet;
+    }
+    
+    public function companyID(){
+        return $this->_companyID;
     }
 	
 	public function modePaiement(){

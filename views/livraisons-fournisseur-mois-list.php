@@ -4,20 +4,20 @@
     //classes loading end
     session_start();
     if ( isset($_SESSION['userImmoERPV2']) ) {
-        $companyID = $_GET['companyID'];
         //classManagers
-        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
-        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
-        $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
-        $livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
-        $livraisonDetailManager = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
+        $companyManager               = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager                = new ProjetManager(PDOFactory::getMysqlConnection());
+        $fournisseurManager           = new FournisseurManager(PDOFactory::getMysqlConnection());
+        $livraisonManager             = new LivraisonManager(PDOFactory::getMysqlConnection());
+        $livraisonDetailManager       = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
         $reglementsFournisseurManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
         //classes and vars
-        $company = $companyManager->getCompanyById($companyID);
+        $companyID     = $_GET['companyID'];
         $idFournisseur = 0;
-        $projets = $projetManager->getProjetsByCompanyID($companyID);
-        $fournisseurs = $fournisseurManager->getFournisseurs();
-        $projet = $projetManager->getProjetsByCompanyID($companyID);
+        $company       = $companyManager->getCompanyById($companyID);
+        $projets       = $projetManager->getProjetsByCompanyID($companyID);
+        $fournisseurs  = $fournisseurManager->getFournisseurs();
+        $projet        = $projetManager->getProjetsByCompanyID($companyID);
         $livraisonNumber = 0;
         $totalReglement = 0;
         $totalLivraison = 0;
@@ -87,7 +87,7 @@
                 foreach($livraisonsIds as $idl){
                     $sommeDetailsLivraisons += $livraisonDetailManager->getTotalLivraisonByIdLivraison($idl);
                 }   
-                $totalReglement = $reglementsFournisseurManager->sommeReglementFournisseursByIdFournisseur($idFournisseur);
+                $totalReglement = $reglementsFournisseurManager->sommeReglementFournisseursByIdFournisseur($idFournisseur, $companyID);
                 $totalLivraison = 
                 $livraisonManager->getTotalLivraisonsIdFournisseur($idFournisseur)+
                 $sommeDetailsLivraisons;
@@ -178,19 +178,47 @@
                 <div class="row-fluid">
                     <div class="span12">
                         <?php
+                         if( isset($_SESSION['livraison-action-message'])
+                         and isset($_SESSION['livraison-type-message']) ){ 
+                            $message = $_SESSION['livraison-action-message'];
+                            $typeMessage = $_SESSION['livraison-type-message'];    
+                         ?>
+                            <div class="alert alert-<?= $typeMessage ?>">
+                                <button class="close" data-dismiss="alert"></button>
+                                <?= $message ?>     
+                            </div>
+                         <?php } 
+                            unset($_SESSION['livraison-action-message']);
+                            unset($_SESSION['livraison-type-message']);
+                         ?>
+                         <?php
+                         if( isset($_SESSION['reglement-action-message'])
+                         and isset($_SESSION['reglement-type-message']) ){ 
+                            $message = $_SESSION['reglement-action-message'];
+                            $typeMessage = $_SESSION['reglement-type-message'];    
+                         ?>
+                            <div class="alert alert-<?= $typeMessage ?>">
+                                <button class="close" data-dismiss="alert"></button>
+                                <?= $message ?>     
+                            </div>
+                         <?php } 
+                            unset($_SESSION['reglement-action-message']);
+                            unset($_SESSION['reglement-type-message']);
+                         ?>
+                        <?php
                             if ( 
                                 $_SESSION['userImmoERPV2']->profil() == "admin" ||
                                 $_SESSION['userImmoERPV2']->profil() == "manager" ||
                                 $_SESSION['userImmoERPV2']->profil() == "user"
                                 ) {
                         ?>
-                        <div class="row-fluid add-portfolio">
+                        <div>
                             <div class="pull-left">
                                 <a href="#addReglement" data-toggle="modal" class="btn black">
                                     Ajouter Nouveau Réglement <i class="icon-plus-sign "></i>
                                 </a>
                             </div>
-                            <div class="pull-right">
+                            <div class="pull-right get-down">
                                 <a href="#addLivraison" data-toggle="modal" class="btn green">
                                     Ajouter Nouvelle Livraison <i class="icon-plus-sign "></i>
                                 </a>
@@ -349,7 +377,7 @@
                         <!-- addReglement box end -->
                         <!-- printCharge box begin-->
                         <div id="printBilanFournisseur" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-                            <form class="form-horizontal" action="../controller/BilanFournisseurPrintController.php" method="post" enctype="multipart/form-data">
+                            <form  target="_blank" class="form-horizontal" action="../controller/BilanFournisseurPrintController.php" method="post" enctype="multipart/form-data">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
                                     <h3><i class="icon-print"></i>&nbsp;Bilan de <strong><?= $fournisseurManager->getFournisseurById($idFournisseur)->nom() ?></strong></h3>
@@ -473,34 +501,6 @@
                         </div>
                         <!-- updateStatusLivraison box end -->     
                         <!-- BEGIN Terrain TABLE PORTLET-->
-                        <?php
-                         if( isset($_SESSION['livraison-action-message'])
-                         and isset($_SESSION['livraison-type-message']) ){ 
-                            $message = $_SESSION['livraison-action-message'];
-                            $typeMessage = $_SESSION['livraison-type-message'];    
-                         ?>
-                            <div class="alert alert-<?= $typeMessage ?>">
-                                <button class="close" data-dismiss="alert"></button>
-                                <?= $message ?>     
-                            </div>
-                         <?php } 
-                            unset($_SESSION['livraison-action-message']);
-                            unset($_SESSION['livraison-type-message']);
-                         ?>
-                         <?php
-                         if( isset($_SESSION['reglement-action-message'])
-                         and isset($_SESSION['reglement-type-message']) ){ 
-                            $message = $_SESSION['reglement-action-message'];
-                            $typeMessage = $_SESSION['reglement-type-message'];    
-                         ?>
-                            <div class="alert alert-<?= $typeMessage ?>">
-                                <button class="close" data-dismiss="alert"></button>
-                                <?= $message ?>     
-                            </div>
-                         <?php } 
-                            unset($_SESSION['reglement-action-message']);
-                            unset($_SESSION['reglement-type-message']);
-                         ?>
                         <div class="portlet box light-grey">
                             <div class="portlet-title">
                                 <h4>Livraison de <?= $fournisseurManager->getFournisseurById($idFournisseur)->nom() ?></h4>
@@ -521,15 +521,6 @@
                                             <i class="icon-check"></i>&nbsp;Modifier Status BL
                                         </a>
                                     </div>
-                                    <!--div class="btn-group pull-right">
-                                        <button class="btn dropdown-toggle" data-toggle="dropdown">Tools <i class="icon-angle-down"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="#">Print</a></li>
-                                            <li><a href="#">Save as PDF</a></li>
-                                            <li><a href="#">Export to Excel</a></li>
-                                        </ul>
-                                    </div-->
                                 </div>
                             <table class="table table-striped table-bordered table-hover" id="sample_1">
                                     <thead>

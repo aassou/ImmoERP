@@ -68,13 +68,13 @@
                         </h3>
                         <ul class="breadcrumb">
                             <li>
-                                <i class="icon-dashboard"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <i class="icon-home"></i>
+                                <a href="company-choice.php">Accueil</a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
                                 <i class="icon-warning-sign"></i>
-                                <a>Liste des anomalies</a>
+                                <a><strong>Liste des anomalies</strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->

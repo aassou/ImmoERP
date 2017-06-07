@@ -6,21 +6,21 @@
     session_start();
     
     //post input processing
-    $action = htmlentities($_POST['action']);
+    $action    = htmlentities($_POST['action']);
     $companyID = htmlentities($_POST['companyID']);
     //This var contains result message of CRUD action
     $actionMessage = "";
-    $typeMessage = "";
-    $redirectLink = "";
+    $typeMessage   = "";
+    $redirectLink  = "";
     
     //process begins
     
     //class managers
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
-    $livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
+    $historyManager     = new HistoryManager(PDOFactory::getMysqlConnection());
+    $livraisonManager   = new LivraisonManager(PDOFactory::getMysqlConnection());
     $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
-    $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
+    $projetManager      = new ProjetManager(PDOFactory::getMysqlConnection());
     
     //objs and vars
     $idFournisseur = htmlentities($_POST['idFournisseur']);

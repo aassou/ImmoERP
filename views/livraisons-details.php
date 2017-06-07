@@ -4,37 +4,36 @@
     //classes loading end
     session_start();
     if( isset($_SESSION['userImmoERPV2']) ){
-        //post processing
-        $companyID = htmlentities($_GET['companyID']);
     	//Class Managers
-    	$companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
-    	$projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
-		$fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
-		$livraisonManager = new LivraisonManager(PDOFactory::getMysqlConnection());
-		$livraisonDetailManager = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
+    	$companyManager               = new CompanyManager(PDOFactory::getMysqlConnection());
+    	$projetManager                = new ProjetManager(PDOFactory::getMysqlConnection());
+		$fournisseurManager           = new FournisseurManager(PDOFactory::getMysqlConnection());
+		$livraisonManager             = new LivraisonManager(PDOFactory::getMysqlConnection());
+		$livraisonDetailManager       = new LivraisonDetailManager(PDOFactory::getMysqlConnection());
 		$reglementsFournisseurManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
 		//objs and vars
-		$company = $companyManager->getCompanyById($companyID);
+		$companyID = htmlentities($_GET['companyID']);
+		$company   = $companyManager->getCompanyById($companyID);
 		$livraisonDetailNumber = 0;
 		$totalReglement = 0;
 		$totalLivraison = 0;
-		$titreLivraison ="Détail de la livraison";
-		$livraison = "Vide";
-		$fournisseur = "Vide";
-		$nomProjet = "Non mentionné";
-        $idProjet = "";
-        $fournisseurs = $fournisseurManager->getFournisseurs();
+		$titreLivraison = "Détail de la livraison";
+		$livraison      = "Vide";
+		$fournisseur    = "Vide";
+		$nomProjet      = "Plusieurs Projets";
+        $idProjet       = "";
+        $fournisseurs   = $fournisseurManager->getFournisseurs();
         $projets = $projetManager->getProjetsByCompanyID($companyID);
 		if( isset($_GET['codeLivraison']) ){
-			$livraison = $livraisonManager->getLivraisonByCode($_GET['codeLivraison']);
+			$livraison   = $livraisonManager->getLivraisonByCode($_GET['codeLivraison']);
 			$fournisseur = $fournisseurManager->getFournisseurById($livraison->idFournisseur());
 			if ( $livraison->idProjet() != 0 ) {
 			    $nomProjet = $projetManager->getProjetById($livraison->idProjet())->nom();
-                $idProjet = $projetManager->getProjetById($livraison->idProjet())->id();    
+                $idProjet  = $projetManager->getProjetById($livraison->idProjet())->id();    
 			} 
             else {
-                $nomProjet = "Non mentionné";
-                $idProjet = "";    
+                $nomProjet = "Plusieurs Projets";
+                $idProjet  = "";    
             }
             
 			$livraisonDetail = $livraisonDetailManager->getLivraisonsDetailByIdLivraison($livraison->id());

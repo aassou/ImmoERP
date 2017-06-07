@@ -68,10 +68,13 @@
 							</li>
 							<li>
 								<i class="icon-wrench"></i>
-								<a href="configuration.php">Paramètrages</a>
+								<a href="configuration-global.php">Paramètrages Globales</a>
 								<i class="icon-angle-right"></i>
 							</li>
-							<li><a>Gestion des utilisateurs</a></li>
+							<li>
+							    <i class="icon-group"></i>
+							    <a><strong>Gestion des utilisateurs</strong></a>
+							</li>
 						</ul>
 						<!-- END PAGE TITLE & BREADCRUMB-->
 					</div>

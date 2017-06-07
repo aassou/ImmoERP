@@ -87,7 +87,9 @@ class LivraisonDetailManager{
 	}
 	
 	public function getTotalLivraison(){
-		$query = $this->_db->query('SELECT SUM(prixUnitaire*quantite) AS totalLivraison FROM t_livraison_detail')
+		$query = $this->_db->query(
+		'SELECT SUM(prixUnitaire*quantite) AS totalLivraison 
+		FROM t_livraison_detail')
 		or die(print_r($this->_db->errorInfo()));
 		$data = $query->fetch(PDO::FETCH_ASSOC);
 		$query->closeCursor();

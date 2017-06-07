@@ -6,19 +6,19 @@
     session_start();
     
     //post input processing
-    $action = htmlentities($_POST['action']);
+    $action    = htmlentities($_POST['action']);
     $companyID = htmlentities($_POST['companyID']);
     //In this session variable we put all the POST, to get it in the contrats-add file
     //in case of error, and this help the user to do not put again what he filled out.
     $_SESSION['reglement-data-form'] = $_POST;
     //This var contains result message of CRUD action
     $actionMessage = "";
-    $typeMessage = "";
-    $redirectLink = "";
+    $typeMessage   = "";
+    $redirectLink  = "";
     //process begins
     //The History Component is used in all ActionControllers to mention a historical version of each action
-    $historyManager = new HistoryManager(PDOFactory::getMysqlConnection());
-    $reglementManager = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
+    $historyManager     = new HistoryManager(PDOFactory::getMysqlConnection());
+    $reglementManager   = new ReglementFournisseurManager(PDOFactory::getMysqlConnection());
     $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
     
     //Action Add Process Begin
@@ -26,6 +26,7 @@
         if( !empty($_POST['montant']) ) {
             $idFournisseur = htmlentities($_POST['idFournisseur']);
             $idProjet = htmlentities($_POST['idProjet']);
+            $companyID = htmlentities($_POST['companyID']);
             $dateReglement = htmlentities($_POST['dateReglement']);
             $montant = htmlentities($_POST['montant']);
             $modePaiement = htmlentities($_POST['modePaiement']);
@@ -34,7 +35,7 @@
             $created = date('Y-m-d h:i:s');
             $reglement = 
             new ReglementFournisseur(array('idFournisseur' => $idFournisseur, 'idProjet' => $idProjet, 
-            'dateReglement' => $dateReglement, 'montant' => $montant,   
+            'companyID' => $companyID, 'dateReglement' => $dateReglement, 'montant' => $montant,   
             'modePaiement' => $modePaiement, 'numeroCheque' => $numeroOperation, 
             'createdBy' => $createdBy, 'created' => $created));
             $reglementManager->add($reglement);
@@ -70,7 +71,7 @@
                 $idFournisseur = htmlentities($_POST['idFournisseur']);
                 $mois = htmlentities($_POST['mois']);
                 $annee = htmlentities($_POST['annee']);
-                $redirectLink = "Location:../views/livraisons-fournisseur-mois.php?idFournisseur=$idFournisseur&mois=$mois&annee=$annee&companyID=$companyID";
+                $redirectLink = "Location:../views/livraisons-fournisseur-mois-list.php?idFournisseur=$idFournisseur&mois=$mois&annee=$annee&companyID=$companyID";
             }
             else if( $_POST['source'] == 'reglements-fournisseur' ) {
                 $idFournisseur = htmlentities($_POST['idFournisseur']);

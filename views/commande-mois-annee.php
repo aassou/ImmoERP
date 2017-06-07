@@ -4,18 +4,17 @@
     //classes loading end
     session_start();
     if ( isset($_SESSION['userImmoERPV2']) ) {
-        //post processing
-        $companyID = htmlentities($_GET['companyID']);
         //classManagers
-        $companyManager = new CompanyManager(PDOFactory::getMysqlConnection());
-        $projetManager = new ProjetManager(PDOFactory::getMysqlConnection());
-        $fournisseurManager = new FournisseurManager(PDOFactory::getMysqlConnection());
-        $commandeManager = new CommandeManager(PDOFactory::getMysqlConnection());
+        $companyManager        = new CompanyManager(PDOFactory::getMysqlConnection());
+        $projetManager         = new ProjetManager(PDOFactory::getMysqlConnection());
+        $fournisseurManager    = new FournisseurManager(PDOFactory::getMysqlConnection());
+        $commandeManager       = new CommandeManager(PDOFactory::getMysqlConnection());
         $commandeDetailManager = new CommandeDetailManager(PDOFactory::getMysqlConnection());
         //objs and vars
-        $company = $companyManager->getCompanyById($companyID);
-        $commandes = "";
-        $projets = $projetManager->getProjetsByCompanyID($companyID);
+        $commandes    = "";
+        $companyID    = htmlentities($_GET['companyID']);
+        $company      = $companyManager->getCompanyById($companyID);
+        $projets      = $projetManager->getProjetsByCompanyID($companyID);
         $fournisseurs = $fournisseurManager->getFournisseurs();
         //$projet = $projetManager->getProjets();
         $livraisonListDeleteLink = "";
@@ -199,15 +198,6 @@
                                              Nouvelle Commande
                                         </a>
                                     </div>
-                                    <!--div class="btn-group pull-right">
-                                        <button class="btn dropdown-toggle" data-toggle="dropdown">Tools <i class="icon-angle-down"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="#">Print</a></li>
-                                            <li><a href="#">Save as PDF</a></li>
-                                            <li><a href="#">Export to Excel</a></li>
-                                        </ul>
-                                    </div-->
                                 </div>
                                 <table class="table table-striped table-bordered table-hover" id="sample_1">
                                     <thead>
@@ -228,7 +218,7 @@
                                                 $nomProjet = $projetManager->getProjetById($commande->idProjet())->nom();
                                             }
                                             else {
-                                                $nomProjet = "Non mentionné";
+                                                $nomProjet = "Plusieurs Projets";
                                             }
                                             $nomFournisseur = $fournisseurManager->getFournisseurById($commande->idFournisseur())->nom();
                                         ?>      
@@ -290,7 +280,7 @@
                                                             <select name="idProjet">
                                                                 <option value="<?= $commande->idProjet() ?>"><?= $nomProjet ?></option>
                                                                 <option disabled="disabled">-----------</option>
-                                                                <option value="0">Non mentionné</option>
+                                                                <option value="0">Plusieurs Projets</option>
                                                                 <?php foreach($projets as $projet){ ?>
                                                                 <option value="<?= $projet->id() ?>"><?= $projet->nom() ?></option>
                                                                 <?php } ?>

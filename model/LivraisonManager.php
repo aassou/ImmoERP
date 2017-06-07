@@ -358,7 +358,13 @@ class LivraisonManager{
 	//new functions
 	
 	public function getLivraisonsNumberByIdFournisseurByProjet($idFournisseur, $idProjet){
-		$query = $this->_db->query('SELECT COUNT(*) AS livraisonNumbers FROM t_livraison WHERE idFournisseur='.$idFournisseur.' AND idProjet='.$idProjet);
+		$query = $this->_db->prepare(
+		'SELECT COUNT(*) AS livraisonNumbers 
+		FROM t_livraison 
+		WHERE idFournisseur= 
+		AND idProjet=:idProjet');
+        $query->bindValue(':idProjet', $idProjet);
+        $query->bindValue(':idFournisseur', $idFournisseur);
         $data = $query->fetch(PDO::FETCH_ASSOC);
         $query->closeCursor();
         return $data['livraisonNumbers'];
@@ -437,8 +443,11 @@ class LivraisonManager{
 	
 	public function getLivraisonsByIdFournisseurByProjet($idFournisseur, $idProjet){
         $livraisons = array();
-        $query = $this->_db->prepare('SELECT * FROM t_livraison WHERE idFournisseur=:idFournisseur
-        AND idProjet=:idProjet ORDER BY dateLivraison DESC');
+        $query = $this->_db->prepare(
+        'SELECT * FROM t_livraison 
+        WHERE idFournisseur=:idFournisseur
+        AND idProjet=:idProjet 
+        ORDER BY dateLivraison DESC');
         $query->bindValue(':idFournisseur', $idFournisseur);
 		$query->bindValue(':idProjet', $idProjet);
         $query->execute();
@@ -449,10 +458,15 @@ class LivraisonManager{
         return $livraisons;
     }
 	
-	public function getLivraisonsByIdFournisseur($idFournisseur){
+	public function getLivraisonsByIdFournisseur($idFournisseur, $companyID){
         $livraisons = array();
-        $query = $this->_db->prepare('SELECT * FROM t_livraison WHERE idFournisseur=:idFournisseur ORDER BY dateLivraison DESC');
+        $query = $this->_db->prepare(
+        'SELECT * FROM t_livraison 
+        WHERE idFournisseur=:idFournisseur 
+        AND companyID=:companyID
+        ORDER BY dateLivraison DESC');
         $query->bindValue(':idFournisseur', $idFournisseur);
+        $query->bindValue(':companyID', $companyID);
         $query->execute();
         while($data = $query->fetch(PDO::FETCH_ASSOC)){
             $livraisons[] = new Livraison($data);
@@ -470,6 +484,30 @@ class LivraisonManager{
         $query->closeCursor();
         return $livraisons;
 	}
+    
+    public function getLivraisonsByCompany($companyID){
+        $livraisons = array();
+        $query = $this->_db->prepare('SELECT * FROM t_livraison WHERE companyID=:companyID ORDER BY dateLivraison DESC');
+        $query->bindValue(':companyID', $companyID);
+        $query->execute();
+        while($data = $query->fetch(PDO::FETCH_ASSOC)){
+            $livraisons[] = new Livraison($data);
+        }
+        $query->closeCursor();
+        return $livraisons;
+    }
+    
+    public function getLivraisonsIdsByCompany($companyID){
+        $idLivraisons = array();
+        $query = $this->_db->prepare('SELECT id FROM t_livraison WHERE companyID=:companyID');
+        $query->bindValue(':companyID', $companyID);
+        $query->execute();
+        while($data = $query->fetch(PDO::FETCH_ASSOC)){
+            $idLivraisons[] = $data['id'];
+        }
+        $query->closeCursor();
+        return $idLivraisons;
+    }
     
     /************************************************************************************************
      *                                                                                              * 

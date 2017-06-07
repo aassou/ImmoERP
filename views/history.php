@@ -70,10 +70,11 @@
                             </li>
                             <li>
                                 <i class="icon-wrench"></i>
-                                <a href="configuration.php">Paramètrages</a> 
+                                <a href="configuration.php">Paramètrages Globales</a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
+                                <i class="icon-calendar"></i>
                                 <a href="history-group.php">Historique des actions</a>
                                 <i class="icon-angle-right"></i>
                             </li>

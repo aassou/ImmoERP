@@ -70,13 +70,13 @@
                         </h3>
                         <ul class="breadcrumb">
                             <li>
-                                <i class="icon-dashboard"></i>
-                                <a href="dashboard.php">Accueil</a> 
+                                <i class="icon-home"></i>
+                                <a href="company-choice.php">Accueil</a> 
                                 <i class="icon-angle-right"></i>
                             </li>
                             <li>
                                 <i class="icon-tasks"></i>
-                                <a>Liste des tâches</a>
+                                <a><strong>Liste des tâches</strong></a>
                             </li>
                         </ul>
                         <!-- END PAGE TITLE & BREADCRUMB-->
