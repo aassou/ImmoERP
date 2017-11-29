@@ -20,4 +20,4 @@ the next version like:
 	- Language support (French,English,Spanich and Arabic).
  	- Develope a mobile version.
  	
-This version is a mix of funtional and OOP programing.
+
